@@ -1,6 +1,12 @@
 import streamlit as st
 
-st.title("🎈 My new app")
+st.title("IRL Prototype")
+
+with st.form(key="my_form"):
+    username = st.text_input("Username")
+    password = st.text_input("Password")
+    st.form_submit_button("Login")
+
 st.write(
-    "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
+    "Testing..."
 )
