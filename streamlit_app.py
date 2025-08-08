@@ -14,8 +14,8 @@ st.write(
 assess = st.toggle("Enable ASSESSOR")
 review = st.toggle("Enable REVIEWER")
 
-st.button("Q1 - ASSESSOR", disabled=not assess)
-st.button("Q1 - REVIEWER", disabled=not review)
+st.checkbox("Q1 - ASSESSOR", disabled=not assess)
+st.checkbox("Q1 - REVIEWER", disabled=not review)
 
 
 
