@@ -45,7 +45,7 @@ with col2:
 st.markdown("""
     <style>
     /* Target the first column of columns */
-    [data-testid="stHorizontalBlock"] > div:first-child {
+    [data-testid="stHorizontalBlock"] > div:nth-child(1) {
         background-color: #e3f3ff;
         padding: 16px;
         border-radius: 8px;
@@ -55,10 +55,11 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+
 st.markdown("""
     <style>
     /* Target the first column of columns */
-    [data-testid="stHorizontalBlock"] > div:second-child {
+    [data-testid="stHorizontalBlock"] > div:nth-child(2) {
         background-color: #ff0000;
         padding: 16px;
         border-radius: 8px;
@@ -67,7 +68,6 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
-
 
 
 
