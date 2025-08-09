@@ -14,6 +14,19 @@ st.write(
 assess = st.toggle("Enable ASSESSOR")
 review = st.toggle("Enable REVIEWER")
 
+# Create two columns for horizontal layout
+col1, col2 = st.columns([1, 2])  # Adjust widths as desired
+
+# First checkbox (no label)
+with col1:
+    cb1 = st.checkbox("", key="cb1")  # Empty string for no label
+
+# Second checkbox (with label)
+with col2:
+    cb2 = st.checkbox("Descriptive label for second checkbox", key="cb2")
+
+
+
 st.checkbox("Q1 - ASSESSOR", disabled=not assess)
 st.checkbox("Q1 - REVIEWER", disabled=not review)
 
