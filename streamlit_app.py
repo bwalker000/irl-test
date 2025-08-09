@@ -7,24 +7,28 @@ with st.form(key="my_form"):
     password = st.text_input("Password")
     st.form_submit_button("Login")
 
-st.write(
-    "Testing..."
-)
-
+# determine whether this is the assessor or reviewer
 assess = st.toggle("Enable ASSESSOR")
 review = st.toggle("Enable REVIEWER")
 
+
 # Create two columns for horizontal layout
-col1, col2 = st.columns([0.1, 0.9])  # Adjust widths as desired
+col1, col2 = st.columns([0.05, 0.95])  # Adjust widths as desired
 
 # First checkbox (no label)
 with col1:
-    cb1 = st.checkbox("", key="cb1")  # Empty string for no label
+    cb1 = st.checkbox("", key="cb1", disabled=not assess)  # Empty string for no label
 
 # Second checkbox (with label)
 with col2:
-    cb2 = st.checkbox("Descriptive label for second checkbox", key="cb2")
+    cb2 = st.checkbox("Descriptive label for second checkbox", key="cb2", disabled=not review)
 
+
+
+
+st.write(
+    "Testing..."
+)
 
 
 st.checkbox("Q1 - ASSESSOR", disabled=not assess)
