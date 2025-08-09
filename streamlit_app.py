@@ -42,13 +42,24 @@ with col2:
     st.checkbox("Option C")
 
 
-
-
 st.markdown("""
     <style>
     /* Target the first column of columns */
     [data-testid="stHorizontalBlock"] > div:first-child {
         background-color: #e3f3ff;
+        padding: 16px;
+        border-radius: 8px;
+        /* Optional: make the column stand out with a border */
+        border: 2px solid #3399ff;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+    /* Target the first column of columns */
+    [data-testid="stHorizontalBlock"] > div:second-child {
+        background-color: #ff0000;
         padding: 16px;
         border-radius: 8px;
         /* Optional: make the column stand out with a border */
@@ -78,13 +89,7 @@ st.pills("Tags", ["Sports", "Politics"])
 st.radio("Pick one", ["cats", "dogs"])
 st.segmented_control("Filter", ["Open", "Closed"])
 
-st.selectbox("Pick one", ["cats", "dogs"])
-st.multiselect("Buy", ["milk", "apples", "potatoes"])
-st.slider("Pick a number", 0, 100)
-st.select_slider("Pick a size", ["S", "M", "L"])
-st.text_input("First name")
-st.number_input("Pick a number", 0, 10)
-st.text_area("Text to translate")
-st.date_input("Your birthday")
+st.text_area("ASSESSOR Comments")
+st.text_area("REVIEWER Comments")
 
 
