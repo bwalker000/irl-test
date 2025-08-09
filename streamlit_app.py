@@ -25,6 +25,42 @@ with col2:
 
 
 
+import streamlit as st
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.write('Boxed Column')
+    st.checkbox("Option 1")
+    st.checkbox("Option 2")
+    st.checkbox("Option 3")
+
+with col2:
+    st.write('Plain Column')
+    st.checkbox("Option A")
+    st.checkbox("Option B")
+    st.checkbox("Option C")
+
+
+
+
+st.markdown("""
+    <style>
+    /* Target the first column of columns */
+    [data-testid="stHorizontalBlock"] > div:first-child {
+        background-color: #e3f3ff;
+        padding: 16px;
+        border-radius: 8px;
+        /* Optional: make the column stand out with a border */
+        border: 2px solid #3399ff;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+
+
+
 
 st.write(
     "Testing..."
