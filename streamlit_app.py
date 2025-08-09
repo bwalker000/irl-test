@@ -15,7 +15,7 @@ assess = st.toggle("Enable ASSESSOR")
 review = st.toggle("Enable REVIEWER")
 
 # Create two columns for horizontal layout
-col1, col2 = st.columns([1, 2])  # Adjust widths as desired
+col1, col2 = st.columns([0.1, 0.9])  # Adjust widths as desired
 
 # First checkbox (no label)
 with col1:
