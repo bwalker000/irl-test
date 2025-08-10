@@ -1,4 +1,4 @@
-pip install pyairtable
+#pip install pyairtable
 
 import streamlit as st
 
