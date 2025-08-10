@@ -60,8 +60,8 @@ st.title("IRL Prototype")
 assess = st.toggle("Enable ASSESSOR")
 review = st.toggle("Enable REVIEWER")
 
-# Create three columns for horizontal layout
-col1, col2, col3 = st.columns([0.05, 0.05, 0.90])  # Adjust widths as desired
+# Create three columns for horizontal layout. [a, b, c] are relative widths
+col1, col2, col3 = st.columns([0.05, 0.05, 0.90], vertical_alignment="center")
 
 # First checkbox (no label)
 with col1:
