@@ -1,10 +1,11 @@
+# import dependencies
 import streamlit as st
 import pandas as pd
 from pyairtable import Table
 import requests
 import json
 
-# Load secrets from .streamlit/secrets.toml
+# Load secrets
 AIRTABLE_API_KEY = st.secrets["airtable_api_key"]
 BASE_ID = st.secrets["airtable_base_id"]
 TABLE_NAME = st.secrets["airtable_table_name"]
@@ -51,35 +52,31 @@ if df.empty:
 else:
     st.dataframe(df)
 
-    
 
 
 st.title("IRL Prototype")
-
-with st.form(key="my_form"):
-    username = st.text_input("Username")
-    password = st.text_input("Password")
-    st.form_submit_button("Login")
 
 # determine whether this is the assessor or reviewer
 assess = st.toggle("Enable ASSESSOR")
 review = st.toggle("Enable REVIEWER")
 
-
-# Create two columns for horizontal layout
-col1, col2 = st.columns([0.05, 0.95])  # Adjust widths as desired
+# Create three columns for horizontal layout
+col1, col2, col3 = st.columns([0.05, 0.05, 0.90])  # Adjust widths as desired
 
 # First checkbox (no label)
 with col1:
-    cb1 = st.checkbox("", key="cb1", disabled=not assess)  # Empty string for no label
+    cb0A = st.checkbox("", key="cb0A", disabled=not assess)  # Empty string for no label
 
 # Second checkbox (with label)
 with col2:
-    cb2 = st.checkbox("Descriptive label for second checkbox", key="cb2", disabled=not review)
+    cb0R = st.checkbox("", key="cb0R", disabled=not review)
+
+with col3:
+    st.write('Dimension 1, Question 0?')
 
 
 
-import streamlit as st
+
 
 col1, col2 = st.columns(2)
 
