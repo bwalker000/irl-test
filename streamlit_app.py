@@ -1,16 +1,40 @@
-#pip install pyairtable
 
 import streamlit as st
+import pandas as pd
+import requests
 
-import os
-from pyairtable import Api
+# User inputs (for demo; in production, store secrets securely)
+AIRTABLE_API_KEY = st.secrets.get("airtable_api_key", "your_api_key")
+BASE_ID = st.secrets.get("airtable_base_id", "your_base_id_here")
+TABLE_NAME = st.secrets.get("airtable_table_name", "your_table_name_here")
 
-# connect to Airtable
-api = Api(os.environ['patdNMT424EkcYEgR.df1fcd9d087d6977be07d02c2b53bdd64afffc583e736a5be174aec174083df1'])
+@st.cache_data
+def get_airtable_records(api_key, base_id, table_name):
+    url = f"https://api.airtable.com/v0/{base_id}/{table_name}"
+    headers = {"Authorization": f"Bearer {api_key}"}
+    records = []
+    offset = None
 
-table = api.table('appExampleBaseId', 'tblExampleTableId')
+    while True:
+        params = {"offset": offset} if offset else {}
+        resp = requests.get(url, headers=headers, params=params)
+        data = resp.json()
+        for record in data.get("records", []):
+            records.append(record["fields"])
+        offset = data.get("offset")
+        if not offset:
+            break
 
-st.write(table.all())
+    return pd.DataFrame(records)
+
+st.title("Airtable Table Viewer")
+
+try:
+    df = get_airtable_records(AIRTABLE_API_KEY, BASE_ID, TABLE_NAME)
+    st.dataframe(df)  # Display as scrollable, interactive table
+except Exception as e:
+    st.error(f"Failed to load data: {e}")
+
 
 
 st.title("IRL Prototype")
