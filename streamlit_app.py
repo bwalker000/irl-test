@@ -1,4 +1,17 @@
+pip install pyairtable
+
 import streamlit as st
+
+import os
+from pyairtable import Api
+
+# connect to Airtable
+api = Api(os.environ['patdNMT424EkcYEgR.df1fcd9d087d6977be07d02c2b53bdd64afffc583e736a5be174aec174083df1'])
+
+table = api.table('appExampleBaseId', 'tblExampleTableId')
+
+st.write(table.all())
+
 
 st.title("IRL Prototype")
 
