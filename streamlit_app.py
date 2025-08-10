@@ -3,9 +3,9 @@ import pandas as pd
 import requests
 
 # User inputs (for demo; in production, store secrets securely)
-AIRTABLE_API_KEY = st.secrets.get("airtable_api_key", "your_api_key")
-BASE_ID = st.secrets.get("airtable_base_id", "your_base_id_here")
-TABLE_NAME = st.secrets.get("airtable_table_name", "your_table_name_here")
+AIRTABLE_API_KEY = st.secrets.get("airtable_api_key", "airtable_api_key")
+BASE_ID = st.secrets.get("airtable_base_id", "airtable_base_id")
+TABLE_NAME = st.secrets.get("airtable_table_name", "airtable_table_name")
 
 @st.cache_data
 def get_airtable_records(api_key, base_id, table_name):
@@ -18,6 +18,7 @@ def get_airtable_records(api_key, base_id, table_name):
         params = {"offset": offset} if offset else {}
         resp = requests.get(url, headers=headers, params=params)
         data = resp.json()
+        st.write("Airtable raw response:", data)  # Add this debug line
         for record in data.get("records", []):
             records.append(record["fields"])
         offset = data.get("offset")
