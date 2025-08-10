@@ -53,6 +53,8 @@ else:
     st.dataframe(df)
 
 
+num_dims = df.shape[0]
+numQ = 10
 
 st.title("IRL Prototype")
 
@@ -92,35 +94,22 @@ with col3:
 #    st.checkbox("Option B")
 #    st.checkbox("Option C")
 
+if assess:
+    live_col = 1
+elif review:
+    livecol = 2
 
-#st.markdown("""
-#    <style>
-#    /* Target the first column of columns */
-#    [data-testid="stHorizontalBlock"] > div:nth-child(1) {
-#        background-color: #e3f3ff;
-#        padding: 16px;
-#        border-radius: 8px;
-#        /* Optional: make the column stand out with a border */
-#        border: 2px solid #3399ff;
-#    }
-#    </style>
-#    """, unsafe_allow_html=True)
-
-
-#st.markdown("""
-#    <style>
-#    /* Target the first column of columns */
-#    [data-testid="stHorizontalBlock"] > div:nth-child(2) {
-#        background-color: #ff0000;
-#        padding: 16px;
-#        border-radius: 8px;
-#        /* Optional: make the column stand out with a border */
-#        border: 2px solid #3399ff;
-#    }
-#    </style>
-#    """, unsafe_allow_html=True)
-
-
+st.markdown("""
+    <style>
+    [data-testid="stHorizontalBlock"] > div:nth-child(live_col) {
+        background-color: #e3f3ff;
+        padding: 16px;
+        border-radius: 8px;
+        /* Optional: make the column stand out with a border */
+        border: 2px solid #3399ff;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 
 
