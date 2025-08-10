@@ -1,37 +1,57 @@
 import streamlit as st
 import pandas as pd
+from pyairtable import Table
 import requests
+import json
 
-# User inputs (for demo; in production, store secrets securely)
-#AIRTABLE_API_KEY = st.secrets.get("airtable_api_key", "airtable_api_key")
-#BASE_ID = st.secrets.get("airtable_base_id", "airtable_base_id")
-#TABLE_NAME = st.secrets.get("airtable_table_name", "airtable_table_name")
+# Load secrets from .streamlit/secrets.toml
 AIRTABLE_API_KEY = st.secrets["airtable_api_key"]
 BASE_ID = st.secrets["airtable_base_id"]
 TABLE_NAME = st.secrets["airtable_table_name"]
 
+# Debug mode toggle
+debug = st.checkbox("Enable Airtable debug mode", value=False)
+
 @st.cache_data
-def load_airtable():
+def load_airtable(debug=False):
+    url = f"https://api.airtable.com/v0/{BASE_ID}/{TABLE_NAME}"
+    headers = {"Authorization": f"Bearer {AIRTABLE_API_KEY}"}
+    response = requests.get(url, headers=headers)
     try:
-        table = Table(AIRTABLE_API_KEY, BASE_ID, TABLE_NAME)
-        records = table.all()  # Returns list of dicts
-        if not records:
-            return pd.DataFrame()  # Empty if no records
-        return pd.DataFrame([rec.get("fields", {}) for rec in records])
+        data = response.json()
     except Exception as e:
-        st.error(f"Error loading Airtable data: {e}")
-        return pd.DataFrame()
+        data = {"error": f"JSON parse error: {e}"}
+    # Extract records if possible
+    records = data.get("records", [])
+    df = pd.DataFrame([r.get("fields", {}) for r in records]) if records else pd.DataFrame()
+    details = {
+        "url": url,
+        "status_code": response.status_code,
+        "response_headers": dict(response.headers),
+        "raw_response": data,
+        "records_count": len(records),
+    }
+    return df, details
 
-st.title("Airtable Table Viewer")
+st.title("Airtable Table Viewer (Debuggable)")
 
-df = load_airtable()
+df, debug_details = load_airtable(debug=debug)
+
+if debug:
+    st.subheader("Airtable API Debug Information")
+    st.code(f"Request URL: {debug_details['url']}", language="text")
+    st.write("Status code:", debug_details["status_code"])
+    st.write("Response headers:", debug_details["response_headers"])
+    st.write("Raw JSON response:")
+    st.json(debug_details["raw_response"])
+    st.write("Records returned:", debug_details["records_count"])
 
 if df.empty:
     st.warning("No records found in the Airtable table.")
 else:
     st.dataframe(df)
 
-
+    
 
 
 st.title("IRL Prototype")
