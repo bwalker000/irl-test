@@ -97,11 +97,15 @@ with col3:
 if assess:
     live_col = 1
 elif review:
-    livecol = 2
+    live_col = 2
+else:
+    live_col = None
+    
+st.write(live_col)
 
-st.markdown("""
+st.markdown(f"""
     <style>
-    [data-testid="stHorizontalBlock"] > div:nth-child(live_col) {
+    [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {
         background-color: #e3f3ff;
         padding: 16px;
         border-radius: 8px;
@@ -113,9 +117,6 @@ st.markdown("""
 
 
 
-st.write(
-    "Testing..."
-)
 
 
 st.checkbox("Q1 - ASSESSOR", disabled=not assess)
