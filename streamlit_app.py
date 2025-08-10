@@ -3,37 +3,34 @@ import pandas as pd
 import requests
 
 # User inputs (for demo; in production, store secrets securely)
-AIRTABLE_API_KEY = st.secrets.get("airtable_api_key", "airtable_api_key")
-BASE_ID = st.secrets.get("airtable_base_id", "airtable_base_id")
-TABLE_NAME = st.secrets.get("airtable_table_name", "airtable_table_name")
+#AIRTABLE_API_KEY = st.secrets.get("airtable_api_key", "airtable_api_key")
+#BASE_ID = st.secrets.get("airtable_base_id", "airtable_base_id")
+#TABLE_NAME = st.secrets.get("airtable_table_name", "airtable_table_name")
+AIRTABLE_API_KEY = st.secrets["airtable_api_key"]
+BASE_ID = st.secrets["airtable_base_id"]
+TABLE_NAME = st.secrets["airtable_table_name"]
 
 @st.cache_data
-def get_airtable_records(api_key, base_id, table_name):
-    url = f"https://api.airtable.com/v0/{base_id}/{table_name}"
-    headers = {"Authorization": f"Bearer {api_key}"}
-    records = []
-    offset = None
-
-    while True:
-        params = {"offset": offset} if offset else {}
-        resp = requests.get(url, headers=headers, params=params)
-        data = resp.json()
-        st.write("Airtable raw response:", data)  # Add this debug line
-        for record in data.get("records", []):
-            records.append(record["fields"])
-        offset = data.get("offset")
-        if not offset:
-            break
-
-    return pd.DataFrame(records)
+def load_airtable():
+    try:
+        table = Table(AIRTABLE_API_KEY, BASE_ID, TABLE_NAME)
+        records = table.all()  # Returns list of dicts
+        if not records:
+            return pd.DataFrame()  # Empty if no records
+        return pd.DataFrame([rec.get("fields", {}) for rec in records])
+    except Exception as e:
+        st.error(f"Error loading Airtable data: {e}")
+        return pd.DataFrame()
 
 st.title("Airtable Table Viewer")
 
-try:
-    df = get_airtable_records(AIRTABLE_API_KEY, BASE_ID, TABLE_NAME)
-    st.dataframe(df)  # Display as scrollable, interactive table
-except Exception as e:
-    st.error(f"Failed to load data: {e}")
+df = load_airtable()
+
+if df.empty:
+    st.warning("No records found in the Airtable table.")
+else:
+    st.dataframe(df)
+
 
 
 
