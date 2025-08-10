@@ -77,7 +77,7 @@ with col3:
 
 
 
-
+"""
 col1, col2 = st.columns(2)
 
 with col1:
@@ -120,7 +120,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-
+"""
 
 
 
@@ -131,14 +131,6 @@ st.write(
 
 st.checkbox("Q1 - ASSESSOR", disabled=not assess)
 st.checkbox("Q1 - REVIEWER", disabled=not review)
-
-
-
-st.checkbox("I agree")
-st.feedback("thumbs")
-st.pills("Tags", ["Sports", "Politics"])
-st.radio("Pick one", ["cats", "dogs"])
-st.segmented_control("Filter", ["Open", "Closed"])
 
 st.text_area("ASSESSOR Comments")
 st.text_area("REVIEWER Comments")
