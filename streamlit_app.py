@@ -63,7 +63,7 @@ assess = st.toggle("Enable ASSESSOR")
 review = st.toggle("Enable REVIEWER")
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
-col1, col2, col3 = st.columns([0.07, 0.07, 0.86], vertical_alignment="center")
+col1, col2, col3 = st.columns([0.05, 0.05, 0.90], vertical_alignment="center")
 
 # First checkbox (no label)
 with col1:
@@ -107,8 +107,8 @@ st.markdown(f"""
     <style>
     [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
         background-color: #e3f3ff;
-        padding: 2px;
-        border-radius: 2px;
+        padding: 4px;
+        border-radius: 4px;
         /* Optional: make the column stand out with a border */
        //border: 2px solid #3399ff;
     }}
