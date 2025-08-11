@@ -100,18 +100,18 @@ elif review:
     live_col = 2
 else:
     live_col = None
-    
+
 st.write(live_col)
 
 st.markdown(f"""
     <style>
-    [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {
+    [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
         background-color: #e3f3ff;
         padding: 16px;
         border-radius: 8px;
         /* Optional: make the column stand out with a border */
         border: 2px solid #3399ff;
-    }
+    }}
     </style>
     """, unsafe_allow_html=True)
 
