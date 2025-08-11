@@ -107,8 +107,8 @@ st.markdown(f"""
     <style>
     [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
         background-color: #e3f3ff;
-        padding: 4px;
-        border-radius: 2px;
+        padding: 0px;
+        border-radius: 0px;
         /* Optional: make the column stand out with a border */
        //border: 2px solid #3399ff;
     }}
