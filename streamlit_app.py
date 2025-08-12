@@ -78,7 +78,7 @@ with col1:
 
 # Second checkbox (with label)
 with col2:
-    cb0R = st.checkbox("", key="cb0R", disabled = not (mode == "review")) )
+    cb0R = st.checkbox("", key="cb0R", disabled = not (mode == "review") )
 
 with col3:
     st.write('Dimension 1, Question 0?')
