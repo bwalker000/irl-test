@@ -94,17 +94,16 @@ with col2:
 
 with col3:
     st.write(f"**{dim}**")
-    st.write(df["Q0"][dim])
-    st.write(df["Q1"][dim])
-    st.write(df["Q2"][dim])
-    st.write(df["Q3"][dim])
-    st.write(df["Q4"][dim])
-    st.write(df["Q5"][dim])
-    st.write(df["Q6"][dim])    
-    st.write(df["Q7"][dim])
-    st.write(df["Q8"][dim])
-    st.write(df["Q9"][dim])
-    
+    st.write(df.loc[dim, "Q0"])
+    st.write(df.loc[dim, "Q1"])
+    st.write(df.loc[dim, "Q2"])
+    st.write(df.loc[dim, "Q3"])
+    st.write(df.loc[dim, "Q4"])
+    st.write(df.loc[dim, "Q5"])
+    st.write(df.loc[dim, "Q6"])
+    st.write(df.loc[dim, "Q7"])
+    st.write(df.loc[dim, "Q8"])
+    st.write(df.loc[dim, "Q9"])
 #QA
 #QR
 
