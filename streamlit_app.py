@@ -109,7 +109,7 @@ for i in range(1, 2):
         st.markdown(f"""
             <style>
             [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
-                /*background-color: #e3f3ff;*/
+                background-color: #ffffff;
                 padding: 4px;
                 border-radius: 4px;
                 /* Optional: make the column stand out with a border */
