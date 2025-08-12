@@ -70,18 +70,18 @@ col1, col2, col3 = st.columns([0.05, 0.05, 0.90], vertical_alignment="center")
 
 # First checkbox (no label)
 with col1:
-    cb0A = st.checkbox("", key="cb0A", disabled = (mode == (not assess)) )  # Empty string for no label
+    cb0A = st.checkbox("", key="cb0A", disabled = (mode == (not "assess")) )  # Empty string for no label
 
 # Second checkbox (with label)
 with col2:
-    cb0R = st.checkbox("", key="cb0R", disabled = (mode == (not review)) )
+    cb0R = st.checkbox("", key="cb0R", disabled = (mode == (not "review")) )
 
 with col3:
     st.write('Dimension 1, Question 0?')
 
-if (mode == assess):
+if (mode == "assess"):
     live_col = 1
-elif (mode == review):
+elif (mode == "review"):
     live_col = 2
 else:
     live_col = None
