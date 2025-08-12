@@ -69,23 +69,21 @@ st.title("IRL Prototype")
 
 modes = ["assess", "review", "report"]
 mode = st.radio("Choose one:", modes)
-#mode
-mode == "assess"
-mode == "review"
-mode == "report"
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
-col1, col2, col3 = st.columns([0.14, 0.14, 0.72], vertical_alignment="center")
+col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
 
 # First checkbox (no label)
 with col1:
     "ASSESS"
-    QA[0,0] = st.checkbox("", key="QA[0,0]", disabled = not (mode == "assess") )
+    for i in range(0, numQ)
+        QA[0,i] = st.checkbox("", key="QA[0,i]", disabled = not (mode == "assess") )
 
 # Second checkbox (with label)
 with col2:
     "REVIEW"
-    QR[0,0] = st.checkbox("", key="QR[0,0]", disabled = not (mode == "review") )
+    for i in range(0, numQ)
+        QR[0,i] = st.checkbox("", key="QR[0,i]", disabled = not (mode == "review") )
 
 QA
 QR
