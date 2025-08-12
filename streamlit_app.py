@@ -65,6 +65,9 @@ st.title("IRL Prototype")
 modes = ["assess", "review", "report"]
 mode = st.radio("Choose one:", modes)
 mode
+mode == "assess"
+mode == "review"
+mode == "report"
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
 col1, col2, col3 = st.columns([0.05, 0.05, 0.90], vertical_alignment="center")
