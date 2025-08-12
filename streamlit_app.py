@@ -62,8 +62,8 @@ st.title("IRL Prototype")
 #assess = st.toggle("Enable ASSESSOR")
 #review = st.toggle("Enable REVIEWER")
 
-mode = ["review", "assess", "eport"]
-selection = st.radio("Choose one:", mode)
+modes = ["review", "assess", "report"]
+mode = st.radio("Choose one:", modes)
 mode
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
