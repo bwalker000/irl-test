@@ -4,6 +4,7 @@ import pandas as pd
 from pyairtable import Table
 import requests
 import json
+import numpy as np
 
 # Load secrets
 AIRTABLE_API_KEY = st.secrets["airtable_api_key"]
@@ -52,9 +53,13 @@ if df.empty:
 else:
     st.dataframe(df)
 
-
 num_dims = df.shape[0]
 numQ = 10
+
+# ASSESSOR Question answers
+QA = np.zeros((num_dims, numQ), dtype=bool)
+# REVIEWER Question answers
+QR = np.zeros((num_dims, numQ), dtype=bool)
 
 st.title("IRL Prototype")
 
@@ -64,7 +69,7 @@ st.title("IRL Prototype")
 
 modes = ["assess", "review", "report"]
 mode = st.radio("Choose one:", modes)
-mode
+#mode
 mode == "assess"
 mode == "review"
 mode == "report"
@@ -92,7 +97,7 @@ elif (mode == "review"):
 else:
     live_col = None
 
-st.write(live_col)
+#st.write(live_col)
 
 for i in range(1, 3):
     if (i == live_col):
@@ -119,14 +124,6 @@ for i in range(1, 3):
             }}
             </style>
             """, unsafe_allow_html=True)
-
-
-
-
-
-
-#st.checkbox("Q1 - ASSESSOR", disabled=not assess)
-#st.checkbox("Q1 - REVIEWER", disabled=not review)
 
 st.text_area("ASSESSOR Comments")
 st.text_area("REVIEWER Comments")
