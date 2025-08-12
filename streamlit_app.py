@@ -93,10 +93,18 @@ with col2:
 
 
 with col3:
-    dim
-    for i in range(numQ):
-        st.write('Dimension 1, Question 0?')
-
+    st.write(f"**{dim}**")
+    st.write(df["Q0"][dim])
+    st.write(df["Q1"][dim])
+    st.write(df["Q2"][dim])
+    st.write(df["Q3"][dim])
+    st.write(df["Q4"][dim])
+    st.write(df["Q5"][dim])
+    st.write(df["Q6"][dim])    
+    st.write(df["Q7"][dim])
+    st.write(df["Q8"][dim])
+    st.write(df["Q9"][dim])
+    
 #QA
 #QR
 
