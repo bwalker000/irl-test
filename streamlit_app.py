@@ -74,11 +74,11 @@ col1, col2, col3 = st.columns([0.05, 0.05, 0.90], vertical_alignment="center")
 
 # First checkbox (no label)
 with col1:
-    cb0A = st.checkbox("", key="cb0A", disabled = (mode == (not "assess")) )  # Empty string for no label
+    cb0A = st.checkbox("", key="cb0A", disabled = not (mode == "assess") )
 
 # Second checkbox (with label)
 with col2:
-    cb0R = st.checkbox("", key="cb0R", disabled = (mode == (not "review")) )
+    cb0R = st.checkbox("", key="cb0R", disabled = not (mode == "review")) )
 
 with col3:
     st.write('Dimension 1, Question 0?')
@@ -92,17 +92,32 @@ else:
 
 st.write(live_col)
 
-st.markdown(f"""
-    <style>
-    [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
-        background-color: #e3f3ff;
-        padding: 4px;
-        border-radius: 4px;
-        /* Optional: make the column stand out with a border */
-       border: 2px solid #3399ff;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
+for i in range(1, 2):
+    if (i == live_col)
+        st.markdown(f"""
+            <style>
+            [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
+                background-color: #e3f3ff;
+                padding: 4px;
+                border-radius: 4px;
+                /* Optional: make the column stand out with a border */
+            border: 2px solid #3399ff;
+            }}
+            </style>
+            """, unsafe_allow_html=True)
+    else
+        st.markdown(f"""
+            <style>
+            [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
+                //background-color: #e3f3ff;
+                padding: 4px;
+                border-radius: 4px;
+                /* Optional: make the column stand out with a border */
+            border: 2px solid #3399ff;
+            }}
+            </style>
+            """, unsafe_allow_html=True)
+
 
 
 
