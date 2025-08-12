@@ -70,14 +70,16 @@ mode == "review"
 mode == "report"
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
-col1, col2, col3 = st.columns([0.05, 0.05, 0.90], vertical_alignment="center")
+col1, col2, col3 = st.columns([0.1, 0.1, 0.80], vertical_alignment="center")
 
 # First checkbox (no label)
 with col1:
+    "ASSESS"
     cb0A = st.checkbox("", key="cb0A", disabled = not (mode == "assess") )
 
 # Second checkbox (with label)
 with col2:
+    "REVIEW"
     cb0R = st.checkbox("", key="cb0R", disabled = not (mode == "review") )
 
 with col3:
