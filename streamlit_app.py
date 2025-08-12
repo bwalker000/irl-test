@@ -62,7 +62,7 @@ st.title("IRL Prototype")
 #assess = st.toggle("Enable ASSESSOR")
 #review = st.toggle("Enable REVIEWER")
 
-modes = ["review", "assess", "report"]
+modes = ["assess", "review", "report"]
 mode = st.radio("Choose one:", modes)
 mode
 
