@@ -73,7 +73,6 @@ st.title("IRL Prototype")
 modes = ["assess", "review", "report"]
 mode = st.radio("Choose one:", modes)
 
-dims = ["assess", "review", "report"]
 dim = st.radio("Choose one:", dims)
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
