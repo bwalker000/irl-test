@@ -80,7 +80,7 @@ with col3:
     st.write('Dimension 1, Question 0?')
 
 
-if (mode == assess)):
+if (mode == assess):
     live_col = 1
 elif (mode == review):
     live_col = 2
