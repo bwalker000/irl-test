@@ -76,13 +76,13 @@ col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
 # First checkbox (no label)
 with col1:
     "ASSESS"
-    for i in range(0, numQ)
+    for i in range(0, numQ):
         QA[0,i] = st.checkbox("", key="QA[0,i]", disabled = not (mode == "assess") )
 
 # Second checkbox (with label)
 with col2:
     "REVIEW"
-    for i in range(0, numQ)
+    for i in range(0, numQ):
         QR[0,i] = st.checkbox("", key="QR[0,i]", disabled = not (mode == "review") )
 
 QA
