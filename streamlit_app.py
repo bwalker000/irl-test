@@ -75,7 +75,7 @@ mode == "review"
 mode == "report"
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
-col1, col2, col3 = st.columns([0.2, 0.2, 0.60], vertical_alignment="center")
+col1, col2, col3 = st.columns([0.16, 0.16, 0.68], vertical_alignment="center")
 
 # First checkbox (no label)
 with col1:
