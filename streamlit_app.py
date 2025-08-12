@@ -59,8 +59,11 @@ numQ = 10
 st.title("IRL Prototype")
 
 # determine whether this is the assessor or reviewer
-assess = st.toggle("Enable ASSESSOR")
-review = st.toggle("Enable REVIEWER")
+#assess = st.toggle("Enable ASSESSOR")
+#review = st.toggle("Enable REVIEWER")
+
+options = ["review", "assess", "eport"]
+selection = st.radio("Choose one:", options)
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
 col1, col2, col3 = st.columns([0.05, 0.05, 0.90], vertical_alignment="center")
@@ -110,7 +113,7 @@ st.markdown(f"""
         padding: 4px;
         border-radius: 4px;
         /* Optional: make the column stand out with a border */
-       //border: 2px solid #3399ff;
+       border: 2px solid #3399ff;
     }}
     </style>
     """, unsafe_allow_html=True)
