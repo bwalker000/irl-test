@@ -80,21 +80,25 @@ col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
 
 # First checkbox (no label)
 with col1:
-    "ASSESS"
+    st.markdown("<div style='text-align: center'>ASSESS</div>", unsafe_allow_html=True)
     for i in range(numQ):
         QA[0,i] = st.checkbox("", key=f"QA_{0}_{i}", disabled = not (mode == "assess") )
 
 # Second checkbox (with label)
 with col2:
-    "REVIEW"
+    st.markdown("<div style='text-align: center'>REVIEW</div>", unsafe_allow_html=True)
     for i in range(numQ):
         QR[0,i] = st.checkbox("", key=f"QR_{0}_{i}", disabled = not (mode == "review") )
 
-#QA
-#QR
+
 
 with col3:
-    st.write('Dimension 1, Question 0?')
+    dim
+    for i in range(numQ):
+        st.write('Dimension 1, Question 0?')
+
+#QA
+#QR
 
 if (mode == "assess"):
     live_col = 1
