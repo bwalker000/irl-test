@@ -56,7 +56,10 @@ else:
 num_dims = df.shape[0]
 numQ = 10
 
-dims = df["Dimensions"]
+dims = (
+    df["Dimension"]
+    .tolist()              # convert to list
+)
 
 dims
 
