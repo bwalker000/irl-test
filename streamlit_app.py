@@ -62,44 +62,27 @@ st.title("IRL Prototype")
 #assess = st.toggle("Enable ASSESSOR")
 #review = st.toggle("Enable REVIEWER")
 
-options = ["review", "assess", "eport"]
-selection = st.radio("Choose one:", options)
+mode = ["review", "assess", "eport"]
+selection = st.radio("Choose one:", mode)
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
 col1, col2, col3 = st.columns([0.05, 0.05, 0.90], vertical_alignment="center")
 
 # First checkbox (no label)
 with col1:
-    cb0A = st.checkbox("", key="cb0A", disabled=not assess)  # Empty string for no label
+    cb0A = st.checkbox("", key="cb0A", disabled=(mode == not assess))  # Empty string for no label
 
 # Second checkbox (with label)
 with col2:
-    cb0R = st.checkbox("", key="cb0R", disabled=not review)
+    cb0R = st.checkbox("", key="cb0R", disabled=(mode == not review))
 
 with col3:
     st.write('Dimension 1, Question 0?')
 
 
-
-
-
-#col1, col2 = st.columns(2)
-
-#with col1:
-#    st.write('Boxed Column')
-#    st.checkbox("Option 1")
-#    st.checkbox("Option 2")
-#    st.checkbox("Option 3")
-
-#with col2:
-#    st.write('Plain Column')
-#    st.checkbox("Option A")
-#    st.checkbox("Option B")
-#    st.checkbox("Option C")
-
-if assess:
+if (mode == assess)):
     live_col = 1
-elif review:
+elif (mode == review):
     live_col = 2
 else:
     live_col = None
@@ -122,8 +105,8 @@ st.markdown(f"""
 
 
 
-st.checkbox("Q1 - ASSESSOR", disabled=not assess)
-st.checkbox("Q1 - REVIEWER", disabled=not review)
+#st.checkbox("Q1 - ASSESSOR", disabled=not assess)
+#st.checkbox("Q1 - REVIEWER", disabled=not review)
 
 st.text_area("ASSESSOR Comments")
 st.text_area("REVIEWER Comments")
