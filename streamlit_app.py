@@ -93,7 +93,7 @@ else:
 st.write(live_col)
 
 for i in range(1, 2):
-    if (i == live_col)
+    if (i == live_col):
         st.markdown(f"""
             <style>
             [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
@@ -105,11 +105,11 @@ for i in range(1, 2):
             }}
             </style>
             """, unsafe_allow_html=True)
-    else
+    else:
         st.markdown(f"""
             <style>
             [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
-                //background-color: #e3f3ff;
+                /*background-color: #e3f3ff;*/
                 padding: 4px;
                 border-radius: 4px;
                 /* Optional: make the column stand out with a border */
