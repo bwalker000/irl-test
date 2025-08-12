@@ -96,7 +96,7 @@ for i in range(1, 2):
     if (i == live_col):
         st.markdown(f"""
             <style>
-            [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
+            [data-testid="stHorizontalBlock"] > div:nth-child({i}) {{
                 background-color: #e3f3ff;
                 padding: 4px;
                 border-radius: 4px;
@@ -108,7 +108,7 @@ for i in range(1, 2):
     else:
         st.markdown(f"""
             <style>
-            [data-testid="stHorizontalBlock"] > div:nth-child({live_col}) {{
+            [data-testid="stHorizontalBlock"] > div:nth-child({i}) {{
                 background-color: #ffffff;
                 padding: 4px;
                 border-radius: 4px;
