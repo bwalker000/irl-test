@@ -94,16 +94,16 @@ with col2:
 
 with col3:
     st.write(f"**{dim}**")
-    st.write(df.loc[dim, "Q0"])
-    st.write(df.loc[dim, "Q1"])
-    st.write(df.loc[dim, "Q2"])
-    st.write(df.loc[dim, "Q3"])
-    st.write(df.loc[dim, "Q4"])
-    st.write(df.loc[dim, "Q5"])
-    st.write(df.loc[dim, "Q6"])
-    st.write(df.loc[dim, "Q7"])
-    st.write(df.loc[dim, "Q8"])
-    st.write(df.loc[dim, "Q9"])
+    st.write(df.loc[df["Dimension"] == dim, "Q0"].iloc[0]])
+    st.write(df.loc[df["Dimension"] == dim, "Q1"].iloc[0]])
+    st.write(df.loc[df["Dimension"] == dim, "Q2"].iloc[0]])
+    st.write(df.loc[df["Dimension"] == dim, "Q3"].iloc[0]])
+    st.write(df.loc[df["Dimension"] == dim, "Q4"].iloc[0]])
+    st.write(df.loc[df["Dimension"] == dim, "Q5"].iloc[0]])
+    st.write(df.loc[df["Dimension"] == dim, "Q6"].iloc[0]])
+    st.write(df.loc[df["Dimension"] == dim, "Q7"].iloc[0]])
+    st.write(df.loc[df["Dimension"] == dim, "Q8"].iloc[0]])
+    st.write(df.loc[df["Dimension"] == dim, "Q9"].iloc[0]])
 #QA
 #QR
 
