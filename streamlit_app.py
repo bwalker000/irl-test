@@ -56,6 +56,10 @@ else:
 num_dims = df.shape[0]
 numQ = 10
 
+dims = df["Dimensions"]
+
+dims
+
 # ASSESSOR Question answers
 QA = np.zeros((num_dims, numQ), dtype=bool)
 # REVIEWER Question answers
@@ -63,12 +67,11 @@ QR = np.zeros((num_dims, numQ), dtype=bool)
 
 st.title("IRL Prototype")
 
-# determine whether this is the assessor or reviewer
-#assess = st.toggle("Enable ASSESSOR")
-#review = st.toggle("Enable REVIEWER")
-
 modes = ["assess", "review", "report"]
 mode = st.radio("Choose one:", modes)
+
+dims = ["assess", "review", "report"]
+dim = st.radio("Choose one:", dims)
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
 col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
@@ -85,8 +88,8 @@ with col2:
     for i in range(numQ):
         QR[0,i] = st.checkbox("", key=f"QR_{0}_{i}", disabled = not (mode == "review") )
 
-QA
-QR
+#QA
+#QR
 
 with col3:
     st.write('Dimension 1, Question 0?')
