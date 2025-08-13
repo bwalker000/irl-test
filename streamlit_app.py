@@ -56,17 +56,22 @@ else:
 num_dims = df.shape[0]
 numQ = 10
 
+# ASSESSOR Question answers
+QA = np.zeros((num_dims, numQ), dtype=bool)
+# REVIEWER Question answers
+QR = np.zeros((num_dims, numQ), dtype=bool)
+
+# ASSESSOR Text responses
+TA = [""]*10
+# REVIEWER Text responses
+TR = [""]*10
+
 dims = (
     df["Dimension"]
     .tolist()              # convert to list
 )
 
-dims
-
-# ASSESSOR Question answers
-QA = np.zeros((num_dims, numQ), dtype=bool)
-# REVIEWER Question answers
-QR = np.zeros((num_dims, numQ), dtype=bool)
+#dims
 
 st.title("IRL Prototype")
 
@@ -94,16 +99,10 @@ with col2:
 
 with col3:
     st.write(f"**{dim}**")
-    st.write(df.loc[df["Dimension"] == dim, "Q0"].iloc[0])
-    st.write(df.loc[df["Dimension"] == dim, "Q1"].iloc[0])
-    st.write(df.loc[df["Dimension"] == dim, "Q2"].iloc[0])
-    st.write(df.loc[df["Dimension"] == dim, "Q3"].iloc[0])
-    st.write(df.loc[df["Dimension"] == dim, "Q4"].iloc[0])
-    st.write(df.loc[df["Dimension"] == dim, "Q5"].iloc[0])
-    st.write(df.loc[df["Dimension"] == dim, "Q6"].iloc[0])
-    st.write(df.loc[df["Dimension"] == dim, "Q7"].iloc[0])
-    st.write(df.loc[df["Dimension"] == dim, "Q8"].iloc[0])
-    st.write(df.loc[df["Dimension"] == dim, "Q9"].iloc[0])
+    for i in range(numQ):  # Loops from 0 to 9
+        col_name = f"Q{i}"  
+        st.write(df.loc[df["Dimension"] == dim, col_name].iloc[0])
+
 #QA
 #QR
 
@@ -144,5 +143,3 @@ for i in range(1, 3):
 
 st.text_area("ASSESSOR Comments")
 st.text_area("REVIEWER Comments")
-
-
