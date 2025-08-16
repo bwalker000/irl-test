@@ -44,7 +44,7 @@ if debug:
 
 if df.empty:
     st.warning("No records found in the Airtable table.")
-else:
+#else:
     #st.dataframe(df)
 
 #
