@@ -93,7 +93,7 @@ elif (mode == "REVIEWER"):
 else:
     live_col = None
 
-col_widths = [0.06 0.12, 0.12, 0.70]
+col_widths = [0.06, 0.12, 0.12, 0.70]
 
 # ----- Heading Row -----
 with st.container():
