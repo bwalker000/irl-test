@@ -131,12 +131,13 @@ for i in range(numQ):
             )
 
         with col3:
-            st.session_state.QR[st.session_state.dim, i] = st.checkbox(
-                "",
-                value=bool(st.session_state.QR[st.session_state.dim, i]),
-                key=f"QR_{st.session_state.dim}_{i}",
-                disabled=not (mode == "REVIEWER"),
-            )
+            if mode == "REVIEWER"
+                st.session_state.QR[st.session_state.dim, i] = st.checkbox(
+                    "",
+                    value=bool(st.session_state.QR[st.session_state.dim, i]),
+                    key=f"QR_{st.session_state.dim}_{i}",
+                    disabled=not (mode == "REVIEWER"),
+                )
 
         with col4:
             question = df.loc[df["Dimension"] == dim, f"Q{i}"].iloc[0]
