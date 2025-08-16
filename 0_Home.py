@@ -9,7 +9,7 @@ import numpy as np
 # Load secrets
 AIRTABLE_API_KEY = st.secrets["airtable_api_key"]
 BASE_ID = st.secrets["airtable_base_id"]
-TABLE_NAME = st.secrets["airtable_table_name"]
+TABLE_NAME = st.secrets["airtable_table_assessment"]
 
 # Debug mode toggle
 debug = st.checkbox("Enable Airtable debug mode", value=False)
@@ -37,6 +37,7 @@ def load_airtable(debug=False):
 
 st.title("Airtable Table Viewer (Debuggable)")
 
+# load airtable data
 df, debug_details = load_airtable(debug=debug)
 
 if debug:
@@ -53,8 +54,13 @@ if df.empty:
 else:
     st.dataframe(df)
 
+# Scale of the survey
 num_dims = df.shape[0]
 numQ = 10
+
+#
+#------------------------------------------------
+#
 
 # ASSESSOR Question answers
 QA = np.zeros((num_dims, numQ), dtype=bool)
@@ -71,14 +77,14 @@ dims = (
     .tolist()              # convert to list
 )
 
-#dims
-
 st.title("IRL Prototype")
 
 modes = ["assess", "review", "report"]
 mode = st.radio("Choose one:", modes)
 
 dim = st.radio("Choose one:", dims)
+
+dim_idx = 0
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
 col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
@@ -95,8 +101,7 @@ with col2:
     for i in range(numQ):
         QR[0,i] = st.checkbox("", key=f"QR_{0}_{i}", disabled = not (mode == "review") )
 
-
-
+# Question
 with col3:
     st.write(f"**{dim}**")
     for i in range(numQ):  # Loops from 0 to 9
@@ -141,5 +146,5 @@ for i in range(1, 3):
             </style>
             """, unsafe_allow_html=True)
 
-st.text_area("ASSESSOR Comments")
-st.text_area("REVIEWER Comments")
+TA[dim_idx]=st.text_area("ASSESSOR Comments", height=None, max_chars=10000, key=TA[dim_idx], width="stretch")
+TR[dim_idx]=st.text_area("REVIEWER Comments", height=None, max_chars=10000, key=TR[dim_idx], width="stretch")
