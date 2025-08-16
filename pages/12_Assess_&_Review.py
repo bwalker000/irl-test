@@ -94,35 +94,45 @@ else:
     live_col = None
 
 
-# Create three columns for horizontal layout. [a, b, c] are relative widths
-col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
 
-# First checkbox (no label)
-with col1:
-    st.markdown("<div style='text-align: center'>ASSESS</div>", unsafe_allow_html=True)
-    for i in range(numQ):
-        st.session_state.QA[st.session_state.dim, i] = st.checkbox(
-            "",
-            value=bool(st.session_state.QA[st.session_state.dim, i]),  # supply the stored value here
-            key=f"QA_{st.session_state.dim}_{i}",
-            disabled=not (mode == "ASSESSOR"),
-        )
-# Second checkbox (with label)
-with col2:
-    st.markdown("<div style='text-align: center'>REVIEW</div>", unsafe_allow_html=True)
-    for i in range(numQ):
-        st.session_state.QR[st.session_state.dim, i] = st.checkbox(
-            "",
-            value=bool(st.session_state.QR[st.session_state.dim, i]),  # supply the stored value here
-            key=f"QR_{st.session_state.dim}_{i}",
-            disabled=not (mode == "REVIEWER"),
-        )
-# Question
-with col3:
-    st.write(f"**{dim}**")
-    for i in range(numQ):  # Loops from 0 to 9
-        col_name = f"Q{i}"  
-        st.write(df.loc[df["Dimension"] == dim, col_name].iloc[0])
+# ----- Heading Row -----
+with st.container():
+    col1, col2, col3 = st.columns([0.12, 0.12, 0.76])
+    with col1:
+        st.markdown("<div style='text-align: center'><b>ASSESS</b></div>", unsafe_allow_html=True)
+    with col2:
+        st.markdown("<div style='text-align: center'><b>REVIEW</b></div>", unsafe_allow_html=True)
+    with col3:
+        st.write(f"**{dim}**")
+
+# ----- Data Rows -----
+for i in range(numQ):
+    with st.container():
+        col1, col2, col3 = st.columns([0.12, 0.12, 0.76])
+
+        # Assess checkbox
+        with col1:
+            st.session_state.QA[st.session_state.dim, i] = st.checkbox(
+                "",
+                value=bool(st.session_state.QA[st.session_state.dim, i]),
+                key=f"QA_{st.session_state.dim}_{i}",
+                disabled=not (mode == "ASSESSOR"),
+            )
+
+        # Review checkbox
+        with col2:
+            st.session_state.QR[st.session_state.dim, i] = st.checkbox(
+                "",
+                value=bool(st.session_state.QR[st.session_state.dim, i]),
+                key=f"QR_{st.session_state.dim}_{i}",
+                disabled=not (mode == "REVIEWER"),
+            )
+
+        # Question text
+        with col3:
+            col_name = f"Q{i}"  
+            st.markdown(df.loc[df["Dimension"] == dim, col_name].iloc[0])
+
 
 
 #st.write(live_col)
