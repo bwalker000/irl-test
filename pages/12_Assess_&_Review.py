@@ -1,7 +1,9 @@
+from shared import *
+
 # Load secrets
-#AIRTABLE_API_KEY = st.secrets["general"]["airtable_api_key"]
-#BASE_ID = st.secrets["general"]["airtable_base_id"]
-#TABLE_NAME = st.secrets["general"]["airtable_table_assessment"]
+AIRTABLE_API_KEY = st.secrets["general"]["airtable_api_key"]
+BASE_ID = st.secrets["general"]["airtable_base_id"]
+TABLE_NAME = st.secrets["general"]["airtable_table_assessment"]
 
 # Debug mode toggle
 debug = st.checkbox("Enable Airtable debug mode", value=False)
