@@ -142,25 +142,20 @@ for i in range(1, 3):
             </style>
             """, unsafe_allow_html=True)
 
-st.session_state.TA[st.session_state.dim]=st.text_area("ASSESSOR Comments", height=None, max_chars=10000, key=st.session_state.TA[st.session_state.dim], width="stretch")
-st.session_state.TR[st.session_state.dim]=st.text_area("REVIEWER Comments", height=None, max_chars=10000, key=st.session_state.TR[st.session_state.dim], width="stretch")
+st.session_state.TA[st.session_state.dim]=st.text_area("ASSESSOR Comments", height=None, max_chars=10000, key=st.session_state.TA[st.session_state.dim], width="stretch", disabled = not (mode == "ASSESSOR") )
+st.session_state.TR[st.session_state.dim]=st.text_area("REVIEWER Comments", height=None, max_chars=10000, key=st.session_state.TR[st.session_state.dim], width="stretch", disabled = not (mode == "REVIEWER"))
 
 
-
-
-if st.session_state.dim == 0:
-    options = ["Next"]
-elif st.session_state.dim == (num_dims - 1):
-    options = ["Previous", "Submit"]
-else:
-    options = ["Previous", "Next"]
-
-nav_dir = st.segmented_control("", options, selection_mode="single")
-
-if nav_dir == "Previous":
-    st.session_state.dim -= 1
-elif nav_dir == "Next":
-    st.session_state.dim += 1
-elif nav_dir == "Submit":
-    st.switch_page("pages/12_Report.py")
-
+col1, col2, col3 = st.columns(3)
+with col1:
+    if st.session_state.dim > 0:
+        if st.button("Previous"):
+            st.session_state.dim -= 1
+with col2:
+    if st.session_state.dim < num_dims - 1:
+        if st.button("Next"):
+            st.session_state.dim += 1
+with col3:
+    if st.session_state.dim == num_dims - 1:
+        if st.button("Submit"):
+            st.switch_page("pages/12_Report.py")
