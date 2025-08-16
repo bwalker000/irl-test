@@ -98,9 +98,9 @@ col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
 with col1:
     st.markdown("<div style='text-align: center'>ASSESS</div>", unsafe_allow_html=True)
     for i in range(numQ):
-        st.session_state.QA[0, i] = st.checkbox(
+        st.session_state.QA[st.session_state.dim, i] = st.checkbox(
             "",
-            value=bool(st.session_state.QA[0, i]),  # supply the stored value here
+            value=bool(st.session_state.QA[st.session_state.dim, i]),  # supply the stored value here
             key=f"QA_{st.session_state.dim}_{i}",
             disabled=not (mode == "ASSESSOR"),
         )
@@ -108,9 +108,9 @@ with col1:
 with col2:
     st.markdown("<div style='text-align: center'>REVIEW</div>", unsafe_allow_html=True)
     for i in range(numQ):
-        st.session_state.QR[0, i] = st.checkbox(
+        st.session_state.QR[st.session_state.dim, i] = st.checkbox(
             "",
-            value=bool(st.session_state.QR[0, i]),  # supply the stored value here
+            value=bool(st.session_state.QR[st.session_state.dim, i]),  # supply the stored value here
             key=f"QR_{st.session_state.dim}_{i}",
             disabled=not (mode == "REVIEWER"),
         )
@@ -150,6 +150,11 @@ for i in range(1, 3):
             </style>
             """, unsafe_allow_html=True)
 
+#
+# --------------------------------------------------------------------------------------
+# Gather comments
+#
+
 st.session_state.TA[st.session_state.dim] = st.text_area(
     "ASSESSOR Comments",
     value=st.session_state.TA[st.session_state.dim],            # <- prepopulate with previous value
@@ -169,6 +174,11 @@ st.session_state.TR[st.session_state.dim] = st.text_area(
     width="stretch",
     disabled=not (mode == "REVIEWER")
 )
+
+#
+# -------------------------------------------------------------------------------------------
+# Navigate
+# 
 
 col1, col2, col3 = st.columns(3)
 with col1:
