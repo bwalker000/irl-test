@@ -1,5 +1,5 @@
 from shared import *
-from airtable_utils import load_airtable
+#from airtable_utils import load_airtable
 
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
