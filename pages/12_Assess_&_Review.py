@@ -53,10 +53,11 @@ else:
 #------------------------------------------------
 #
 
+num_dims = df.shape[0]
+numQ = 10
+
 if 'dim' not in st.session_state:
     st.session_state.dim = 0
-    num_dims = df.shape[0]
-    numQ = 10
 
     # ASSESSOR Question answers
     QA = np.zeros((num_dims, numQ), dtype=bool)
