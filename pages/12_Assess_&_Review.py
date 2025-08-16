@@ -150,7 +150,7 @@ if st.session_state.dim == 0:
     options = ["Next"]
 elif st.session_state.dim == (num_dims - 1):
     options = ["Previous", "Submit"]
-else
+else:
     options = ["Previous", "Next"]
 
 nav_dir = st.segmented_control("", options, selection_mode="single")
