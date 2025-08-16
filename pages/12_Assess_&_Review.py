@@ -204,15 +204,16 @@ st.session_state.TA[st.session_state.dim] = st.text_area(
     disabled=not (mode == "ASSESSOR")
 )
 
-st.session_state.TR[st.session_state.dim] = st.text_area(
-    "REVIEWER Comments",
-    value=st.session_state.TR[st.session_state.dim],            # <- prepopulate with previous value
-    height=None,
-    max_chars=10000,
-    key=f"TR_{st.session_state.dim}",                           # <- use a simple, unique key
-    width="stretch",
-    disabled=not (mode == "REVIEWER")
-)
+if mode != "ASSESSOR":
+    st.session_state.TR[st.session_state.dim] = st.text_area(
+        "REVIEWER Comments",
+        value=st.session_state.TR[st.session_state.dim],            # <- prepopulate with previous value
+        height=None,
+        max_chars=10000,
+        key=f"TR_{st.session_state.dim}",                           # <- use a simple, unique key
+        width="stretch",
+        disabled=not (mode == "REVIEWER")
+    )
 
 #
 # -------------------------------------------------------------------------------------------
