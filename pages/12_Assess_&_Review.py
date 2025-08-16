@@ -1,7 +1,7 @@
 # Load secrets
-AIRTABLE_API_KEY = st.secrets["general"]["airtable_api_key"]
-BASE_ID = st.secrets["general"]["airtable_base_id"]
-TABLE_NAME = st.secrets["general"]["airtable_table_assessment"]
+#AIRTABLE_API_KEY = st.secrets["general"]["airtable_api_key"]
+#BASE_ID = st.secrets["general"]["airtable_base_id"]
+#TABLE_NAME = st.secrets["general"]["airtable_table_assessment"]
 
 # Debug mode toggle
 debug = st.checkbox("Enable Airtable debug mode", value=False)
@@ -141,3 +141,6 @@ for i in range(1, 3):
 
 TA[dim_idx]=st.text_area("ASSESSOR Comments", height=None, max_chars=10000, key=TA[dim_idx], width="stretch")
 TR[dim_idx]=st.text_area("REVIEWER Comments", height=None, max_chars=10000, key=TR[dim_idx], width="stretch")
+
+if st.button("Home"):
+    st.switch_page("streamlit_app.py")
