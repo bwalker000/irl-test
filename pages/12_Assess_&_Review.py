@@ -98,14 +98,22 @@ col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
 with col1:
     st.markdown("<div style='text-align: center'>ASSESS</div>", unsafe_allow_html=True)
     for i in range(numQ):
-        st.session_state.QA[0,i] = st.checkbox("", key=f"st.session_state.QA_{st.session_state.dim}_{i}", disabled = not (mode == "ASSESSOR") )
-
+        st.session_state.QA[0, i] = st.checkbox(
+            "",
+            value=bool(st.session_state.QA[0, i]),  # supply the stored value here
+            key=f"QA_{st.session_state.dim}_{i}",
+            disabled=not (mode == "ASSESSOR"),
+        )
 # Second checkbox (with label)
 with col2:
     st.markdown("<div style='text-align: center'>REVIEW</div>", unsafe_allow_html=True)
     for i in range(numQ):
-        st.session_state.QR[0,i] = st.checkbox("", key=f"st.session_state.QR_{st.session_state.dim}_{i}", disabled = not (mode == "REVIEWER") )
-
+        st.session_state.QR[0, i] = st.checkbox(
+            "",
+            value=bool(st.session_state.QR[0, i]),  # supply the stored value here
+            key=f"QR_{st.session_state.dim}_{i}",
+            disabled=not (mode == "REVIEWER"),
+        )
 # Question
 with col3:
     st.write(f"**{dim}**")
@@ -142,9 +150,25 @@ for i in range(1, 3):
             </style>
             """, unsafe_allow_html=True)
 
-st.session_state.TA[st.session_state.dim]=st.text_area("ASSESSOR Comments", height=None, max_chars=10000, key=st.session_state.TA[st.session_state.dim], width="stretch", disabled = not (mode == "ASSESSOR") )
-st.session_state.TR[st.session_state.dim]=st.text_area("REVIEWER Comments", height=None, max_chars=10000, key=st.session_state.TR[st.session_state.dim], width="stretch", disabled = not (mode == "REVIEWER"))
+st.session_state.TA[st.session_state.dim] = st.text_area(
+    "ASSESSOR Comments",
+    value=st.session_state.TA[st.session_state.dim],            # <- prepopulate with previous value
+    height=None,
+    max_chars=10000,
+    key=f"TA_{st.session_state.dim}",                           # <- use a simple, unique key
+    width="stretch",
+    disabled=not (mode == "ASSESSOR")
+)
 
+st.session_state.RA[st.session_state.dim] = st.text_area(
+    "ASSESSOR Comments",
+    value=st.session_state.RA[st.session_state.dim],            # <- prepopulate with previous value
+    height=None,
+    max_chars=10000,
+    key=f"RA_{st.session_state.dim}",                           # <- use a simple, unique key
+    width="stretch",
+    disabled=not (mode == "REVIEWER")
+)
 
 col1, col2, col3 = st.columns(3)
 with col1:
