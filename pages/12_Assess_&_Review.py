@@ -141,8 +141,8 @@ for i in range(1, 3):
             </style>
             """, unsafe_allow_html=True)
 
-TA[dim_idx]=st.text_area("ASSESSOR Comments", height=None, max_chars=10000, key=TA[dim_idx], width="stretch")
-TR[dim_idx]=st.text_area("REVIEWER Comments", height=None, max_chars=10000, key=TR[dim_idx], width="stretch")
+TA[st.session_state.dim]=st.text_area("ASSESSOR Comments", height=None, max_chars=10000, key=TA[st.session_state.dim], width="stretch")
+TR[st.session_state.dim]=st.text_area("REVIEWER Comments", height=None, max_chars=10000, key=TR[st.session_state.dim], width="stretch")
 
 
 
