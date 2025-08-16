@@ -7,13 +7,15 @@ if 'mode' not in st.session_state:
     st.session_state.mode = 'REVIEWER'
 
 # Load secrets
-TABLE_NAME = st.secrets["general"]["airtable_table_reviewers"]
+api_key = st.secrets["general"]["airtable_api_key"]
+base_id = st.secrets["general"]["airtable_base_id"]
+table_name = st.secrets["general"]["airtable_table_reviewers"]
 
 # Debug mode toggle
 debug = st.checkbox("Enable Airtable debug mode", value=False)
 
 # load airtable data
-df, debug_details = load_airtable(TABLE_NAME, debug=debug)
+df, debug_details = load_airtable(table_name, base_id, api_key, debug=True)
 
 if debug:
     st.subheader("Airtable API Debug Information")

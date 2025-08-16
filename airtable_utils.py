@@ -1,12 +1,23 @@
 # airtable_utils.py
-
 from shared import *
+import requests
+import pandas as pd
+import streamlit as st
 
 @st.cache_data
-def load_airtable(table_name, debug=False, base_id=None, airtable_api_key=None, view="Grid view"):
-    # Use default from env if not provided
-    base_id = base_id or os.getenv("BASE_ID")
-    airtable_api_key = airtable_api_key or os.getenv("AIRTABLE_API_KEY")
+def load_airtable(table_name, base_id, airtable_api_key, debug=False, view="Grid view"):
+    """
+    Loads records from an Airtable table.
+
+    Parameters:
+    - table_name (str): Name of the Airtable table
+    - base_id (str): Airtable Base ID (required)
+    - airtable_api_key (str): Airtable API Key (required)
+    - debug (bool): Whether to return debug info
+    - view (str): Airtable view to use (default: "Grid view")
+    """
+    if not base_id or not airtable_api_key:
+        raise ValueError("You must provide both base_id and airtable_api_key.")
     url = f"https://api.airtable.com/v0/{base_id}/{table_name}"
     headers = {"Authorization": f"Bearer {airtable_api_key}"}
     params = {"view": view}
