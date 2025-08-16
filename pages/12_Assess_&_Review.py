@@ -79,6 +79,16 @@ st.title("ASSESS / REVIEW")
 
 dim = dims[st.session_state.dim]
 
+if (st.session_state.mode == "ASSESSOR"):
+    live_col = 1
+    mode = "ASSESSOR"
+elif (mode == "REVIEWER"):
+    live_col = 2
+    mode = "REVIEWER" 
+else:
+    live_col = None
+
+
 # Create three columns for horizontal layout. [a, b, c] are relative widths
 col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
 
@@ -86,13 +96,13 @@ col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
 with col1:
     st.markdown("<div style='text-align: center'>ASSESS</div>", unsafe_allow_html=True)
     for i in range(numQ):
-        QA[0,i] = st.checkbox("", key=f"QA_{st.session_state.dim}_{i}", disabled = not (mode == "assess") )
+        QA[0,i] = st.checkbox("", key=f"QA_{st.session_state.dim}_{i}", disabled = not (mode == "ASSESSOR") )
 
 # Second checkbox (with label)
 with col2:
     st.markdown("<div style='text-align: center'>REVIEW</div>", unsafe_allow_html=True)
     for i in range(numQ):
-        QR[0,i] = st.checkbox("", key=f"QR_{st.session_state.dim}_{i}", disabled = not (mode == "review") )
+        QR[0,i] = st.checkbox("", key=f"QR_{st.session_state.dim}_{i}", disabled = not (mode == "REVIEWER") )
 
 # Question
 with col3:
@@ -101,13 +111,6 @@ with col3:
         col_name = f"Q{i}"  
         st.write(df.loc[df["Dimension"] == dim, col_name].iloc[0])
 
-
-if (mode == "ASSESSOR"):
-    live_col = 1
-elif (mode == "REVIEWER"):
-    live_col = 2
-else:
-    live_col = None
 
 #st.write(live_col)
 

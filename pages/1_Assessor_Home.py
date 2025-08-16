@@ -3,10 +3,9 @@ from shared import *
 st.title("Assessor Home")
 
 if 'mode' not in st.session_state:
-    st_session_state.mode = 'ASSESSOR'
+    st.session_state.mode = 'ASSESSOR'
 
 if st.button("Assess"):
     st.switch_page("pages/12_Assess_&_Review.py")
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
-    
