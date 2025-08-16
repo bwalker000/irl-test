@@ -99,44 +99,55 @@ else:
 with st.container():
     col1, col2, col3 = st.columns([0.12, 0.12, 0.76])
     with col1:
-        st.markdown("<div style='text-align: center'><b>ASSESS</b></div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: left'><b>ASSESS</b></div>", unsafe_allow_html=True)
     with col2:
-        st.markdown("<div style='text-align: center'><b>REVIEW</b></div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
     with col3:
         st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
 
 # ----- Data Rows -----
-ROW_HEIGHT = 40  # Adjust to match checkbox height in your browser/view
+ROW_HEIGHT = 40  # Should match your previous setting
+LIGHT_GRAY = "#f0f0f0"
+NO_COLOR = "transparent"
 
 for i in range(numQ):
     with st.container():
         col1, col2, col3 = st.columns([0.12, 0.12, 0.76])
 
+        # Assess checkbox with conditional background
         with col1:
+            assess_bg = LIGHT_GRAY if mode == "ASSESSOR" else NO_COLOR
+            st.markdown(
+                f"<div style='background-color:{assess_bg}; padding:4px; border-radius:6px; height:{ROW_HEIGHT}px; display:flex; align-items:center; justify-content:center;'>",
+                unsafe_allow_html=True)
             st.session_state.QA[st.session_state.dim, i] = st.checkbox(
                 "",
                 value=bool(st.session_state.QA[st.session_state.dim, i]),
                 key=f"QA_{st.session_state.dim}_{i}",
                 disabled=not (mode == "ASSESSOR"),
             )
+            st.markdown("</div>", unsafe_allow_html=True)
 
+        # Review checkbox with conditional background
         with col2:
+            review_bg = LIGHT_GRAY if mode == "REVIEWER" else NO_COLOR
+            st.markdown(
+                f"<div style='background-color:{review_bg}; padding:4px; border-radius:6px; height:{ROW_HEIGHT}px; display:flex; align-items:center; justify-content:center;'>",
+                unsafe_allow_html=True)
             st.session_state.QR[st.session_state.dim, i] = st.checkbox(
                 "",
                 value=bool(st.session_state.QR[st.session_state.dim, i]),
                 key=f"QR_{st.session_state.dim}_{i}",
                 disabled=not (mode == "REVIEWER"),
             )
+            st.markdown("</div>", unsafe_allow_html=True)
 
+        # Question cell, unchanged
         with col3:
             question = df.loc[df["Dimension"] == dim, f"Q{i}"].iloc[0]
             st.markdown(
-                f"""
-                <div style='display: flex; align-items: center; height: {ROW_HEIGHT}px'>
-                    {question}
-                </div>
-                """,
-                unsafe_allow_html=True
+                f"<div style='display:flex; align-items:center; height:{ROW_HEIGHT}px'>{question}</div>",
+                unsafe_allow_html=True,
             )
 
 
