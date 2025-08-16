@@ -105,55 +105,52 @@ with st.container():
     with col3:
         st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
 
-BORDER_COLOR = "#bbb"
-BORDER_RADIUS = "8px"
-PADDING = "4px"
-ROW_HEIGHT = 40  # Adjust to match checkbox height in your browser/view
+# Define your style variables
+ROW_HEIGHT = 40
+ROW_BG = "#f4f8fd"  # Choose your preferred row highlight
+ROW_BORDER = "#b0c4de"
 
 for i in range(numQ):
-    with st.container():
+    col1, col2, col3 = st.columns([0.12, 0.12, 0.76])
+    with col1:
         st.markdown(
-            f"""
-            <div style="
-                border: 2px solid {BORDER_COLOR};
-                border-radius: {BORDER_RADIUS};
-                padding: {PADDING};
-                margin-bottom: 8px;
-            ">
-            """,
+            f"<div style='background:{ROW_BG};"
+            f"height:{ROW_HEIGHT}px; border:1px solid {ROW_BORDER};"
+            f"border-radius:6px 0 0 6px; display:flex; align-items:center; justify-content:center;'>",
+            unsafe_allow_html=True
+        )
+        st.session_state.QA[st.session_state.dim, i] = st.checkbox(
+            "",
+            value=bool(st.session_state.QA[st.session_state.dim, i]),
+            key=f"QA_{st.session_state.dim}_{i}",
+            disabled=not (mode == "ASSESSOR"),
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with col2:
+        st.markdown(
+            f"<div style='background:{ROW_BG};"
+            f"height:{ROW_HEIGHT}px; border-top:1px solid {ROW_BORDER}; border-bottom:1px solid {ROW_BORDER};"
+            f"border-left:0; border-right:0; display:flex; align-items:center; justify-content:center;'>",
+            unsafe_allow_html=True
+        )
+        st.session_state.QR[st.session_state.dim, i] = st.checkbox(
+            "",
+            value=bool(st.session_state.QR[st.session_state.dim, i]),
+            key=f"QR_{st.session_state.dim}_{i}",
+            disabled=not (mode == "REVIEWER"),
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with col3:
+        question = df.loc[df["Dimension"] == dim, f"Q{i}"].iloc[0]
+        st.markdown(
+            f"<div style='background:{ROW_BG};"
+            f"height:{ROW_HEIGHT}px; border:1px solid {ROW_BORDER};"
+            f"border-radius:0 6px 6px 0; display:flex; align-items:center; padding-left:10px;'>{question}</div>",
             unsafe_allow_html=True
         )
 
-        col1, col2, col3 = st.columns([0.12, 0.12, 0.76])
-
-        with col1:
-            st.session_state.QA[st.session_state.dim, i] = st.checkbox(
-                "",
-                value=bool(st.session_state.QA[st.session_state.dim, i]),
-                key=f"QA_{st.session_state.dim}_{i}",
-                disabled=not (mode == "ASSESSOR"),
-            )
-
-        with col2:
-            st.session_state.QR[st.session_state.dim, i] = st.checkbox(
-                "",
-                value=bool(st.session_state.QR[st.session_state.dim, i]),
-                key=f"QR_{st.session_state.dim}_{i}",
-                disabled=not (mode == "REVIEWER"),
-            )
-
-        with col3:
-            question = df.loc[df["Dimension"] == dim, f"Q{i}"].iloc[0]
-            st.markdown(
-                f"""
-                <div style='display: flex; align-items: center; height: {ROW_HEIGHT}px'>
-                    {question}
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        st.markdown("</div>", unsafe_allow_html=True)
 
 #st.write(live_col)
 
