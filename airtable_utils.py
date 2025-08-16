@@ -25,7 +25,7 @@ def load_airtable(table_name, base_id, airtable_api_key, debug=False, view="Grid
         data = {"error": f"JSON parse error: {e}"}
     records = data.get("records", [])
     df = pd.DataFrame([r.get("fields", {}) for r in records]) if records else pd.DataFrame()
-    details = {
+    debug_details = {
         "url": url,
         "status_code": response.status_code,
         "response_headers": dict(response.headers),
@@ -47,4 +47,4 @@ def load_airtable(table_name, base_id, airtable_api_key, debug=False, view="Grid
         st.write("")
         st.dataframe(df)
 
-    return df, details
+    return df, debug_details
