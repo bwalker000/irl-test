@@ -155,10 +155,10 @@ else:
 
 nav_dir = st.segmented_control("", options, selection_mode="single")
 
-if nav_dir == "Previous"
+if nav_dir == "Previous":
     st.session_state.dim -= 1
-elif nav_dir == "Next"
+elif nav_dir == "Next":
     st.session_state.dim += 1
-elif nav_dir == "Submit"
+elif nav_dir == "Submit":
     st.switch_page("pages/12_Report.py")
 
