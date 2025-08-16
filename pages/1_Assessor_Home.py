@@ -15,7 +15,7 @@ debug = st.checkbox("Enable Airtable debug mode", value=False)
 
 # load airtable data
 #df, debug_details = load_airtable(table_name, base_id, api_key, debug=True)
-df, debug_details = load_airtable(table_name, base_id, api_key)
+df, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 #if debug:
 #    st.subheader("Airtable API Debug Information")
