@@ -106,7 +106,7 @@ with st.container():
     with col2:
         st.markdown("<div style='text-align: left'><b>ASSESS</b></div>", unsafe_allow_html=True)
     with col3:
-        if mode==not("ASSESS"):
+        if mode !="ASSESS":
             st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
     with col4:
         st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
