@@ -70,13 +70,14 @@ if 'dim' not in st.session_state:
     # REVIEWER Text responses
     TR = [""]*10
 
-    dims = (
-        df["Dimension"]
-        .tolist()              # convert to list
-    )
+
 
 st.title("ASSESS / REVIEW")
 
+dims = (
+    df["Dimension"]
+    .tolist()              # convert to list
+)
 dim = dims[st.session_state.dim]
 
 if (st.session_state.mode == "ASSESSOR"):
