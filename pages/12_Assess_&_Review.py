@@ -114,8 +114,14 @@ for i in range(numQ):
         col1, col2, col3, col4 = st.columns(col_widths)
 
         with col1:
-            st.write(i)
-
+            st.markdown(
+                f"""
+                <div style='display: flex; align-items: center; height: {ROW_HEIGHT}px'>
+                    {i}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
         with col2:
             st.session_state.QA[st.session_state.dim, i] = st.checkbox(
                 "",
