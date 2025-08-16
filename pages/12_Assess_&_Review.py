@@ -49,37 +49,35 @@ if df.empty:
 else:
     st.dataframe(df)
 
-# Scale of the survey
-num_dims = df.shape[0]
-numQ = 10
-
 #
 #------------------------------------------------
 #
 
-# ASSESSOR Question answers
-QA = np.zeros((num_dims, numQ), dtype=bool)
-# REVIEWER Question answers
-QR = np.zeros((num_dims, numQ), dtype=bool)
+if 'dim' not in st.session_state:
+    st.session_state.dim = 0
+    num_dims = df.shape[0]
+    numQ = 10
 
-# ASSESSOR Text responses
-TA = [""]*10
-# REVIEWER Text responses
-TR = [""]*10
+    # ASSESSOR Question answers
+    QA = np.zeros((num_dims, numQ), dtype=bool)
 
-dims = (
-    df["Dimension"]
-    .tolist()              # convert to list
-)
+    # REVIEWER Question answers
+    QR = np.zeros((num_dims, numQ), dtype=bool)
 
-st.title("IRL Prototype")
+    # ASSESSOR Text responses
+    TA = [""]*10
 
-modes = ["assess", "review", "report"]
-mode = st.radio("Choose one:", modes)
+    # REVIEWER Text responses
+    TR = [""]*10
 
-dim = st.radio("Choose one:", dims)
+    dims = (
+        df["Dimension"]
+        .tolist()              # convert to list
+    )
 
-dim_idx = 0
+st.title("ASSESS / REVIEW")
+
+dim = dims[st.session_state.dim]
 
 # Create three columns for horizontal layout. [a, b, c] are relative widths
 col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
@@ -88,13 +86,13 @@ col1, col2, col3 = st.columns([0.12, 0.12, 0.76], vertical_alignment="center")
 with col1:
     st.markdown("<div style='text-align: center'>ASSESS</div>", unsafe_allow_html=True)
     for i in range(numQ):
-        QA[0,i] = st.checkbox("", key=f"QA_{0}_{i}", disabled = not (mode == "assess") )
+        QA[0,i] = st.checkbox("", key=f"QA_{st.session_state.dim}_{i}", disabled = not (mode == "assess") )
 
 # Second checkbox (with label)
 with col2:
     st.markdown("<div style='text-align: center'>REVIEW</div>", unsafe_allow_html=True)
     for i in range(numQ):
-        QR[0,i] = st.checkbox("", key=f"QR_{0}_{i}", disabled = not (mode == "review") )
+        QR[0,i] = st.checkbox("", key=f"QR_{st.session_state.dim}_{i}", disabled = not (mode == "review") )
 
 # Question
 with col3:
@@ -103,12 +101,10 @@ with col3:
         col_name = f"Q{i}"  
         st.write(df.loc[df["Dimension"] == dim, col_name].iloc[0])
 
-#QA
-#QR
 
-if (mode == "assess"):
+if (mode == "ASSESSOR"):
     live_col = 1
-elif (mode == "review"):
+elif (mode == "REVIEWER"):
     live_col = 2
 else:
     live_col = None
@@ -144,5 +140,22 @@ for i in range(1, 3):
 TA[dim_idx]=st.text_area("ASSESSOR Comments", height=None, max_chars=10000, key=TA[dim_idx], width="stretch")
 TR[dim_idx]=st.text_area("REVIEWER Comments", height=None, max_chars=10000, key=TR[dim_idx], width="stretch")
 
-if st.button("Home"):
-    st.switch_page("streamlit_app.py")
+
+
+
+if st.session_state.dim == 0:
+    options = ["Next"]
+elif st.session_state.dim == (num_dims - 1):
+    options = ["Previous", "Submit"]
+else
+    options = ["Previous", "Next"]
+
+nav_dir = st.segmented_control("", options, selection_mode="single")
+
+if nav_dir == "Previous"
+    st.session_state.dim -= 1
+elif nav_dir == "Next"
+    st.session_state.dim += 1
+elif nav_dir == "Submit"
+    st.switch_page("12_Report.py")
+
