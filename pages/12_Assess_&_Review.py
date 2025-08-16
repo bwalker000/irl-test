@@ -157,5 +157,5 @@ if nav_dir == "Previous"
 elif nav_dir == "Next"
     st.session_state.dim += 1
 elif nav_dir == "Submit"
-    st.switch_page("12_Report.py")
+    st.switch_page("pages/12_Report.py")
 
