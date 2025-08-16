@@ -91,9 +91,9 @@ elif (mode == "REVIEWER"):
 else:
     live_col = None
 
-if mode == "ASSESS":
+if mode == "ASSESSOR":
     st.title("ASSESS")
-elif mode == "REVIEW":
+elif mode == "REVIEWER":
     st.title("REVIEW")
 else:
     st.title("REPORT")
@@ -106,7 +106,7 @@ with st.container():
     with col2:
         st.markdown("<div style='text-align: left'><b>ASSESS</b></div>", unsafe_allow_html=True)
     with col3:
-        if mode !="ASSESS":
+        if mode !="ASSESSOR":
             st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
     with col4:
         st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
