@@ -5,6 +5,9 @@ from shared import *
 #BASE_ID = st.secrets["general"]["airtable_base_id"]
 #TABLE_NAME = st.secrets["general"]["airtable_table_assessment"]
 
+
+st.title("Impact Readiness Level")
+
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
 if st.button("Login"):
