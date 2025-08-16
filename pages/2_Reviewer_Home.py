@@ -2,7 +2,8 @@ from shared import *
 
 st.title("Reviewer Home")
 
-st_session_state.mode = 'REVIEWER'
+if 'mode' not in st.session_state:
+    st_session_state.mode = 'REVIEWER'
 
 if st.button("Assess"):
     st.switch_page("pages/12_Assess_&_Review.py")
