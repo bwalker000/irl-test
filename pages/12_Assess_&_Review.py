@@ -104,7 +104,7 @@ with st.container():
         st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
     with col3:
         st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
-    st.divider()
+    st.markdown("<hr style='margin: 2px 0; border: 0.5px solid #e0e0e0;'>", unsafe_allow_html=True)
 
 # ----- Data Rows -----
 ROW_HEIGHT = 40  # Adjust to match checkbox height in your browser/view
@@ -142,7 +142,7 @@ for i in range(numQ):
     
     # Add horizontal line after each row (except the last one)
     if i < numQ:
-        st.divider()
+        st.markdown("<hr style='margin: 2px 0; border: 0.5px solid #e0e0e0;'>", unsafe_allow_html=True)
 
 
 #st.write(live_col)
