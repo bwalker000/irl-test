@@ -28,11 +28,10 @@ if debug:
 
 if df.empty:
     st.warning("No records found in the Airtable table.")
-#else:
-    #st.dataframe(df)
+else:
+    st.dataframe(df)
 
-
-names = data['Name']
+names = df['Name']
 
 # Streamlit selectbox for choosing a Name
 selected_name = st.selectbox('Select a Name:', options=names)
