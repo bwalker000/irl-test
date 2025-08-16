@@ -8,8 +8,8 @@ import numpy as np
 
 # Load secrets
 AIRTABLE_API_KEY = st.secrets["general"]["airtable_api_key"]
-BASE_ID = st.secrets["airtable_base_id"]
-TABLE_NAME = st.secrets["airtable_table_assessment"]
+BASE_ID = st.secrets["general"]["airtable_base_id"]
+TABLE_NAME = st.secrets["general"]["airtable_table_assessment"]
 
 # Debug mode toggle
 debug = st.checkbox("Enable Airtable debug mode", value=False)
