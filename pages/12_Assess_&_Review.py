@@ -106,11 +106,12 @@ with st.container():
         st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
 
 # ----- Data Rows -----
+ROW_HEIGHT = 40  # Adjust to match checkbox height in your browser/view
+
 for i in range(numQ):
     with st.container():
         col1, col2, col3 = st.columns([0.12, 0.12, 0.76])
 
-        # Assess checkbox
         with col1:
             st.session_state.QA[st.session_state.dim, i] = st.checkbox(
                 "",
@@ -119,7 +120,6 @@ for i in range(numQ):
                 disabled=not (mode == "ASSESSOR"),
             )
 
-        # Review checkbox
         with col2:
             st.session_state.QR[st.session_state.dim, i] = st.checkbox(
                 "",
@@ -128,11 +128,16 @@ for i in range(numQ):
                 disabled=not (mode == "REVIEWER"),
             )
 
-        # Question text
         with col3:
-            col_name = f"Q{i}"  
-            st.markdown(df.loc[df["Dimension"] == dim, col_name].iloc[0])
-
+            question = df.loc[df["Dimension"] == dim, f"Q{i}"].iloc[0]
+            st.markdown(
+                f"""
+                <div style='display: flex; align-items: center; height: {ROW_HEIGHT}px'>
+                    {question}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 
 #st.write(live_col)
