@@ -36,9 +36,6 @@ names = df['Name']
 # Streamlit selectbox for choosing a Name
 selected_name = st.selectbox('Select a Name:', options=names)
 
-# Use the selected name for further processing
-st.write(f'You selected: {selected_name}')
-
 if st.button("Review"):
     st.switch_page("pages/12_Assess_&_Review.py")
 if st.button("Home"):
