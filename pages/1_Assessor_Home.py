@@ -16,14 +16,14 @@ debug = st.checkbox("Enable Airtable debug mode", value=False)
 # load airtable data
 df, debug_details = load_airtable(table_name, base_id, api_key, debug=True)
 
-if debug:
-    st.subheader("Airtable API Debug Information")
-    st.code(f"Request URL: {debug_details['url']}", language="text")
-    st.write("Status code:", debug_details["status_code"])
-    st.write("Response headers:", debug_details["response_headers"])
-    st.write("Raw JSON response:")
-    st.json(debug_details["raw_response"])
-    st.write("Records returned:", debug_details["records_count"])
+#if debug:
+#    st.subheader("Airtable API Debug Information")
+#    st.code(f"Request URL: {debug_details['url']}", language="text")
+#    st.write("Status code:", debug_details["status_code"])
+#    st.write("Response headers:", debug_details["response_headers"])
+#    st.write("Raw JSON response:")
+#    st.json(debug_details["raw_response"])
+#    st.write("Records returned:", debug_details["records_count"])
 
 #if df.empty:
 #    st.warning("No records found in the Airtable table.")

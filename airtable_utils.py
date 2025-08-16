@@ -36,4 +36,15 @@ def load_airtable(table_name, base_id, airtable_api_key, debug=False, view="Grid
     if df.empty:
         st.warning("No records found in the Airtable table.")
     
+    if debug:
+        st.subheader("Airtable API Debug Information")
+        st.code(f"Request URL: {debug_details['url']}", language="text")
+        st.write("Status code:", debug_details["status_code"])
+        st.write("Response headers:", debug_details["response_headers"])
+        st.write("Raw JSON response:")
+        st.json(debug_details["raw_response"])
+        st.write("Records returned:", debug_details["records_count"])
+        st.write("")
+        st.dataframe(df)
+
     return df, details
