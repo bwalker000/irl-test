@@ -93,24 +93,25 @@ elif (mode == "REVIEWER"):
 else:
     live_col = None
 
-
+col_widths = [0.12, 0.12, 0.76]
 
 # ----- Heading Row -----
 with st.container():
-    col1, col2, col3 = st.columns([0.12, 0.12, 0.76])
+    col1, col2, col3 = st.columns(col_widths)
     with col1:
         st.markdown("<div style='text-align: left'><b>ASSESS</b></div>", unsafe_allow_html=True)
     with col2:
         st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
     with col3:
         st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
+    st.divider()
 
 # ----- Data Rows -----
 ROW_HEIGHT = 40  # Adjust to match checkbox height in your browser/view
 
 for i in range(numQ):
     with st.container():
-        col1, col2, col3 = st.columns([0.12, 0.12, 0.76])
+        col1, col2, col3 = st.columns(col_widths)
 
         with col1:
             st.session_state.QA[st.session_state.dim, i] = st.checkbox(
