@@ -114,7 +114,7 @@ for i in range(numQ):
         col1, col2, col3, col4 = st.columns(col_widths)
 
         with col1:
-            st.session_state.dim
+            st.write(i)
 
         with col2:
             st.session_state.QA[st.session_state.dim, i] = st.checkbox(
