@@ -151,10 +151,12 @@ with col1:
     if st.session_state.dim > 0:
         if st.button("Previous"):
             st.session_state.dim -= 1
+            st.experimental_rerun()
 with col2:
     if st.session_state.dim < num_dims - 1:
         if st.button("Next"):
             st.session_state.dim += 1
+            st.experimental_rerun()
 with col3:
     if st.session_state.dim == num_dims - 1:
         if st.button("Submit"):
