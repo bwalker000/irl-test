@@ -7,7 +7,7 @@ import json
 import numpy as np
 
 # Load secrets
-AIRTABLE_API_KEY = st.secrets["airtable_api_key"]
+AIRTABLE_API_KEY = st.secrets["general"]["airtable_api_key"]
 BASE_ID = st.secrets["airtable_base_id"]
 TABLE_NAME = st.secrets["airtable_table_assessment"]
 
@@ -18,7 +18,8 @@ debug = st.checkbox("Enable Airtable debug mode", value=False)
 def load_airtable(debug=False):
     url = f"https://api.airtable.com/v0/{BASE_ID}/{TABLE_NAME}"
     headers = {"Authorization": f"Bearer {AIRTABLE_API_KEY}"}
-    response = requests.get(url, headers=headers)
+    params = {"view": "Grid view"}  # Or "My Custom View"
+    response = requests.get(url, headers=headers, params=params)
     try:
         data = response.json()
     except Exception as e:
