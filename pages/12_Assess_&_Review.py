@@ -131,7 +131,7 @@ for i in range(numQ):
             )
 
         with col3:
-            if mode == "REVIEWER"
+            if mode == "REVIEWER":
                 st.session_state.QR[st.session_state.dim, i] = st.checkbox(
                     "",
                     value=bool(st.session_state.QR[st.session_state.dim, i]),
