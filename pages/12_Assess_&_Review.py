@@ -1,37 +1,14 @@
 from shared import *
+from airtable_utils import load_airtable
 
 # Load secrets
-AIRTABLE_API_KEY = st.secrets["general"]["airtable_api_key"]
-BASE_ID = st.secrets["general"]["airtable_base_id"]
 TABLE_NAME = st.secrets["general"]["airtable_table_assessment"]
 
 # Debug mode toggle
 debug = st.checkbox("Enable Airtable debug mode", value=False)
 
-@st.cache_data
-def load_airtable(debug=False):
-    url = f"https://api.airtable.com/v0/{BASE_ID}/{TABLE_NAME}"
-    headers = {"Authorization": f"Bearer {AIRTABLE_API_KEY}"}
-    params = {"view": "Grid view"}  # Or "My Custom View"
-    response = requests.get(url, headers=headers, params=params)
-    try:
-        data = response.json()
-    except Exception as e:
-        data = {"error": f"JSON parse error: {e}"}
-    # Extract records if possible
-    records = data.get("records", [])
-    df = pd.DataFrame([r.get("fields", {}) for r in records]) if records else pd.DataFrame()
-    details = {
-        "url": url,
-        "status_code": response.status_code,
-        "response_headers": dict(response.headers),
-        "raw_response": data,
-        "records_count": len(records),
-    }
-    return df, details
-
 # load airtable data
-df, debug_details = load_airtable(debug=debug)
+df, debug_details = load_airtable(TABLE_NAME, debug=debug)
 
 if debug:
     st.subheader("Airtable API Debug Information")
