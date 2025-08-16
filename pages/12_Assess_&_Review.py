@@ -106,7 +106,7 @@ with st.container():
         st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
 
 # ----- Data Rows -----
-ROW_HEIGHT = 40  # Adjust to match checkbox height in your browser/view
+ROW_HEIGHT = 20  # Adjust to match checkbox height in your browser/view
 
 for i in range(numQ):
     with st.container():
@@ -140,7 +140,7 @@ for i in range(numQ):
             )
     
     # Add horizontal line after each row (except the last one)
-    if i < numQ - 1:
+    if i < numQ:
         st.divider()
 
 
