@@ -103,7 +103,7 @@ with st.container():
     with col2:
         st.markdown("<div style='text-align: center'><b>REVIEW</b></div>", unsafe_allow_html=True)
     with col3:
-        st.write(f"**{dim}**")
+        st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
 
 # ----- Data Rows -----
 for i in range(numQ):
