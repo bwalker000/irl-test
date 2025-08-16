@@ -1,7 +1,7 @@
 # airtable_utils.py
 from shared import *
 
-#@st.cache_data
+@st.cache_data
 def load_airtable(table_name, base_id, airtable_api_key, debug=False, view="Grid view"):
     """
     Loads records from an Airtable table.
