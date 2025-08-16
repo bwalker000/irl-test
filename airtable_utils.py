@@ -1,8 +1,5 @@
 # airtable_utils.py
 from shared import *
-import requests
-import pandas as pd
-import streamlit as st
 
 @st.cache_data
 def load_airtable(table_name, base_id, airtable_api_key, debug=False, view="Grid view"):
@@ -35,4 +32,8 @@ def load_airtable(table_name, base_id, airtable_api_key, debug=False, view="Grid
         "raw_response": data,
         "records_count": len(records),
     }
+
+    if df.empty:
+        st.warning("No records found in the Airtable table.")
+    
     return df, details

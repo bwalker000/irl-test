@@ -25,15 +25,16 @@ if debug:
     st.json(debug_details["raw_response"])
     st.write("Records returned:", debug_details["records_count"])
 
-if df.empty:
-    st.warning("No records found in the Airtable table.")
-else:
-    st.dataframe(df)
+#if df.empty:
+#    st.warning("No records found in the Airtable table.")
+#else:
+#    st.dataframe(df)
 
 names = df['Name']
 
 # Streamlit selectbox for choosing a Name
 selected_name = st.selectbox('Select a Name:', options=names)
+
 
 if st.button("Assess"):
     st.switch_page("pages/12_Assess_&_Review.py")

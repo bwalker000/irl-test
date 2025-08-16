@@ -2,5 +2,7 @@ from shared import *
 
 st.title("Create New Reviewer")
 
-if st.button("Home"):
-    st.switch_page("streamlit_app.py")
+st.write("New reviewers can currently only be created by the administrator. Please request via email.")
+
+if st.button("Back"):
+    st.switch_page("pages/Reviewer_Home.py")
