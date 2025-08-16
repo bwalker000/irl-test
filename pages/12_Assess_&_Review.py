@@ -93,16 +93,16 @@ elif (mode == "REVIEWER"):
 else:
     live_col = None
 
-col_widths = [0.12, 0.12, 0.76]
+col_widths = [0.06 0.12, 0.12, 0.70]
 
 # ----- Heading Row -----
 with st.container():
-    col1, col2, col3 = st.columns(col_widths)
-    with col1:
-        st.markdown("<div style='text-align: left'><b>ASSESS</b></div>", unsafe_allow_html=True)
+    col1, col2, col3, col4 = st.columns(col_widths)
     with col2:
-        st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: left'><b>ASSESS</b></div>", unsafe_allow_html=True)
     with col3:
+        st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
+    with col4:
         st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
     st.markdown("<hr style='margin: 2px 0; border: 0.5px solid #e0e0e0;'>", unsafe_allow_html=True)
 
@@ -111,9 +111,12 @@ ROW_HEIGHT = 40  # Adjust to match checkbox height in your browser/view
 
 for i in range(numQ):
     with st.container():
-        col1, col2, col3 = st.columns(col_widths)
+        col1, col2, col3, col4 = st.columns(col_widths)
 
         with col1:
+            st.session_state.dim
+
+        with col2:
             st.session_state.QA[st.session_state.dim, i] = st.checkbox(
                 "",
                 value=bool(st.session_state.QA[st.session_state.dim, i]),
@@ -121,7 +124,7 @@ for i in range(numQ):
                 disabled=not (mode == "ASSESSOR"),
             )
 
-        with col2:
+        with col3:
             st.session_state.QR[st.session_state.dim, i] = st.checkbox(
                 "",
                 value=bool(st.session_state.QR[st.session_state.dim, i]),
@@ -129,7 +132,7 @@ for i in range(numQ):
                 disabled=not (mode == "REVIEWER"),
             )
 
-        with col3:
+        with col4:
             question = df.loc[df["Dimension"] == dim, f"Q{i}"].iloc[0]
             st.markdown(
                 f"""
