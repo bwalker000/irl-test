@@ -76,8 +76,6 @@ if 'dim' not in st.session_state:
 # 
 
 
-st.title("ASSESS / REVIEW")
-
 dims = (
     df["Dimension"]
     .tolist()              # convert to list
@@ -93,6 +91,13 @@ elif (mode == "REVIEWER"):
 else:
     live_col = None
 
+if mode == "ASSESS":
+    st.title("ASSESS")
+elif mode == "REVIEW":
+    st.title("REVIEW")
+else:
+    st.title("REPORT")
+
 col_widths = [0.06, 0.12, 0.12, 0.70]
 
 # ----- Heading Row -----
@@ -101,7 +106,8 @@ with st.container():
     with col2:
         st.markdown("<div style='text-align: left'><b>ASSESS</b></div>", unsafe_allow_html=True)
     with col3:
-        st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
+        if mode==not("ASSESS"):
+            st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
     with col4:
         st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
     st.markdown("<hr style='margin: 2px 0; border: 0.5px solid #e0e0e0;'>", unsafe_allow_html=True)
