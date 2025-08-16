@@ -137,31 +137,31 @@ for i in range(numQ):
 
 #st.write(live_col)
 
-for i in range(1, 3):
-    if (i == live_col):
-        st.markdown(f"""
-            <style>
-            [data-testid="stHorizontalBlock"] > div:nth-child({i}) {{
-                background-color: #e3f3ff;
-                padding: 8px;
-                border-radius: 4px;
-                /* Optional: make the column stand out with a border */
-            border: 2px solid #3399ff;
-            }}
-            </style>
-            """, unsafe_allow_html=True)
-    else:
-        st.markdown(f"""
-            <style>
-            [data-testid="stHorizontalBlock"] > div:nth-child({i}) {{
-                background-color: #ffffff;
-                padding: 8px;
-                border-radius: 4px;
-                /* Optional: make the column stand out with a border */
-            border: 2px solid #3399ff;
-            }}
-            </style>
-            """, unsafe_allow_html=True)
+#for i in range(1, 3):
+#    if (i == live_col):
+#        st.markdown(f"""
+#            <style>
+#            [data-testid="stHorizontalBlock"] > div:nth-child({i}) {{
+#                background-color: #e3f3ff;
+#                padding: 8px;
+#                border-radius: 4px;
+#                /* Optional: make the column stand out with a border */
+#            border: 2px solid #3399ff;
+#            }}
+#            </style>
+#            """, unsafe_allow_html=True)
+#    else:
+#        st.markdown(f"""
+#            <style>
+#            [data-testid="stHorizontalBlock"] > div:nth-child({i}) {{
+#                background-color: #ffffff;
+#                padding: 8px;
+#                border-radius: 4px;
+#                /* Optional: make the column stand out with a border */
+#            border: 2px solid #3399ff;
+#            }}
+#            </style>
+#            """, unsafe_allow_html=True)
 
 #
 # --------------------------------------------------------------------------------------
