@@ -75,7 +75,7 @@ elif (mode == "REVIEWER"):
 else:
     live_col = None
 
-
+# Page title
 if mode == "ASSESSOR":
     st.title("ASSESS")
 elif mode == "REVIEWER":
@@ -106,15 +106,16 @@ with st.container(border=True):
 
 st.write("\n\n")
 
+#
+# Present General Instructions
+#
+
 if mode == "ASSESSOR":
     st.write("__General Instructions:__")
-    st.write("Answer yes only to questions that have written data to support your position.")
-    st.write("Knowing the answer without documentation is not adequate proof to answer yes.")
+    st.write("A yes answer must be supported by written data.")
 elif mode == "REVIEWER":
     st.write("__General Instructions:__")
-    st.write("Apply healthy skepticism to the Assessor's answers.")
-    st.write("All founders and operators believe in their venture.")
-    st.write("Help the Assessor succeed by challenging their positions.")
+    st.write("All Founders believe in their venture. You must help them by applying healthy skepticism.")
 
 st.write("\n\n")
 
@@ -217,9 +218,9 @@ with st.container(border=True):
 # Present specific instructions
 #
 with st.container(border=True):
-    st.write("__Dimension Instructions:__")
+    st.write("__Detailed Instructions:__")
     instructions = df.loc[df["Dimension"] == dim, "Instructions"].iloc[0]
-    st.write("Instructions")
+    st.write(instructions)
 
 #
 # -------------------------------------------------------------------------------------------
