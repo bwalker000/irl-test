@@ -7,11 +7,10 @@ base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_assessment"]
 
 # Debug mode toggle
-debug = st.checkbox("Enable Airtable debug mode", value=False)
+#debug = st.checkbox("Enable Airtable debug mode", value=False)
 
 # load airtable data
 df, debug_details = load_airtable(table_name, base_id, api_key, debug)
-
 
 if debug:
     st.subheader("Airtable API Debug Information")
@@ -58,12 +57,13 @@ if 'dim' not in st.session_state:
 # the following presents the project id, not name
 #st.session_state.project
 
-
+# create a list of all the dimensions
 dims = (
     df["Dimension"]
     .tolist()              # convert to list
 )
 dim = dims[st.session_state.dim]
+
 
 if (st.session_state.mode == "ASSESSOR"):
     live_col = 1
@@ -74,6 +74,7 @@ elif (mode == "REVIEWER"):
 else:
     live_col = None
 
+
 if mode == "ASSESSOR":
     st.title("ASSESS")
 elif mode == "REVIEWER":
@@ -83,6 +84,29 @@ else:
 
 st.write("")
 
+#
+# Display details about the assessment
+#
+col1, col2 = st.columns(2)
+col1.write("__Assessor:__")
+col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
+
+col1.write("__Support Organization:__")
+col2.write(st.session_state.support_name)
+
+col1.write("__Venture:__")
+col2.write(st.session_state.venture_name)
+
+col1.write("Project:__")
+col2.write(st.session_state.project_name)
+
+
+st.write("__General Instructions:__")
+st.write("Answer yes to questions only if you have written data to support your position. Do answer yes to questions you 'know the answer to' but can't support in writing.")
+
+#
+# Display and collect the questions and answers
+#
 
 col_widths = [0.06, 0.12, 0.12, 0.70]
 

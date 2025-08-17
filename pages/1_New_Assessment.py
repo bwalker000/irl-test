@@ -7,7 +7,7 @@ st.write(st.session_state.name)
 # Debug mode toggle
 debug = st.checkbox("Enable Airtable debug mode", value=False)
 
-# Load secrets
+# Load shared secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 
@@ -37,39 +37,26 @@ st.session_state.venture = row.iloc[0]["Venture"][0]
 assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
 
-support_id = st.session_state.support_org
-#st.write(f"Support id: {support_id}")
-#st.write("")
+support_id = st.session_state.support
 venture_id = st.session_state.venture
-#st.write(f"Venture id: {venture_id}")
-#st.write("")
-
-#st.write("Columns in air_support:", air_support.columns.tolist())
-#st.write("Columns in air_ventures:", air_ventures.columns.tolist())
 
 support_name = airtable_value_from_id(air_support, support_id, "Name")
 venture_name = airtable_value_from_id(air_ventures, venture_id, "Name")
 
-#support_row = air_support.loc[air_support["id"] == support_id]
-#support_row
-#support_name = support_row.iloc[0]["Name"]
+st.session_state.support_name = support_name
+st.session_state.venture_name = venture_name
 
-#venture_row = air_ventures.loc[air_ventures["id"] == venture_id]
-#venture_row
-#venture_name = venture_row.iloc[0]["Name"]
-
-#st.write("Testing airtable_value_from_id function")
-#test_venture_names = airtable_value_from_id(air_ventures, venture_id, "Name")
-#test_venture_names
-
+#
+# Display details about the assessment
+#
 col1, col2 = st.columns(2)
-col1.write("Assessor:")
+col1.write("__Assessor:__")
 col2.write(f"{assessor_first_name} {assessor_last_name}")
 
-col1.write("Support Organization:")
+col1.write("__Support Organization:__")
 col2.write(support_name)
 
-col1.write("Venture:")
+col1.write("__Venture:__")
 col2.write(venture_name)
 
 #
@@ -97,7 +84,8 @@ selected_project = st.selectbox('Project:', options=project_names)
 if st.button("Continue to Assessment"):
     row = records[records["Name"] == selected_project]
     st.session_state.project = row["id"].iloc[0]
-    st.session_state.project
+    project_id = st.session_state.project
+    st.session_state.project_name = airtable_value_from_id(air_projects, project_id, "Name")
     st.switch_page("pages/12_Assess_&_Review.py")
 
 if st.button("Home"):
