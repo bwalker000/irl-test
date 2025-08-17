@@ -16,7 +16,7 @@ table_name = st.secrets["general"]["airtable_table_assessors"]
 air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 # load airtable Ventures table
-table_name = st.secrets["general"]["airtable_ventures"]
+table_name = st.secrets["general"]["airtable_table_ventures"]
 air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 # load airtable Ventures table
