@@ -88,6 +88,7 @@ st.write("")
 #
 # Display details about the assessment
 #
+col_widths = [0.25 0.75]
 col1, col2 = st.columns(2)
 col1.write("__Assessor:__")
 col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
@@ -98,12 +99,15 @@ col2.write(st.session_state.support_name)
 col1.write("__Venture:__")
 col2.write(st.session_state.venture_name)
 
-col1.write("Project:__")
+col1.write("__Project:__")
 col2.write(st.session_state.project_name)
 
+st.write()
 
 st.write("__General Instructions:__")
-st.write("Answer yes to questions only if you have written data to support your position. Do answer yes to questions you 'know the answer to' but can't support in writing.")
+st.write("Answer yes only to questions that have written data to support your position.")
+
+st.write()
 
 #
 # Display and collect the questions and answers
