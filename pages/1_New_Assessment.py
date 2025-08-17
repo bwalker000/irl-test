@@ -47,17 +47,20 @@ venture_id = st.session_state.venture
 #st.write("Columns in air_support:", air_support.columns.tolist())
 #st.write("Columns in air_ventures:", air_ventures.columns.tolist())
 
-support_row = air_support.loc[air_support["id"] == support_id]
+support_name = airtable_value_from_id(air_support, support_id, "Name")
+venture_name = airtable_value_from_id(air_venture, venture_id, "Name")
+
+#support_row = air_support.loc[air_support["id"] == support_id]
 #support_row
-support_name = support_row.iloc[0]["Name"]
+#support_name = support_row.iloc[0]["Name"]
 
-venture_row = air_ventures.loc[air_ventures["id"] == venture_id]
+#venture_row = air_ventures.loc[air_ventures["id"] == venture_id]
 #venture_row
-venture_name = venture_row.iloc[0]["Name"]
+#venture_name = venture_row.iloc[0]["Name"]
 
-st.write("Testing airtable_value_from_id function")
-test_venture_names = airtable_value_from_id(air_ventures, venture_id, "Name")
-test_venture_names
+#st.write("Testing airtable_value_from_id function")
+#test_venture_names = airtable_value_from_id(air_ventures, venture_id, "Name")
+#test_venture_names
 
 col1, col2 = st.columns(2)
 col1.write("Assessor:")
