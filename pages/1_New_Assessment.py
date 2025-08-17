@@ -48,7 +48,7 @@ venture_id = st.session_state.venture
 #st.write("Columns in air_ventures:", air_ventures.columns.tolist())
 
 support_name = airtable_value_from_id(air_support, support_id, "Name")
-venture_name = airtable_value_from_id(air_venture, venture_id, "Name")
+venture_name = airtable_value_from_id(air_ventures, venture_id, "Name")
 
 #support_row = air_support.loc[air_support["id"] == support_id]
 #support_row
