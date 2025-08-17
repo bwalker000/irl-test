@@ -67,9 +67,7 @@ col1.write("Venture:")
 col2.write(venture_name)
 
 #
-#
 # Select among projects
-#
 #
 
 # Load secrets
@@ -78,11 +76,9 @@ table_name = st.secrets["general"]["airtable_table_projects"]
 # load airtable data
 air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-
-air_projects
-
-venture_id
-air_projects.iloc[0]["Venture"][0]
+#air_projects
+#venture_id
+#air_projects.iloc[0]["Venture"][0]
 
 records = air_projects[air_projects["Venture"].apply(lambda x: x[0] == venture_id)]
 records
@@ -90,7 +86,7 @@ records
 project_names = records['Name']
 
 # Streamlit selectbox for choosing a Name
-selected_project = st.selectbox('Select a Project to Assess:', options=names)
+selected_project = st.selectbox('Select a Project to Assess:', options=project_names)
 
 if st.button("Continue to Assessment"):
     st.switch_page("pages/12_Assess_&_Review.py")
