@@ -28,10 +28,19 @@ assessor_name = st.session_state.name
 row = air_assessors.loc[air_assessors["Name"] == assessor_name]
 
 st.session_state.assessor = st.session_state.name
-st.session_state.assessor_first_name = row["First Name"].values
-st.session_state.assessor_last_name = row["Last Name"].values
-st.session_state.support_org = row["Organization"].values
-st.session_state.venture = row["Venture"].values
+st.session_state.assessor_first_name = row.iloc["First Name"]
+st.session_state.assessor_last_name = row.iloc["Last Name"]
+
+# If "Organization" and "Venture" columns contain record IDs:
+org_id = row.iloc["Organization"] if row.iloc["Organization"] else None
+venture_id = row.iloc["Venture"] if row.iloc["Venture"] else None
+
+# Map IDs to names using reference DataFrames (example: org_df and venture_df)
+org_map = dict(zip(org_df["id"], org_df["Name"]))
+venture_map = dict(zip(venture_df["id"], venture_df["Name"]))
+
+st.session_state.support_org = org_map.get(org_id, "Unknown")
+st.session_state.venture = venture_map.get(venture_id, "Unknown")
 
 assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
