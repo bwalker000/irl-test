@@ -10,7 +10,7 @@ table_name = st.secrets["general"]["airtable_table_assessment"]
 debug = st.checkbox("Enable Airtable debug mode", value=False)
 
 # load airtable data
-df, debug_details = load_airtable(table_name, base_id, api_key, debug=True)
+df, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 
 if debug:
@@ -55,8 +55,8 @@ if 'dim' not in st.session_state:
 # Present the page
 # 
 
-st.session_state.project
-
+# the following presents the project id, not name
+#st.session_state.project
 
 
 dims = (
@@ -80,6 +80,10 @@ elif mode == "REVIEWER":
     st.title("REVIEW")
 else:
     st.title("REPORT")
+
+write("")
+
+
 
 col_widths = [0.06, 0.12, 0.12, 0.70]
 
@@ -181,7 +185,7 @@ st.session_state.TA[st.session_state.dim] = st.text_area(
     "ASSESSOR Comments",
     value=st.session_state.TA[st.session_state.dim],            # <- prepopulate with previous value
     height=None,
-    max_chars=10000,
+    max_chars=1000,
     key=f"TA_{st.session_state.dim}",                           # <- use a simple, unique key
     width="stretch",
     disabled=not (mode == "ASSESSOR")
@@ -192,7 +196,7 @@ if mode != "ASSESSOR":
         "REVIEWER Comments",
         value=st.session_state.TR[st.session_state.dim],            # <- prepopulate with previous value
         height=None,
-        max_chars=10000,
+        max_chars=1000,
         key=f"TR_{st.session_state.dim}",                           # <- use a simple, unique key
         width="stretch",
         disabled=not (mode == "REVIEWER")

@@ -51,3 +51,23 @@ def load_airtable(table_name, base_id, airtable_api_key, debug=False, view="Grid
         st.dataframe(df)
 
     return df, debug_details
+
+
+
+@st.cache_data
+def airtable_value_from_id(table, id, field, debug=False):
+    """
+    accepts an airtable id value and uses it to pull the underlying text
+
+    Parameters:
+    - table (df): Imported table from Airtable
+    - id (str): Airtable 
+    - field (str): name of the field in Airtable to pull the  value from 
+    - debug (bool): Whether to return debug info
+    """
+
+    row = table.loc[table["id"] == id]
+    #row
+    values = row.iloc[0][field]
+
+    return values, debug_details

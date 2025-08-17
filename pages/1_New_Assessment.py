@@ -55,6 +55,9 @@ venture_row = air_ventures.loc[air_ventures["id"] == venture_id]
 #venture_row
 venture_name = venture_row.iloc[0]["Name"]
 
+st.write("Testing airtable_value_from_id function")
+test_venture_names = airtable_value_from_id(air_ventures, venture_id, "id")
+test_venture_names
 
 col1, col2 = st.columns(2)
 col1.write("Assessor:")
