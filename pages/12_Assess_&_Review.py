@@ -1,5 +1,4 @@
 from shared import *
-#from airtable_utils import load_airtable
 
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
@@ -90,7 +89,7 @@ st.write("\n\n")
 #
 with st.container(border=True):
 
-    col_widths = [0.25, 0.75]
+    col_widths = [0.3, 0.7]
     col1, col2 = st.columns(col_widths)
     col1.write("__Assessor:__")
     col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
@@ -241,4 +240,5 @@ with col2:
 with col3:
     if st.session_state.dim == num_dims - 1:
         if st.button("Submit"):
-            st.switch_page("pages/12_Report.py")
+            st.switch_page("pages/12_Submit.py")
+            
