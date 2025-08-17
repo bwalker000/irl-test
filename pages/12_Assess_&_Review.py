@@ -83,15 +83,17 @@ elif mode == "REVIEWER":
 else:
     st.title("REPORT")
 
-st.write("")
+st.write("\n\n")
 
 #
 # Display details about the assessment
 #
+container1 = st.container(border=True)
+
 col_widths = [0.25, 0.75]
 col1, col2 = st.columns(2)
-col1.write("__Assessor:__")
-col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
+container1.col1.write("__Assessor:__")
+container1.col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
 
 col1.write("__Support Organization:__")
 col2.write(st.session_state.support_name)
@@ -102,12 +104,19 @@ col2.write(st.session_state.venture_name)
 col1.write("__Project:__")
 col2.write(st.session_state.project_name)
 
-st.write()
+st.write("\n\n")
 
-st.write("__General Instructions:__")
-st.write("Answer yes only to questions that have written data to support your position.")
+if mode == "ASSESSOR":
+    st.write("__General Instructions:__")
+    st.write("Answer yes only to questions that have written data to support your position.")
+    st.write("Knowing the answer without documentation is not adequate proof to answer yes.")
+elif mode == "REVIEWER":
+    st.write("__General Instructions:__")
+    st.write("Apply healthy skepticism to the Assessor's answers.")
+    st.write("All founders and operators believe in their venture.")
+    st.write("Help the Assessor succeed by challenging their positions.")
 
-st.write()
+st.write("\n\n")
 
 #
 # Display and collect the questions and answers
@@ -175,34 +184,12 @@ for i in range(numQ):
     if i < numQ:
         st.markdown("<hr style='margin: 2px 0; border: 0.5px solid #e0e0e0;'>", unsafe_allow_html=True)
 
+#
+# --------------------------------------------------------------------------------------
+# Present specific instructions
+#
 
-#st.write(live_col)
 
-#for i in range(1, 3):
-#    if (i == live_col):
-#        st.markdown(f"""
-#            <style>
-#            [data-testid="stHorizontalBlock"] > div:nth-child({i}) {{
-#                background-color: #e3f3ff;
-#                padding: 8px;
-#                border-radius: 4px;
-#                /* Optional: make the column stand out with a border */
-#            border: 2px solid #3399ff;
-#            }}
-#            </style>
-#            """, unsafe_allow_html=True)
-#    else:
-#        st.markdown(f"""
-#            <style>
-#            [data-testid="stHorizontalBlock"] > div:nth-child({i}) {{
-#                background-color: #ffffff;
-#                padding: 8px;
-#                border-radius: 4px;
-#                /* Optional: make the column stand out with a border */
-#            border: 2px solid #3399ff;
-#            }}
-#            </style>
-#            """, unsafe_allow_html=True)
 
 #
 # --------------------------------------------------------------------------------------
