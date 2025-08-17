@@ -88,7 +88,7 @@ st.write("\n\n")
 #
 # Display details about the assessment
 #
-with st.container(border=True)
+with st.container(border=True):
 
     col_widths = [0.25, 0.75]
     col1, col2 = st.columns(2)

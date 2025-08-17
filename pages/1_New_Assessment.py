@@ -2,10 +2,11 @@ from shared import *
 
 st.title("Create a New Assessment")
 
-st.write(st.session_state.name)
+#st.write(st.session_state.name)
 
 # Debug mode toggle
-debug = st.checkbox("Enable Airtable debug mode", value=False)
+#debug = st.checkbox("Enable Airtable debug mode", value=False)
+debug = False
 
 # Load shared secrets
 api_key = st.secrets["general"]["airtable_api_key"]
