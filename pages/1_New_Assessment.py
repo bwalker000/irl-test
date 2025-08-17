@@ -87,17 +87,13 @@ air_projects.iloc[0]["Venture"][0]
 records = air_projects[air_projects["Venture"].apply(lambda x: x[0] == venture_id)]
 records
 
-#project_names = air_projects['Name']
+project_names = records['Name']
 
 # Streamlit selectbox for choosing a Name
-#selected_project = st.selectbox('Select a Project to Assess:', options=names)
-
-#
-#
-#
+selected_project = st.selectbox('Select a Project to Assess:', options=names)
 
 if st.button("Continue to Assessment"):
     st.switch_page("pages/12_Assess_&_Review.py")
-###    st.session_state.project = 
+    st.session_state.project = selected_project
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
