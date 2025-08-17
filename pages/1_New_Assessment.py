@@ -36,9 +36,9 @@ st.session_state.assessor_last_name = row["Last Name"].values
 assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
 
-st.write("Assessor: {assessor_first_name} {assessor_last_name}")
-st.write("Support Organization: {}")
-st.write("Venture: {}")
+st.write(f"Assessor: {assessor_first_name} {assessor_last_name}")
+st.write(f"Support Organization: {}")
+st.write(f"Venture: {}")
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
