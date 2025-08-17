@@ -88,21 +88,21 @@ st.write("\n\n")
 #
 # Display details about the assessment
 #
-container1 = st.container(border=True)
+with st.container(border=True)
 
-col_widths = [0.25, 0.75]
-col1, col2 = st.columns(2)
-container1.col1.write("__Assessor:__")
-container1.col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
+    col_widths = [0.25, 0.75]
+    col1, col2 = st.columns(2)
+    container1.col1.write("__Assessor:__")
+    container1.col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
 
-col1.write("__Support Organization:__")
-col2.write(st.session_state.support_name)
+    col1.write("__Support Organization:__")
+    col2.write(st.session_state.support_name)
 
-col1.write("__Venture:__")
-col2.write(st.session_state.venture_name)
+    col1.write("__Venture:__")
+    col2.write(st.session_state.venture_name)
 
-col1.write("__Project:__")
-col2.write(st.session_state.project_name)
+    col1.write("__Project:__")
+    col2.write(st.session_state.project_name)
 
 st.write("\n\n")
 
