@@ -10,24 +10,32 @@ debug = st.checkbox("Enable Airtable debug mode", value=False)
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
-table_name = st.secrets["general"]["airtable_table_assessors"]
 
 # load airtable ASSESSORs table
+table_name = st.secrets["general"]["airtable_table_assessors"]
 air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
+
+# load airtable Ventures table
+table_name = st.secrets["general"]["airtable_ventures"]
+air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
+
+# load airtable Ventures table
+table_name = st.secrets["general"]["airtable_table_support"]
+air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 assessor_name = st.session_state.name
 
 row = air_assessors.loc[air_assessors["Name"] == assessor_name]
 
-first_name = row["First Name"].values
-last_name = row["Last Name"].values
-organization = row["Organization"].values
-venture = row["Venture"].values
+st.session_state.assessor = st.session_state.name
+st.session_state.assessor_first_name = row["First Name"].values
+st.session_state.assessor_last_name = row["Last Name"].values
+#st.session_state.support = row["Organization"].values
+#st.session_state.venture = row["Venture"].values
 
-first_name
-last_name
-organization
-venture
+st.write("Assessor: {st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
+st.write("Support Organization: {}")
+st.write("Venture: {}")
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
