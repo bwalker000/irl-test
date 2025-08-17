@@ -38,14 +38,18 @@ assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
 
 support_org = st.session_state.support_org
+st.write(f"Support id: {support_org}")
+st.write("")
 venture = st.session_state.venture
+st.write(f"Venture id: {venture}")
+st.write("")
 
-venture_row = air_ventures.loc[air_ventures["id"] == venture]
-venture_name = venture_row.iloc[0]["Venture Name"][0]
+#venture_row = air_ventures.loc[air_ventures["id"] == venture]
+#venture_name = venture_row.iloc[0]["Venture Name"][0]
 
 st.write(f"Assessor: {assessor_first_name} {assessor_last_name}")
-st.write(f"Support Organization: {support_org}")
-st.write(f"Venture: {venture_name}")
+#st.write(f"Support Organization: {support_org}")
+#st.write(f"Venture: {venture_name}")
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
