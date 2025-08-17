@@ -92,6 +92,6 @@ records
 
 if st.button("Continue to Assessment"):
     st.switch_page("pages/12_Assess_&_Review.py")
-    st.project = 
+###    st.session_state.project = 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
