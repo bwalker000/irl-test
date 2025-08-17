@@ -51,7 +51,7 @@ support_row = air_support.loc[air_support["id"] == support_id]
 support_row
 support_name = support_row.iloc[0]["Name"]
 
-venture_row = air_ventures.loc[air_ventures["id"] == venture]
+venture_row = air_ventures.loc[air_ventures["id"] == venture_id]
 venture_row
 venture_name = venture_row.iloc[0]["Name"]
 
