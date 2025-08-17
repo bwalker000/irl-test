@@ -37,11 +37,11 @@ st.session_state.venture = row.iloc[0]["Venture"][0]
 assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
 
-support_org = st.session_state.support_org
+support_id = st.session_state.support_org
 #st.write(f"Support id: {support_org}")
 #st.write("")
-venture = st.session_state.venture
-#st.write(f"Venture id: {venture}")
+venture_id = st.session_state.venture
+#st.write(f"Venture id: {venture_id}")
 #st.write("")
 
 #st.write("Columns in air_support:", air_support.columns.tolist())
@@ -66,7 +66,32 @@ col2.write(support_org)
 col1.write("Venture:")
 col2.write(venture_name)
 
+#
+#
+# Select among projects
+#
+#
+
+# Load secrets
+table_name = st.secrets["general"]["airtable_table_projects"]
+
+# load airtable data
+air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
+
+records = table.all(formula=f"{{Venture}} = '{venture_id}'")
+records 
+
+#project_names = air_projects['Name']
+
+# Streamlit selectbox for choosing a Name
+#selected_project = st.selectbox('Select a Project to Assess:', options=names)
+
+#
+#
+#
+
 if st.button("Continue to Assessment"):
     st.switch_page("pages/12_Assess_&_Review.py")
+    st.project = 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
