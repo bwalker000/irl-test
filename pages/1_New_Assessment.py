@@ -78,7 +78,7 @@ table_name = st.secrets["general"]["airtable_table_projects"]
 # load airtable data
 air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-records = table.all(formula=f"{"Venture"} = '{venture_id}'")
+records = table.all(formula=f"{{Venture}} = '{venture_id}'")
 records 
 
 #project_names = air_projects['Name']
