@@ -84,7 +84,7 @@ air_projects
 venture_id
 air_projects.iloc[0]["Venture"][0]
 
-records = air_projects[air_projects["Venture"][0] == venture_id]
+records = air_projects[air_projects["Venture"].apply(lambda x: x[0] == venture_id)]
 records
 
 #project_names = air_projects['Name']
