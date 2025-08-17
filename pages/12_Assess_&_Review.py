@@ -55,6 +55,9 @@ if 'dim' not in st.session_state:
 # Present the page
 # 
 
+st.session_state.project
+
+
 
 dims = (
     df["Dimension"]

@@ -89,7 +89,10 @@ project_names = records['Name']
 selected_project = st.selectbox('Project:', options=project_names)
 
 if st.button("Continue to Assessment"):
+    row = records["Name" == selected_project]
+    st.session_state.project = row["id"]
+    st.session_state.project
     st.switch_page("pages/12_Assess_&_Review.py")
-    st.session_state.project = selected_project
+
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
