@@ -89,8 +89,8 @@ project_names = records['Name']
 selected_project = st.selectbox('Project:', options=project_names)
 
 if st.button("Continue to Assessment"):
-    row = records["Name" == selected_project]
-    st.session_state.project = row["id"]
+    row = records[records["Name"] == selected_project]
+    st.session_state.project = row["id"].iloc[0]
     st.session_state.project
     st.switch_page("pages/12_Assess_&_Review.py")
 
