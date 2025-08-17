@@ -81,6 +81,8 @@ air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
 venture_id
 air_projects
 
+air_projects[0]["Venture"]
+
 records = air_projects[air_projects["Venture"] == venture_id]
 records 
 
