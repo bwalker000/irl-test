@@ -8,9 +8,10 @@ table_name = st.secrets["general"]["airtable_table_assessment"]
 
 # Debug mode toggle
 #debug = st.checkbox("Enable Airtable debug mode", value=False)
+debug = False
 
 # load airtable data
-df, debug_details = load_airtable(table_name, base_id, api_key, debug=False)
+df, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 if debug:
     st.subheader("Airtable API Debug Information")
