@@ -44,8 +44,8 @@ venture_id = st.session_state.venture
 #st.write(f"Venture id: {venture_id}")
 #st.write("")
 
-st.write("Columns in air_support:", air_support.columns.tolist())
-st.write("Columns in air_ventures:", air_ventures.columns.tolist())
+#st.write("Columns in air_support:", air_support.columns.tolist())
+#st.write("Columns in air_ventures:", air_ventures.columns.tolist())
 
 support_row = air_support.loc[air_support["id"] == support_id]
 #support_row
@@ -81,7 +81,7 @@ air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
 venture_id
 air_projects
 
-air_projects[0]['Venture']
+air_projects.iloc[0]["Venture"]
 
 records = air_projects[air_projects["Venture"] == venture_id]
 records
