@@ -30,15 +30,17 @@ row = air_assessors.loc[air_assessors["Name"] == assessor_name]
 st.session_state.assessor = st.session_state.name
 st.session_state.assessor_first_name = row["First Name"].values
 st.session_state.assessor_last_name = row["Last Name"].values
-#st.session_state.support = row["Organization"].values
-#st.session_state.venture = row["Venture"].values
+st.session_state.support_org = row["Organization"].values
+st.session_state.venture = row["Venture"].values
 
 assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
+support_org = st.session_state.support_org
+venture = st.session_state.venture
 
 st.write(f"Assessor: {assessor_first_name} {assessor_last_name}")
-st.write(f"Support Organization: {}")
-st.write(f"Venture: {}")
+st.write(f"Support Organization: {support_org}")
+st.write(f"Venture: {venture}")
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
