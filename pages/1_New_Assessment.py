@@ -33,7 +33,10 @@ st.session_state.assessor_last_name = row["Last Name"].values
 #st.session_state.support = row["Organization"].values
 #st.session_state.venture = row["Venture"].values
 
-st.write("Assessor: {st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
+assessor_first_name = st.session_state.assessor_first_name
+assessor_last_name = st.session_state.assessor_last_name
+
+st.write("Assessor: {assessor_first_name} {assessor_last_name}")
 st.write("Support Organization: {}")
 st.write("Venture: {}")
 
