@@ -88,7 +88,7 @@ st.write("")
 #
 # Display details about the assessment
 #
-col_widths = [0.25 0.75]
+col_widths = [0.25, 0.75]
 col1, col2 = st.columns(2)
 col1.write("__Assessor:__")
 col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")

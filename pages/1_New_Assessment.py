@@ -79,7 +79,7 @@ records = air_projects[air_projects["Venture"].apply(lambda x: x[0] == venture_i
 project_names = records['Name']
 
 # Streamlit selectbox for choosing a Name
-selected_project = st.selectbox('Project:', options=project_names)
+selected_project = st.selectbox('__Project:__', options=project_names)
 
 if st.button("Continue to Assessment"):
     row = records[records["Name"] == selected_project]
