@@ -185,38 +185,41 @@ with st.container(border=True):
         if i < numQ:
             st.markdown("<hr style='margin: 2px 0; border: 0.5px solid #e0e0e0;'>", unsafe_allow_html=True)
 
-#
-# --------------------------------------------------------------------------------------
-# Present specific instructions
-#
-
-
 
 #
 # --------------------------------------------------------------------------------------
 # Gather comments
 #
 
-st.session_state.TA[st.session_state.dim] = st.text_area(
-    "ASSESSOR Comments",
-    value=st.session_state.TA[st.session_state.dim],            # <- prepopulate with previous value
-    height=None,
-    max_chars=1000,
-    key=f"TA_{st.session_state.dim}",                           # <- use a simple, unique key
-    width="stretch",
-    disabled=not (mode == "ASSESSOR")
-)
-
-if mode != "ASSESSOR":
-    st.session_state.TR[st.session_state.dim] = st.text_area(
-        "REVIEWER Comments",
-        value=st.session_state.TR[st.session_state.dim],            # <- prepopulate with previous value
+    st.session_state.TA[st.session_state.dim] = st.text_area(
+        "ASSESSOR Comments",
+        value=st.session_state.TA[st.session_state.dim],            # <- prepopulate with previous value
         height=None,
         max_chars=1000,
-        key=f"TR_{st.session_state.dim}",                           # <- use a simple, unique key
+        key=f"TA_{st.session_state.dim}",                           # <- use a simple, unique key
         width="stretch",
-        disabled=not (mode == "REVIEWER")
+        disabled=not (mode == "ASSESSOR")
     )
+
+    if mode != "ASSESSOR":
+        st.session_state.TR[st.session_state.dim] = st.text_area(
+            "REVIEWER Comments",
+            value=st.session_state.TR[st.session_state.dim],            # <- prepopulate with previous value
+            height=None,
+            max_chars=1000,
+            key=f"TR_{st.session_state.dim}",                           # <- use a simple, unique key
+            width="stretch",
+            disabled=not (mode == "REVIEWER")
+        )
+
+#
+# --------------------------------------------------------------------------------------
+# Present specific instructions
+#
+with st.container(border=True):
+    st.write("__Dimension Instructions:__")
+    instructions = df.loc[df["Dimension"] == dim, "Instructions"].iloc[0]
+    st.write(Instructions)
 
 #
 # -------------------------------------------------------------------------------------------
