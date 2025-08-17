@@ -31,8 +31,8 @@ st.session_state.assessor = st.session_state.name
 st.session_state.assessor_first_name = row.iloc[0]["First Name"]
 st.session_state.assessor_last_name = row.iloc[0]["Last Name"]
 
-st.session_state.support_org = row.iloc[0]["Organization"][0]
-st.session_state.venture = row.iloc[0]["Venture"][0]
+st.session_state.support_org = row.iloc[0]["Organization"]
+st.session_state.venture = row.iloc[0]["Venture"]
 
 assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
@@ -81,7 +81,7 @@ air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
 air_projects
 
 venture_id
-air_projects.iloc[0]["Venture"][0]
+air_projects.iloc[0]["Venture"]
 
 records = air_projects[air_projects["Venture"] == venture_id]
 records
