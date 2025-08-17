@@ -38,11 +38,11 @@ assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
 
 support_id = st.session_state.support_org
-st.write(f"Support id: {support_id}")
-st.write("")
+#st.write(f"Support id: {support_id}")
+#st.write("")
 venture_id = st.session_state.venture
-st.write(f"Venture id: {venture_id}")
-st.write("")
+#st.write(f"Venture id: {venture_id}")
+#st.write("")
 
 st.write("Columns in air_support:", air_support.columns.tolist())
 st.write("Columns in air_ventures:", air_ventures.columns.tolist())
@@ -81,10 +81,10 @@ air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
 venture_id
 air_projects
 
-air_projects[0]["Venture"]
+air_projects[0]['Venture']
 
 records = air_projects[air_projects["Venture"] == venture_id]
-records 
+records
 
 #project_names = air_projects['Name']
 
