@@ -18,7 +18,7 @@ at_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 assessor_name = st.session_state.name
 formula = match({"Name": assessor_name})
-records = at_assessors.all(formula=formula)
+records = at_assessors.all(filterByFormula=formula)
 
 if records:
     assessor_record = records[0]  # Should only be one, as Name is unique
