@@ -70,4 +70,4 @@ def airtable_value_from_id(table, id, field, debug=False):
     #row
     values = row.iloc[0][field]
 
-    return values, debug_details
+    return values
