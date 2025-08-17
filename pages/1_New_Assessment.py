@@ -31,8 +31,8 @@ st.session_state.assessor = st.session_state.name
 st.session_state.assessor_first_name = row.iloc[0]["First Name"]
 st.session_state.assessor_last_name = row.iloc[0]["Last Name"]
 
-st.session_state.support_org = row.iloc[0]["Organization"]
-st.session_state.venture = row.iloc[0]["Venture"]
+st.session_state.support_org = row.iloc[0]["Organization"][0]
+st.session_state.venture = row.iloc[0]["Venture"][0]
 
 assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
