@@ -11,7 +11,8 @@ base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_assessors"]
 
 # Debug mode toggle
-debug = st.checkbox("Enable Airtable debug mode", value=False)
+#debug = st.checkbox("Enable Airtable debug mode", value=False)
+debug = False
 
 # load airtable data
 df, debug_details = load_airtable(table_name, base_id, api_key, debug)

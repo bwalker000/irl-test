@@ -219,7 +219,7 @@ with st.container(border=True):
 with st.container(border=True):
     st.write("__Dimension Instructions:__")
     instructions = df.loc[df["Dimension"] == dim, "Instructions"].iloc[0]
-    st.write(Instructions)
+    st.write("Instructions")
 
 #
 # -------------------------------------------------------------------------------------------
