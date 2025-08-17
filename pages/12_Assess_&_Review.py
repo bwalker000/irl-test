@@ -81,8 +81,7 @@ elif mode == "REVIEWER":
 else:
     st.title("REPORT")
 
-write("")
-
+st.write("")
 
 
 col_widths = [0.06, 0.12, 0.12, 0.70]

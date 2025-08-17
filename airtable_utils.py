@@ -61,7 +61,7 @@ def airtable_value_from_id(table, id, field, debug=False):
 
     Parameters:
     - table (df): Imported table from Airtable
-    - id (str): Airtable 
+    - id (str): Airtable id
     - field (str): name of the field in Airtable to pull the  value from 
     - debug (bool): Whether to return debug info
     """
