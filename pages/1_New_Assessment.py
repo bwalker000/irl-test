@@ -28,8 +28,9 @@ assessor_name = st.session_state.name
 row = air_assessors.loc[air_assessors["Name"] == assessor_name]
 
 st.session_state.assessor = st.session_state.name
-st.session_state.assessor_first_name = row.iloc["First Name"]
-st.session_state.assessor_last_name = row.iloc["Last Name"]
+st.session_state.assessor_first_name = row.iloc[0]["First Name"]
+st.session_state.assessor_last_name = row.iloc[0]["Last Name"]
+
 st.session_state.support_org = row["Organization"].values
 st.session_state.venture = row["Venture"].values
 
