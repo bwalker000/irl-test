@@ -38,21 +38,21 @@ assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
 
 support_id = st.session_state.support_org
-#st.write(f"Support id: {support_org}")
-#st.write("")
+st.write(f"Support id: {support_org}")
+st.write("")
 venture_id = st.session_state.venture
-#st.write(f"Venture id: {venture_id}")
-#st.write("")
+st.write(f"Venture id: {venture_id}")
+st.write("")
 
-#st.write("Columns in air_support:", air_support.columns.tolist())
-#st.write("Columns in air_ventures:", air_ventures.columns.tolist())
+st.write("Columns in air_support:", air_support.columns.tolist())
+st.write("Columns in air_ventures:", air_ventures.columns.tolist())
 
 support_row = air_support.loc[air_support["id"] == support_org]
-#support_row
+support_row
 support_org = support_row.iloc[0]["Name"]
 
 venture_row = air_ventures.loc[air_ventures["id"] == venture]
-#venture_row
+venture_row
 venture_name = venture_row.iloc[0]["Name"]
 
 
