@@ -51,11 +51,12 @@ support_row = air_support.loc[air_support["id"] == support_org]
 support_row
 
 venture_row = air_ventures.loc[air_ventures["id"] == venture]
-venture_name = venture_row.iloc[0]["Venture Name"][0]
+venture_row
+#venture_name = venture_row.iloc[0]["Venture Name"][0]
 
 st.write(f"Assessor: {assessor_first_name} {assessor_last_name}")
 #st.write(f"Support Organization: {support_org}")
-st.write(f"Venture: {venture_name}")
+#st.write(f"Venture: {venture_name}")
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
