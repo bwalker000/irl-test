@@ -44,6 +44,9 @@ venture = st.session_state.venture
 st.write(f"Venture id: {venture}")
 st.write("")
 
+support_row = air_support.loc[air_support["id"] == support_org]
+support_row
+
 #venture_row = air_ventures.loc[air_ventures["id"] == venture]
 #venture_name = venture_row.iloc[0]["Venture Name"][0]
 
