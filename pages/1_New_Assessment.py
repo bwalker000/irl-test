@@ -1,5 +1,4 @@
 from shared import *
-from pyairtable.formulas import match
 
 st.title("Create a New Assessment")
 
@@ -14,28 +13,21 @@ base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_assessors"]
 
 # load airtable ASSESSORs table
-at_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
+air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 assessor_name = st.session_state.name
-formula = match({"Name": assessor_name})
-records = at_assessors.all(filterByFormula=formula)
 
-if records:
-    assessor_record = records[0]  # Should only be one, as Name is unique
-    fields = assessor_record['fields']
-    first_name = fields.get("First Name", "")
-    last_name = fields.get("Last Name", "")
-    organization = fields.get("Organization", [])  # Usually a list of linked record IDs
-    venture = fields.get("Venture", [])            # Usually a list of linked record IDs
-else:
-    st.error("No record found for the given Name.")
+row = air_assessors.loc[air_assessors["Name"] == assessor_name]
 
+first_name = row["First Name"].values
+last_name = row["Last Name"].values
+organization = row["Organization"].values
+venture = row["Venture"].values
 
 first_name
 last_name
 organization
 venture
-
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
