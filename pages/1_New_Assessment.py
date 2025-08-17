@@ -78,6 +78,9 @@ table_name = st.secrets["general"]["airtable_table_projects"]
 # load airtable data
 air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
+venture_id
+air_projects
+
 records = air_projects[air_projects["Venture"] == venture_id]
 records 
 
