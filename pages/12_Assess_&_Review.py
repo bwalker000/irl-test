@@ -34,7 +34,7 @@ if df.empty:
 num_dims = df.shape[0]
 numQ = 10
 
-if 'dim' not in st.session_state:
+if 'dim' not in st.session_state:liva
     st.session_state.dim = 0
 
     # ASSESSOR Question answers
@@ -44,10 +44,10 @@ if 'dim' not in st.session_state:
     st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
 
     # ASSESSOR Text responses
-    st.session_state.TA = [""]*10
+    st.session_state.TA = [""]*num_dims
 
     # REVIEWER Text responses
-    st.session_state.TR = [""]*10
+    st.session_state.TR = [""]*num_dims
 
 #
 #-----------------------------------------------------------------------------------------
@@ -241,4 +241,3 @@ with col3:
     if st.session_state.dim == num_dims - 1:
         if st.button("Submit"):
             st.switch_page("pages/12_Submit.py")
-            

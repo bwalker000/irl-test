@@ -83,6 +83,7 @@ project_names = records['Name']
 selected_project = st.selectbox('__Project:__', options=project_names)
 
 if st.button("Continue to Assessment"):
+    st.session_state.project_id=selected_project
     row = records[records["Name"] == selected_project]
     st.session_state.project = row["id"].iloc[0]
     project_id = st.session_state.project
