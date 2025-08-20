@@ -2,7 +2,7 @@ from shared import *
 
 st.title("Create a New Assessment")
 
-#st.write(st.session_state.name)
+#st.write(st.session_state.assessor)
 
 # Debug mode toggle
 #debug = st.checkbox("Enable Airtable debug mode", value=False)
@@ -20,26 +20,25 @@ air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug
 table_name = st.secrets["general"]["airtable_table_ventures"]
 air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-# load airtable Ventures table
+# load airtable Support table
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-assessor_name = st.session_state.name
+assessor_email = st.session_state.assessor_email
 
-row = air_assessors.loc[air_assessors["Name"] == assessor_name]
+row = air_assessors.loc[air_assessors["Email"] == assessor_email]
 
-st.session_state.assessor = st.session_state.name
 st.session_state.assessor_first_name = row.iloc[0]["First Name"]
 st.session_state.assessor_last_name = row.iloc[0]["Last Name"]
 
-st.session_state.support = row.iloc[0]["Organization"][0]
-st.session_state.venture = row.iloc[0]["Venture"][0]
+st.session_state.support_id = row.iloc[0]["Organization"][0]
+st.session_state.venture_id = row.iloc[0]["Venture"][0]
 
 assessor_first_name = st.session_state.assessor_first_name
 assessor_last_name = st.session_state.assessor_last_name
 
-support_id = st.session_state.support
-venture_id = st.session_state.venture
+support_id = st.session_state.support_id
+venture_id = st.session_state.venture_id
 
 support_name = airtable_value_from_id(air_support, support_id, "Name")
 venture_name = airtable_value_from_id(air_ventures, venture_id, "Name")
@@ -83,7 +82,9 @@ project_names = records['Name']
 selected_project = st.selectbox('__Project:__', options=project_names)
 
 if st.button("Continue to Assessment"):
-    st.session_state.project_id=selected_project
+
+    ### Check the following block
+    st.session_state.project_id = selected_project
     row = records[records["Name"] == selected_project]
     st.session_state.project = row["id"].iloc[0]
     project_id = st.session_state.project

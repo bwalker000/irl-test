@@ -17,13 +17,13 @@ debug = False
 # load airtable data
 df, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-names = df['Name']
+emails = df['Email']
 
 # Streamlit selectbox for choosing a Name
-selected_name = st.selectbox('Select a Name:', options=names)
+selected_email = st.selectbox('Select an Assessor:', options=emails)
 
 if st.button("Assess"):
-    st.session_state.name = selected_name
+    st.session_state.assessor_email = selected_email
     st.switch_page("pages/1_New_Assessment.py")
 if st.button("Home"):
     st.switch_page("streamlit_app.py")

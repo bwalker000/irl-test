@@ -34,7 +34,7 @@ if df.empty:
 num_dims = df.shape[0]
 numQ = 10
 
-if 'dim' not in st.session_state:liva
+if (('dim' not in st.session_state) :
     st.session_state.dim = 0
 
     # ASSESSOR Question answers
