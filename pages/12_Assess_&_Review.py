@@ -34,7 +34,8 @@ if df.empty:
 num_dims = df.shape[0]
 numQ = 10
 
-if (('dim' not in st.session_state) :
+### fix the following to recognize that things are different for ASSESSOR and REVIEWER
+if ('dim' not in st.session_state):
     st.session_state.dim = 0
 
     # ASSESSOR Question answers
@@ -68,7 +69,7 @@ dim = dims[st.session_state.dim]
 if (st.session_state.mode == "ASSESSOR"):
     live_col = 1
     mode = "ASSESSOR"
-elif (mode == "REVIEWER"):
+elif (st.session_state.mode == "REVIEWER"):
     live_col = 2
     mode = "REVIEWER" 
 else:
