@@ -18,10 +18,10 @@ for dim in range(16):  # dim from 0 to 15
     field_name = f"TR_{dim:02d}"
     responses[field_name] = value
 
-responses["Venture"]=st.session_state.venture_id
-responses["Project"]=st.session_state.project_id
-responses["Support"]=st.session_state.support_id
-responses["ASSESSOR"]=st.session_state.assessor
+responses["Venture"] = st.session_state.venture_id
+responses["Project"] = st.session_state.project_id
+responses["Support"] = st.session_state.support_id
+responses["ASSESSOR"] = st.session_state.assessor_email
 
 today = date.today()
 airtable_date = today.isoformat()
