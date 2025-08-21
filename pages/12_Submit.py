@@ -3,19 +3,18 @@ from shared import *
 # This page saves the assessment to the airtable database
 responses = {}
 
-for i, value in enumerate(st.session_state.QA):
-    field_name = f"QA_{dim:02d}_{i}"
-    responses[field_name] = value
+for dim in range(16):  # dim from 0 to 15
+    for i, value in enumerate(st.session_state.QA[dim]):
+        field_name = f"QA_{dim:02d}_{i}"
+        responses[field_name] = value
 
-for i, value in enumerate(st.session_state.QR):
-    field_name = f"QR_{dim:02d}_{i}"
-    responses[field_name] = value
+    for i, value in enumerate(st.session_state.QR[dim]):
+        field_name = f"QR_{dim:02d}_{i}"
+        responses[field_name] = value
 
-for i, value in enumerate(st.session_state.TA):
     field_name = f"TA_{dim:02d}"
     responses[field_name] = value
 
-for i, value in enumerate(st.session_state.TR):
     field_name = f"TR_{dim:02d}"
     responses[field_name] = value
 
