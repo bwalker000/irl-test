@@ -27,11 +27,14 @@ responses["ASSESSOR"]=st.session_state.assessor
 today = date.today()
 airtable_date = today.isoformat()
 
-if st.session_state.mode="ASSESSOR":
-    responses["Name"]=
-    responses["Assess_date"]=airtable_date
-elif st.session_state.mode="REVIEWER":
+venture_name = st.session_state.venture_name
+project_name = st.session_state.project_name
 
+if st.session_state.mode == "ASSESSOR":
+    responses["Name"] = venture_name + " - " + project_name + " - " airtable_date
+    responses["Assess_date"] = airtable_date
+elif st.session_state.mode == "REVIEWER":
+    responses["Review_date"] = airtable_date
 #
 #
 #
@@ -43,7 +46,5 @@ table = Table(API_KEY, BASE_ID, TABLE_NAME)
 table.create(responses)
 
 
-
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
-    
