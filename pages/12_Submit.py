@@ -6,18 +6,22 @@ responses = {}
 st.write(type(st.session_state.QA))
 st.write(st.session_state.QA)
 
-for dim in range(16):  # dim from 0 to 15
+
+for dim in range(st.session_state.QA.shape[0]):
     for i, value in enumerate(st.session_state.QA[dim]):
         field_name = f"QA_{dim:02d}_{i}"
         responses[field_name] = value
 
+for dim in range(st.session_state.QR.shape[0]):
     for i, value in enumerate(st.session_state.QR[dim]):
         field_name = f"QR_{dim:02d}_{i}"
         responses[field_name] = value
 
+for dim in range(st.session_state.TA.shape[0]):
     field_name = f"TA_{dim:02d}"
     responses[field_name] = value
 
+for dim in range(st.session_state.TR.shape[0]):
     field_name = f"TR_{dim:02d}"
     responses[field_name] = value
 
