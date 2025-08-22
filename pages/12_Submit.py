@@ -6,7 +6,7 @@ responses = {}
 #st.write(type(st.session_state.QA))
 #st.write(st.session_state.QA)
 
-'''
+
 for dim in range(st.session_state.QA.shape[0]):
     for i, value in enumerate(st.session_state.QA[dim]):
         field_name = f"QA_{dim:02d}_{i}"
@@ -24,10 +24,10 @@ for dim, value in enumerate(st.session_state.TA):
 for dim, value in enumerate(st.session_state.TR):
     field_name = f"TR_{dim:02d}"
     responses[field_name] = value
-'''
-responses["Venture"] = st.session_state.venture_id
+
+#responses["Venture"] = st.session_state.venture_id
 #responses["Project"] = st.session_state.project_id
-responses["Support"] = st.session_state.support_id
+#responses["Support"] = st.session_state.support_id
 #responses["ASSESSOR"] = st.session_state.assessor_id
 
 today = date.today()
@@ -36,13 +36,13 @@ airtable_date = today.isoformat()
 venture_name = st.session_state.venture_name
 project_name = st.session_state.project_name
 
-'''
+
 if st.session_state.mode == "ASSESSOR":
     responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date
     responses["Assess_date"] = airtable_date
 elif st.session_state.mode == "REVIEWER":
     responses["Review_date"] = airtable_date
-    '''
+
 #
 #
 
