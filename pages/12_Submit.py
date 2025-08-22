@@ -61,6 +61,8 @@ for k, v in responses.items():
         v = v.item()  # Converts numpy types to native types
     cleaned_responses[k] = v
 
+cleaned_responses
+
 table.create(cleaned_responses)
 
 
