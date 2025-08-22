@@ -28,6 +28,8 @@ assessor_email = st.session_state.assessor_email
 
 row = air_assessors.loc[air_assessors["Email"] == assessor_email]
 
+st.session_state.assessor_id = row.iloc[0]["id"][0]
+
 st.session_state.assessor_first_name = row.iloc[0]["First Name"]
 st.session_state.assessor_last_name = row.iloc[0]["Last Name"]
 
