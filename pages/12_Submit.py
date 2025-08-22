@@ -27,8 +27,8 @@ for dim, value in enumerate(st.session_state.TR):
 '''
 #responses["Venture"] = st.session_state.venture_id
 #responses["Project"] = st.session_state.project_id
-#responses["Support"] = st.session_state.support_id
-responses["ASSESSOR"] = st.session_state.assessor_email
+responses["Support"] = st.session_state.support_id
+#responses["ASSESSOR"] = st.session_state.assessor_email
 
 today = date.today()
 airtable_date = today.isoformat()
