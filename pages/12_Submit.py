@@ -3,6 +3,9 @@ from shared import *
 # This page saves the assessment to the airtable database
 responses = {}
 
+st.write(type(st.session_state.QA))
+st.write(st.session_state.QA)
+
 for dim in range(16):  # dim from 0 to 15
     for i, value in enumerate(st.session_state.QA[dim]):
         field_name = f"QA_{dim:02d}_{i}"
