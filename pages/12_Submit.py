@@ -3,8 +3,8 @@ from shared import *
 # This page saves the assessment to the airtable database
 responses = {}
 
-st.write(type(st.session_state.QA))
-st.write(st.session_state.QA)
+#st.write(type(st.session_state.QA))
+#st.write(st.session_state.QA)
 
 
 for dim in range(st.session_state.QA.shape[0]):
@@ -25,9 +25,9 @@ for dim, value in enumerate(st.session_state.TR):
     field_name = f"TR_{dim:02d}"
     responses[field_name] = value
 
-responses["Venture"] = st.session_state.venture_id
-responses["Project"] = st.session_state.project_id
-responses["Support"] = st.session_state.support_id
+#responses["Venture"] = st.session_state.venture_id
+#responses["Project"] = st.session_state.project_id
+#responses["Support"] = st.session_state.support_id
 responses["ASSESSOR"] = st.session_state.assessor_email
 
 today = date.today()
