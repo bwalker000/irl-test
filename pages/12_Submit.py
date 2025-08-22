@@ -48,7 +48,7 @@ api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_data"]
 
-table = Table(API_KEY, BASE_ID, TABLE_NAME)
+table = Table(api_key, base_id, table_name)
 table.create(responses)
 
 
