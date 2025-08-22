@@ -17,11 +17,11 @@ for dim in range(st.session_state.QR.shape[0]):
         field_name = f"QR_{dim:02d}_{i}"
         responses[field_name] = value
 
-for dim in range(st.session_state.TA):
+for dim, value in enumerate(st.session_state.TA):
     field_name = f"TA_{dim:02d}"
     responses[field_name] = value
 
-for dim in range(st.session_state.TR):
+for dim, value in enumerate(st.session_state.TR):
     field_name = f"TR_{dim:02d}"
     responses[field_name] = value
 
