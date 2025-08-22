@@ -49,7 +49,17 @@ base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_data"]
 
 table = Table(api_key, base_id, table_name)
-table.create(responses)
+
+
+# Convert numpy types to native Python types before sending to Airtable
+cleaned_responses = {}
+for k, v in responses.items():
+    # Convert numpy bool to plain Python bool
+    if isinstance(v, np.generic):
+        v = v.item()  # Converts numpy types to native types
+    cleaned_responses[k] = v
+
+table.create(cleaned_responses)
 
 
 if st.button("Home"):
