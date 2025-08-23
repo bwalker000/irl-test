@@ -67,7 +67,7 @@ def airtable_value_from_id(table, id, field, debug=False):
     """
 
     st.write(id)
-    st_write(type(id))
+    st.write(type(id))
 
     row = table.loc[table["id"] == id[0]]
     st.write(row)
