@@ -66,11 +66,11 @@ def airtable_value_from_id(table, id, field, debug=False):
     - debug (bool): Whether to return debug info
     """
 
-    st.write(id)
-    st.write(type(id))
+    #st.write(id)
+    #st.write(type(id))
 
     row = table.loc[table["id"] == id[0]]
-    st.write(row)
+    #st.write(row)
     values = row.iloc[0][field]
 
     return values

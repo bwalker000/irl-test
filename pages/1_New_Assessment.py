@@ -70,15 +70,15 @@ with st.container(border=True):
     #venture_id
     #air_projects.iloc[0]["Venture"][0]
 
-    records = air_projects[air_projects["Venture"].apply(lambda x: x[0] == venture_id)]
-    #records
+    records = air_projects[air_projects["Venture"].apply(lambda x: x[0] 
+            == st.session_state.venture_id)]
 
     project_names = records['Name']
 
     # Streamlit selectbox for choosing a Name
     selected_project = st.selectbox('__Project:__', options=project_names)
 
-    st.write()
+    st.write("\n")
 
 if st.button("Continue to Assessment"):
 
