@@ -66,7 +66,7 @@ def airtable_value_from_id(table, id, field, debug=False):
     - debug (bool): Whether to return debug info
     """
 
-    row = table.loc[table["id"] == id]
+    row = table.loc[table["id"] == id[0]]
     #row
     values = row.iloc[0][field]
 

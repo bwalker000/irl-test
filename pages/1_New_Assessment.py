@@ -28,60 +28,57 @@ assessor_email = st.session_state.assessor_email
 
 row = air_assessors.loc[air_assessors["Email"] == assessor_email]
 
-st.session_state.assessor_id = row.iloc[0]["id"][0]
+st.session_state.assessor_id = row.iloc[0]["id"]
 
 st.session_state.assessor_first_name = row.iloc[0]["First Name"]
 st.session_state.assessor_last_name = row.iloc[0]["Last Name"]
 
-st.session_state.support_id = row.iloc[0]["Organization"][0]
-st.session_state.venture_id = row.iloc[0]["Venture"][0]
+st.session_state.support_id = row.iloc[0]["Organization"]
+st.session_state.venture_id = row.iloc[0]["Venture"]
 
-assessor_first_name = st.session_state.assessor_first_name
-assessor_last_name = st.session_state.assessor_last_name
-
-support_id = st.session_state.support_id
-venture_id = st.session_state.venture_id
-
-support_name = airtable_value_from_id(air_support, support_id, "Name")
-venture_name = airtable_value_from_id(air_ventures, venture_id, "Name")
-
-st.session_state.support_name = support_name
-st.session_state.venture_name = venture_name
+st.session_state.support_name = airtable_value_from_id(air_support, 
+        st.session_state.support_id, "Name")
+st.session_state.venture_name = airtable_value_from_id(air_ventures, 
+        st.session_state.venture_id, "Name")
 
 #
 # Display details about the assessment
 #
-col1, col2 = st.columns(2)
-col1.write("__Assessor:__")
-col2.write(f"{assessor_first_name} {assessor_last_name}")
+with st.container(border=True):
 
-col1.write("__Support Organization:__")
-col2.write(support_name)
+    col1, col2 = st.columns(2)
+    col1.write("__Assessor:__")
+    col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
 
-col1.write("__Venture:__")
-col2.write(venture_name)
+    col1.write("__Support Organization:__")
+    col2.write(support_name)
 
-#
-# Select among projects
-#
+    col1.write("__Venture:__")
+    col2.write(venture_name)
 
-# Load secrets
-table_name = st.secrets["general"]["airtable_table_projects"]
+    #
+    # Select among projects
+    #
 
-# load airtable data
-air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
+    # Load secrets
+    table_name = st.secrets["general"]["airtable_table_projects"]
 
-#air_projects
-#venture_id
-#air_projects.iloc[0]["Venture"][0]
+    # load airtable data
+    air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-records = air_projects[air_projects["Venture"].apply(lambda x: x[0] == venture_id)]
-#records
+    #air_projects
+    #venture_id
+    #air_projects.iloc[0]["Venture"][0]
 
-project_names = records['Name']
+    records = air_projects[air_projects["Venture"].apply(lambda x: x[0] == venture_id)]
+    #records
 
-# Streamlit selectbox for choosing a Name
-selected_project = st.selectbox('__Project:__', options=project_names)
+    project_names = records['Name']
+
+    # Streamlit selectbox for choosing a Name
+    selected_project = st.selectbox('__Project:__', options=project_names)
+
+    st.write("\n")
 
 if st.button("Continue to Assessment"):
 
