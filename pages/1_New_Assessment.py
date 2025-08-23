@@ -70,8 +70,7 @@ with st.container(border=True):
     #venture_id
     #air_projects.iloc[0]["Venture"][0]
 
-    records = air_projects[
-            air_projects["Venture"].apply(lambda x: x[0] == st.session_state.venture_id)[0]]
+    records = air_projects[air_projects["Venture"].apply(lambda x: x[0] == st.session_state.venture_id[0])]
 
     project_names = records['Name']
 
