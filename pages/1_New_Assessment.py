@@ -51,10 +51,10 @@ with st.container(border=True):
     col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
 
     col1.write("__Support Organization:__")
-    col2.write(support_name)
+    col2.write(st.session_state.support_name)
 
     col1.write("__Venture:__")
-    col2.write(venture_name)
+    col2.write(st.session_state.venture_name)
 
     #
     # Select among projects
