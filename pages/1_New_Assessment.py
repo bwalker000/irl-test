@@ -78,7 +78,7 @@ with st.container(border=True):
     # Streamlit selectbox for choosing a Name
     selected_project = st.selectbox('__Project:__', options=project_names)
 
-    st.write("\n")
+    st.write()
 
 if st.button("Continue to Assessment"):
 
