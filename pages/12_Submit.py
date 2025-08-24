@@ -43,8 +43,6 @@ if st.session_state.mode == "ASSESSOR":
 elif st.session_state.mode == "REVIEWER":
     responses["Review_date"] = airtable_date
 
-#
-#
 
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
@@ -61,10 +59,15 @@ for k, v in responses.items():
         v = v.item()  # Converts numpy types to native types
     cleaned_responses[k] = v
 
-cleaned_responses
+#cleaned_responses
 
 table.create(cleaned_responses)
 
+
+if st.session_state.mode == "ASSESSOR":
+    st.success("Assessment submitted successfully!")
+elif st.session_state.mode == "REVIEWER":
+    st.success("Review submitted successfully!")
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
