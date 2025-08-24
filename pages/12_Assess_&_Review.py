@@ -1,7 +1,5 @@
 from shared import *
 
-st.session_state.project_id
-
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
