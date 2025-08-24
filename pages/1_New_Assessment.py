@@ -83,7 +83,7 @@ if st.button("Continue to Assessment"):
 
     ### Check the following block
     row = records[records["Name"] == st.session_state.project_name]
-    st.session_state.project_id = row["id"]
+    st.session_state.project_id = row["id"].tolist()
 
     st.switch_page("pages/12_Assess_&_Review.py")
 
