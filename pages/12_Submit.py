@@ -30,19 +30,7 @@ responses["Project"] = st.session_state.project_id
 responses["Support"] = st.session_state.support_id
 responses["ASSESSOR"] = st.session_state.assessor_id
 
-#st.write(st.session_state.venture_id)
-#st.write(type(st.session_state.venture_id))
-
-#st.write(st.session_state.project_id)
-#st.write(type(st.session_state.project_id))
-
-#st.write(st.session_state.support_id)
-#st.write(type(st.session_state.support_id))
-
-#st.write(st.session_state.assessor_id)
-#st.write(type(st.session_state.assessor_id))
-
-today = date.today()
+today = datetime.now().date()
 airtable_date = today.isoformat()
 
 venture_name = st.session_state.venture_name
