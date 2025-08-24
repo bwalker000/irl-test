@@ -75,20 +75,16 @@ with st.container(border=True):
     project_names = records['Name']
 
     # Streamlit selectbox for choosing a Name
-    selected_project = st.selectbox('__Project:__', options=project_names)
+    st.session_state.project_name = st.selectbox('__Project:__', options=project_names)
 
     #st.write("\n")
-
-selected_project
 
 if st.button("Continue to Assessment"):
 
     ### Check the following block
-    st.session_state.project_id = selected_project
-#    row = records[records["Name"] == selected_project]
-#    st.session_state.project_name = row["id"].iloc[0]
-#    project_id = st.session_state.project
-    st.session_state.project_name = airtable_value_from_id(air_projects, st.session_state.project_id, "Name")
+    row = records[records["Name"] == st.session_state.project_name]
+    st.session_state.project_id = row["id"].iloc[0]
+    
     st.switch_page("pages/12_Assess_&_Review.py")
 
 if st.button("Home"):
