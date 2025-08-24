@@ -20,10 +20,9 @@ df, debug_details = load_airtable(table_name, base_id, api_key, debug)
 emails = df['Email']
 
 # Streamlit selectbox for choosing a Name
-selected_email = st.selectbox('Select an Assessor:', options=emails)
+st.session_state.assessor_email = st.selectbox('Select an Assessor:', options=emails)
 
 if st.button("Assess"):
-    st.session_state.assessor_email = selected_email
     st.switch_page("pages/1_New_Assessment.py")
 if st.button("Home"):
     st.switch_page("streamlit_app.py")

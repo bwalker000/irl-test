@@ -24,11 +24,9 @@ air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-assessor_email = st.session_state.assessor_email
+row = air_assessors.loc[air_assessors["Email"] == st.session_state.assessor_email]
 
-row = air_assessors.loc[air_assessors["Email"] == assessor_email]
-
-st.session_state.assessor_id = row.iloc[0]["id"]
+st.session_state.assessor_id = row["id"].tolist()
 
 st.session_state.assessor_first_name = row.iloc[0]["First Name"]
 st.session_state.assessor_last_name = row.iloc[0]["Last Name"]
