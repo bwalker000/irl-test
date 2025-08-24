@@ -83,10 +83,10 @@ if st.button("Continue to Assessment"):
 
     ### Check the following block
     st.session_state.project_id = selected_project
-    row = records[records["Name"] == selected_project]
-    st.session_state.project = row["id"].iloc[0]
-    project_id = st.session_state.project
-    st.session_state.project_name = airtable_value_from_id(air_projects, project_id, "Name")
+#    row = records[records["Name"] == selected_project]
+#    st.session_state.project_name = row["id"].iloc[0]
+#    project_id = st.session_state.project
+    st.session_state.project_name = airtable_value_from_id(air_projects, st.session_state.project_id, "Name")
     st.switch_page("pages/12_Assess_&_Review.py")
 
 if st.button("Home"):
