@@ -41,32 +41,32 @@ st.session_state.reviewer_first_name = row.iloc[0]["First Name"]
 st.session_state.reviewer_last_name = row.iloc[0]["Last Name"]
 
 #---------------------------------------------------------------------------------
+# Load names an id of support organization
 # load airtable Support table
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-# Determine the id and name of the support organization associated with the current reviewer
+# load airtable REVIEWERs table
+table_name = st.secrets["general"]["airtable_table_reviewers"]
+air_reviewers, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-st.session_state.reviewer_id
-st.write(type(st.session_state.reviewer_id))
+# Determine the id and name of the support organization associated with the reviewer
+row = air_reviewers.loc[air_assessors["id"] == st.session_state.reviewer_id]
+st.session_state.support_id = row["Support Organizations"].tolist()
 
-air_support
-st.write(type(air_support))
+row = air_support.loc[air_support["id"] == st.session_state.support_id]
+st.session_state.support_name = row["Name"].tolist()
 
-air_support["REVIEWERs"]
-st.write(type(air_support["REVIEWERs"]))
+#---------------------------------------------------------------------------------
+# Build a set of ventures associated with the support org
 
-air_support["REVIEWERs"][0]
-st.write(type(air_support["REVIEWERs"][0]))
+# load airtable Ventures table
+table_name = st.secrets["general"]["airtable_table_ventures"]
+air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-mask = air_support["REVIEWERs"].apply(lambda x: st.session_state.reviewer_id in x)
-row = air_support.loc[mask]
+rows = air_ventures.loc[air_ventures["Support Organizations"] == st.session_state.support_id]
 
-row
-
-st.session_state.support_id = row["id"].tolist()
-st.session_state.support_name = airtable_value_from_id(air_support, 
-        st.session_state.support_id, "id")
+rows
 
 #---------------------------------------------------------------------------------
 # Prepare a list of the assessments ready for review
@@ -82,8 +82,6 @@ st.session_state.support_name = airtable_value_from_id(air_support,
 # Then need to filter out all the assessments that have had a review performed.
 # Then need to build the selection mechanism.
 
-st.session_state.support_id
-st.session_state.support_name
 
 
 
