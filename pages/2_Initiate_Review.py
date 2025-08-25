@@ -12,7 +12,7 @@ st.title("Initiate a Review of an existing Assessment")
 
 # Debug mode toggle
 #debug = st.checkbox("Enable Airtable debug mode", value=False)
-debug = True
+debug = False
 
 # Load shared secrets
 api_key = st.secrets["general"]["airtable_api_key"]
@@ -50,6 +50,10 @@ air_reviewers, debug_details = load_airtable(table_name, base_id, api_key, debug
 # Determine the id and name of the support organization associated with the reviewer
 row = air_reviewers.loc[air_reviewers["id"] == st.session_state.reviewer_id[0]]
 st.session_state.support_id = row["Support Organizations"].tolist()
+
+st.session_state.support_id
+
+air_support
 
 st.session_state.support_name = airtable_value_from_id(air_support, 
         st.session_state.support_id, "Name")
