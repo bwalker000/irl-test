@@ -61,12 +61,13 @@ st.session_state.support_name = airtable_value_from_id(air_support,
 
 # load airtable Data table for records corresponding to the support org
 table_name = st.secrets["general"]["airtable_table_data"]
-selected_air_ventures = match({"Support Organization": st.session_state.support_id})
+table = Table(api_key, base_id, table_name)
+formula = match({"Support Organization": st.session_state.support_id})
 
 records = table.all(formula=formula)
 record_ids = [record["id"] for record in records]
 
-selected_air_ventures
+records
 record_ids
 
 
