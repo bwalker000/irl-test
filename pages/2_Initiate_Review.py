@@ -1,20 +1,12 @@
 from shared import *
 
-<<<<<<< HEAD
 ''' Assumptions:
-=======
-""" Assumptions:
->>>>>>> 86197ff931208c98255f3e7cec13e5726392d81d
         A specific ASSESSOR is intrinsically tied to:
             A specific venture
         A specific venture is intrinsically tied to:
             A specific support organization
         The ASSESSOR can select which project they are interested in assessing.
-<<<<<<< HEAD
 '''
-=======
-"""
->>>>>>> 86197ff931208c98255f3e7cec13e5726392d81d
 
 st.title("Initiate a Review of an existing Assessment")
 
@@ -29,22 +21,14 @@ debug = False
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 
-<<<<<<< HEAD
 '''
-=======
-"""
->>>>>>> 86197ff931208c98255f3e7cec13e5726392d81d
 The only options available should be for the support org associated with the reviewer
 
 1. Figure out which ventures are associated with the reviewers support org.
 2. Reviewer selects which assessment they would like to review
 3. Then move on to performing the review
 
-<<<<<<< HEAD
 '''
-=======
-"""
->>>>>>> 86197ff931208c98255f3e7cec13e5726392d81d
 
 #---------------------------------------------------------------------------------
 # load airtable Reviewers table
@@ -64,15 +48,8 @@ air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 # Determine the id and name of the support organization associated with the current reviewer
 
-<<<<<<< HEAD
 mask = air_support["REVIEWERs"].apply(lambda x: st.session_state.reviewer_id in x)
 row = air_support.loc[mask]
-=======
-### *** This is probably wrong. Probably need to use id, not Email.
-row = air_support.loc[air_support["REVIEWERs"] == st.session_state.reviewer_id]
-
-row
->>>>>>> 86197ff931208c98255f3e7cec13e5726392d81d
 
 st.session_state.support_id = row["id"].tolist()
 st.session_state.support_name = airtable_value_from_id(air_support, 
