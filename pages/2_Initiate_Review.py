@@ -59,16 +59,16 @@ st.session_state.support_name = airtable_value_from_id(air_support,
 #---------------------------------------------------------------------------------
 # Build a set of ventures associated with the support org
 
-# load airtable Ventures table
-table_name = st.secrets["general"]["airtable_table_ventures"]
-air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
+# load airtable Data table for records corresponding to the support org
+table_name = st.secrets["general"]["airtable_table_data"]
+selected_air_ventures = match({"Support Organization": st.session_state.support_id})
 
-air_ventures
-st.session_state.support_id
+records = table.all(formula=formula)
+record_ids = [record["id"] for record in records]
 
-rows = air_ventures.loc[air_ventures["Support Organizations"] == st.session_state.support_id]
+selected_air_ventures
+record_ids
 
-rows
 
 #---------------------------------------------------------------------------------
 # Prepare a list of the assessments ready for review
