@@ -8,7 +8,8 @@ from shared import *
         The ASSESSOR can select which project they are interested in assessing.
 """
 
-st.title("Create a New Assessment")
+st.title("Initiate a Review of an existing Assessment")
+
 
 #st.write(st.session_state.assessor)
 
@@ -20,6 +21,62 @@ debug = False
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 
+"""
+The only options available should be for the support org associated with the reviewer
+
+1. Figure out which ventures are associated with the reviewers support org.
+2. Reviewer selects which assessment they would like to review
+3. Then move on to performing the review
+
+"""
+
+#---------------------------------------------------------------------------------
+# load airtable Reviewers table
+table_name = st.secrets["general"]["airtable_table_reviewers"]
+air_reviewers, debug_details = load_airtable(table_name, base_id, api_key, debug)
+
+# Determine the id, first name, and last name of the Reviewer
+row = air_reviewers.loc[air_reviewers["Email"] == st.session_state.reviewer_email]
+st.session_state.reviewer_id = row["id"].tolist()
+st.session_state.reviewer_first_name = row.iloc[0]["First Name"]
+st.session_state.reviewer_last_name = row.iloc[0]["Last Name"]
+
+#---------------------------------------------------------------------------------
+# load airtable Support table
+table_name = st.secrets["general"]["airtable_table_support"]
+air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
+
+# Determine the id and name of the support organization associated with the current reviewer
+
+### *** This is probably wrong. Probably need to use id, not Email.
+row = air_support.loc[air_support["REVIEWERs"] == st.session_state.reviewer_id]
+
+row
+
+st.session_state.support_id = row["id"].tolist()
+st.session_state.support_name = airtable_value_from_id(air_support, 
+        st.session_state.support_id, "Name")
+
+#---------------------------------------------------------------------------------
+# Prepare a list of the assessments ready for review
+
+# Do I want a pulldown, or a list with a radio button? 
+# Seems like there is too much information for a pulldown.
+# That leads to a list with a single select radio button.
+
+# Does the assesssment need to be tied to the reviewer, or just the support org?
+# I think that the support org.
+
+# Need to find all assessments associated with the support org
+# Then need to filter out all the assessments that have had a review performed.
+# Then need to build the selection mechanism.
+
+
+
+
+
+
+
 # load airtable ASSESSORs table
 table_name = st.secrets["general"]["airtable_table_assessors"]
 air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
@@ -28,9 +85,7 @@ air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug
 table_name = st.secrets["general"]["airtable_table_ventures"]
 air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-# load airtable Support table
-table_name = st.secrets["general"]["airtable_table_support"]
-air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
+
 
 row = air_assessors.loc[air_assessors["Email"] == st.session_state.assessor_email]
 
@@ -85,11 +140,9 @@ with st.container(border=True):
 
     #st.write("\n")
 
-if st.button("Continue to Assessment"):
+if st.button("Continue to Review"):
 
-    ### Check the following block
-    row = records[records["Name"] == st.session_state.project_name]
-    st.session_state.project_id = row["id"].tolist()
+    # Need to load in the assessment data.
 
     st.switch_page("pages/12_Assess_&_Review.py")
 

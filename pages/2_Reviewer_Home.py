@@ -12,23 +12,20 @@ base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_reviewers"]
 
 # Debug mode toggle
-debug = st.checkbox("Enable Airtable debug mode", value=False)
+#debug = st.checkbox("Enable Airtable debug mode", value=False)
+debug = False
 
 # load airtable data
-df, debug_details = load_airtable(table_name, base_id, api_key, debug)
+air_reviewers, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-names = df['Name']
+reviewer_emails = air_reviewers['Email']
 
-# Streamlit selectbox for choosing a Name
-selected_name = st.selectbox('Select a Name:', options=names)
+# Streamlit selectbox for choosing a Reviewer by email
+### *** This will go away in the future and be part of login
+st.session_state.reviewer_email = st.selectbox('Select a REVIEWER:', options=reviewer_emails)
 
-names = df['Name']
-
-# Streamlit selectbox for choosing a Name
-selected_name = st.selectbox('Select a Name:', options=names)
-
-if st.button("Review"):
-    st.switch_page("pages/12_Assess_&_Review.py")
+if st.button("Initiate Review"):
+    st.switch_page("pages/2_Initiate_Review.py")
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
 
