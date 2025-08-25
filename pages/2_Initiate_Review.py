@@ -49,7 +49,9 @@ air_reviewers, debug_details = load_airtable(table_name, base_id, api_key, debug
 
 # Determine the id and name of the support organization associated with the reviewer
 row = air_reviewers.loc[air_reviewers["id"] == st.session_state.reviewer_id[0]]
-st.session_state.support_id = row["Support Organizations"].tolist()
+
+# this comes out as a list. Normally we would add .tolist(), but not here.
+st.session_state.support_id = row["Support Organizations"]
 
 st.session_state.support_id
 
