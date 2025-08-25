@@ -47,6 +47,9 @@ air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 # Determine the id and name of the support organization associated with the current reviewer
 
+st.session_state.reviewer_id
+air_support
+
 mask = air_support["REVIEWERs"].apply(lambda x: st.session_state.reviewer_id in x)
 row = air_support.loc[mask]
 
