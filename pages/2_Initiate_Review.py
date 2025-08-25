@@ -46,16 +46,16 @@ st.session_state.reviewer_last_name = row.iloc[0]["Last Name"]
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-st.write(air_support)
-
 # Determine the id and name of the support organization associated with the current reviewer
 
 mask = air_support["REVIEWERs"].apply(lambda x: st.session_state.reviewer_id in x)
 row = air_support.loc[mask]
 
+row
+
 st.session_state.support_id = row["id"].tolist()
 st.session_state.support_name = airtable_value_from_id(air_support, 
-        st.session_state.support_id, "Name")
+        st.session_state.support_id, "id")
 
 #---------------------------------------------------------------------------------
 # Prepare a list of the assessments ready for review
@@ -71,8 +71,8 @@ st.session_state.support_name = airtable_value_from_id(air_support,
 # Then need to filter out all the assessments that have had a review performed.
 # Then need to build the selection mechanism.
 
-
-
+st.session_state.support_id
+st.session_state.support_name
 
 
 
