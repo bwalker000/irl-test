@@ -1,12 +1,12 @@
 from shared import *
 
-''' Assumptions:
-        A specific ASSESSOR is intrinsically tied to:
-            A specific venture
-        A specific venture is intrinsically tied to:
-            A specific support organization
-        The ASSESSOR can select which project they are interested in assessing.
-'''
+# Assumptions:
+#        A specific ASSESSOR is intrinsically tied to:
+#            A specific venture
+#        A specific venture is intrinsically tied to:
+#            A specific support organization
+#        The ASSESSOR can select which project they are interested in assessing.
+
 
 st.title("Initiate a Review of an existing Assessment")
 
@@ -21,14 +21,13 @@ debug = False
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 
-'''
-The only options available should be for the support org associated with the reviewer
 
-1. Figure out which ventures are associated with the reviewers support org.
-2. Reviewer selects which assessment they would like to review
-3. Then move on to performing the review
+# The only options available should be for the support org associated with the reviewer
 
-'''
+# 1. Figure out which ventures are associated with the reviewers support org.
+# 2. Reviewer selects which assessment they would like to review
+# 3. Then move on to performing the review
+
 
 #---------------------------------------------------------------------------------
 # load airtable Reviewers table
