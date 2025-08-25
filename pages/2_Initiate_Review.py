@@ -51,7 +51,7 @@ table_name = st.secrets["general"]["airtable_table_reviewers"]
 air_reviewers, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 # Determine the id and name of the support organization associated with the reviewer
-row = air_reviewers.loc[air_assessors["id"] == st.session_state.reviewer_id]
+row = air_reviewers.loc[air_reviewers["id"] == st.session_state.reviewer_id]
 st.session_state.support_id = row["Support Organizations"].tolist()
 
 row = air_support.loc[air_support["id"] == st.session_state.support_id]
