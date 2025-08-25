@@ -46,6 +46,8 @@ st.session_state.reviewer_last_name = row.iloc[0]["Last Name"]
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
+st.write(air_support)
+
 # Determine the id and name of the support organization associated with the current reviewer
 
 mask = air_support["REVIEWERs"].apply(lambda x: st.session_state.reviewer_id in x)
