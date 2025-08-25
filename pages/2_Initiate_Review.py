@@ -53,10 +53,6 @@ row = air_reviewers.loc[air_reviewers["id"] == st.session_state.reviewer_id[0]]
 # this comes out as a list. Normally we would add .tolist(), but not here.
 st.session_state.support_id = row["Support Organizations"][0]
 
-st.session_state.support_id
-
-air_support
-
 st.session_state.support_name = airtable_value_from_id(air_support, 
         st.session_state.support_id, "Name")
 
@@ -66,6 +62,9 @@ st.session_state.support_name = airtable_value_from_id(air_support,
 # load airtable Ventures table
 table_name = st.secrets["general"]["airtable_table_ventures"]
 air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
+
+air_ventures
+st.session_state.support_id
 
 rows = air_ventures.loc[air_ventures["Support Organizations"] == st.session_state.support_id]
 
