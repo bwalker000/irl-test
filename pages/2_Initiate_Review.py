@@ -49,6 +49,8 @@ air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
 st.session_state.reviewer_id
 air_support
+air_support["REVIEWERs"]
+air_support["REVIEWERs"][0]
 
 mask = air_support["REVIEWERs"].apply(lambda x: st.session_state.reviewer_id in x)
 row = air_support.loc[mask]
