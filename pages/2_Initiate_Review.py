@@ -10,12 +10,9 @@ from shared import *
 
 st.title("Initiate a Review of an existing Assessment")
 
-
-#st.write(st.session_state.assessor)
-
 # Debug mode toggle
 #debug = st.checkbox("Enable Airtable debug mode", value=False)
-debug = False
+debug = True
 
 # Load shared secrets
 api_key = st.secrets["general"]["airtable_api_key"]
@@ -59,7 +56,6 @@ air_support
 air_support["REVIEWERs"]
 
 st.session_state.reviewer_id
-
 
 
 # Determine the id and name of the support organization associated with the reviewer
