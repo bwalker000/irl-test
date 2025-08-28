@@ -17,7 +17,7 @@ records
 
 'testing match:'
 
-table.all(formula=match({"First Name": "Anissa"}))
+table.all(formula=match({"First Name": "*"}))
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
