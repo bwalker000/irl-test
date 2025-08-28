@@ -20,7 +20,7 @@ air_assessors = air_assessors.all()
 
 air_assessors
 
-assessor_emails = air_assessors.get("Email")
+assessor_emails = air_assessors["Email"]
 
 assessor_emails
 
