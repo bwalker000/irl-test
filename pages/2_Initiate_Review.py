@@ -18,6 +18,7 @@ debug = False
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 
+api = Api(api_key)
 
 # The only options available should be for the support org associated with the reviewer
 
@@ -29,19 +30,27 @@ base_id = st.secrets["general"]["airtable_base_id"]
 #---------------------------------------------------------------------------------
 # load airtable Reviewers table
 table_name = st.secrets["general"]["airtable_table_reviewers"]
-air_reviewers, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-# Determine the id, first name, and last name of the Reviewer
-row = air_reviewers.loc[air_reviewers["Email"] == st.session_state.reviewer_email]
-st.session_state.reviewer_id = row["id"].tolist()
-st.session_state.reviewer_first_name = row.iloc[0]["First Name"]
-st.session_state.reviewer_last_name = row.iloc[0]["Last Name"]
+air_reviewers = api.table(base_id, table_name)
+
+row = air_reviewers.all(formula=match({"Email": st.session_state.reviewer_email}))
+
+row
+
+st.session_state.reviewer_id = row.get("id")
+st.session_state.reviewer_first_name = row.get("First Name")
+st.session_state.reviewer_last_name = row.get("Last Name")
+
+st.session_state.reviewer_id
+st.session_state.reviewer_first_name
+st.session_state.reviewer_last_name
+
 
 #---------------------------------------------------------------------------------
 # Load names an id of support organization
 # load airtable Support table
 table_name = st.secrets["general"]["airtable_table_support"]
-air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
+air_support = api.table(base_id, table_name)
 
 # load airtable REVIEWERs table
 table_name = st.secrets["general"]["airtable_table_reviewers"]
