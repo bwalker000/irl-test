@@ -20,9 +20,8 @@ air_assessors = air_assessors.all()
 
 air_assessors
 
-st.write(type(air_assessors))
-
-assessor_emails = air_assessors["Email"]
+df_assessors = pd.json_normalize(air_assessors)
+assessor_emails = df_assessors['fields.Email'].tolist()
 
 assessor_emails
 
