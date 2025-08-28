@@ -37,35 +37,29 @@ record = air_reviewers.all(formula=match({"Email": st.session_state.reviewer_ema
 
 df_record = pd.json_normalize(record)
 
-df_record
-
 st.session_state.reviewer_id  = df_record["id"].tolist()
 st.session_state.reviewer_first_name  = df_record["fields.First Name"].tolist()
 st.session_state.reviewer_last_name  = df_record["fields.Last Name"].tolist()
+st.session_state.support_id  = df_record["fields.Support Organizations"].tolist()
 
 st.session_state.reviewer_id
 st.session_state.reviewer_first_name
 st.session_state.reviewer_last_name
-
+st.session_state.support_id
 
 #---------------------------------------------------------------------------------
 # Load names an id of support organization
+
 # load airtable Support table
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support = api.table(base_id, table_name)
 
-# load airtable REVIEWERs table
-table_name = st.secrets["general"]["airtable_table_reviewers"]
-air_reviewers, debug_details = load_airtable(table_name, base_id, api_key, debug)
+record = air_support.all(formula=match({"id": st.session_state.support_id[0]}))
+df_record = pd.json_normalize(record)
 
-# Determine the id and name of the support organization associated with the reviewer
-row = air_reviewers.loc[air_reviewers["id"] == st.session_state.reviewer_id[0]]
+st.session_state.support_name  = df_record["fields.Name"].tolist()
 
-# this comes out as a list. Normally we would add .tolist(), but not here.
-st.session_state.support_id = row["Support Organizations"][0]
-
-st.session_state.support_name = airtable_value_from_id(air_support, 
-        st.session_state.support_id, "Name")
+st.session_state.support_name
 
 #---------------------------------------------------------------------------------
 # Build a set of ventures associated with the support org
