@@ -1,11 +1,21 @@
 from shared import *
 
-# Load secrets
-AIRTABLE_API_KEY = st.secrets["general"]["airtable_api_key"]
-BASE_ID = st.secrets["general"]["airtable_base_id"]
-
-
 st.title("Impact Readiness Level")
+
+
+
+# Load secrets
+api_key = st.secrets["general"]["airtable_api_key"]
+base_id = st.secrets["general"]["airtable_base_id"]
+table_name = st.secrets["general"]["airtable_table_assessors"]
+
+api = Api('api_key')
+table = api.table('base_id', 'table_name')
+records = table.all()
+
+records
+
+
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
