@@ -42,9 +42,9 @@ st.session_state.reviewer_first_name  = df_record["fields.First Name"].tolist()
 st.session_state.reviewer_last_name  = df_record["fields.Last Name"].tolist()
 st.session_state.support_id  = df_record["fields.Support Organizations"].tolist()
 
-st.session_state.reviewer_id
-st.session_state.reviewer_first_name
-st.session_state.reviewer_last_name
+#st.session_state.reviewer_id
+#st.session_state.reviewer_first_name
+#st.session_state.reviewer_last_name
 st.session_state.support_id
 
 #---------------------------------------------------------------------------------
@@ -54,9 +54,12 @@ st.session_state.support_id
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support = api.table(base_id, table_name)
 
-air_support
+records = air_support.all()
+records
 
-pd.json_normalize(air_support)
+df_records = pd.json_normalize(records)
+
+df_records
 
 record = air_support.all(formula=match({"id": st.session_state.support_id[0]}))
 
