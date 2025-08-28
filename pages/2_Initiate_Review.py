@@ -55,11 +55,11 @@ table_name = st.secrets["general"]["airtable_table_support"]
 air_support = api.table(base_id, table_name)
 
 records = air_support.all()
-records
 
 df_records = pd.json_normalize(records)
-
 df_records
+
+st.session_state.support_id[0]
 
 record = air_support.all(formula=match({"id": st.session_state.support_id[0]}))
 
