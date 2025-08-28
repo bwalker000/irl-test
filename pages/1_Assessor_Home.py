@@ -16,6 +16,8 @@ table_name = st.secrets["general"]["airtable_table_assessors"]
 
 air_assessors = api.table(base_id, table_name)
 
+air_assessors = air_assessors.all()
+
 air_assessors
 
 assessor_emails = air_assessors['Email']
