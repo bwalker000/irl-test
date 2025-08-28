@@ -36,9 +36,12 @@ air_reviewers = api.table(base_id, table_name)
 record = air_reviewers.all(formula=match({"Email": st.session_state.reviewer_email}))
 
 df_record = pd.json_normalize(record)
-st.session_state.reviewer_id  = df_record['id']
-st.session_state.reviewer_first_name  = df_record['First Name']
-st.session_state.reviewer_last_name  = df_record['Last Name']
+
+df_record
+
+st.session_state.reviewer_id  = df_record["id"].tolist()
+st.session_state.reviewer_first_name  = df_record["First Name"].tolist()
+st.session_state.reviewer_last_name  = df_record["Last Name"].tolist()
 
 st.session_state.reviewer_id
 st.session_state.reviewer_first_name
