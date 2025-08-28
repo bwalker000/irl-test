@@ -16,7 +16,6 @@ debug = False
 
 # Load shared secrets
 api_key = st.secrets["general"]["airtable_api_key"]
-base_id = st.secrets["general"]["airtable_base_id"]
 
 api = Api(api_key)
 
@@ -29,17 +28,18 @@ api = Api(api_key)
 
 #---------------------------------------------------------------------------------
 # load airtable Reviewers table
+base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_reviewers"]
 
 air_reviewers = api.table(base_id, table_name)
 
-row = air_reviewers.all(formula=match({"Email": st.session_state.reviewer_email}))
+record = air_reviewers.all(formula=match({"Email": st.session_state.reviewer_email}))
 
-row
+record
 
-st.session_state.reviewer_id = row.get("id")
-st.session_state.reviewer_first_name = row.get("First Name")
-st.session_state.reviewer_last_name = row.get("Last Name")
+st.session_state.reviewer_id = record.get("id")
+st.session_state.reviewer_first_name = record.get("First Name")
+st.session_state.reviewer_last_name = record.get("Last Name")
 
 st.session_state.reviewer_id
 st.session_state.reviewer_first_name

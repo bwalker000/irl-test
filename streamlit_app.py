@@ -2,8 +2,6 @@ from shared import *
 
 st.title("Impact Readiness Level")
 
-
-
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]

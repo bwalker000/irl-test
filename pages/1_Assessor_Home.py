@@ -5,17 +5,16 @@ st.title("Assessor Home")
 if 'mode' not in st.session_state:
     st.session_state.mode = 'ASSESSOR'
 
+
 # Load secrets for Assessors Table
 api_key = st.secrets["general"]["airtable_api_key"]
+
+api = Api(api_key)
+
 base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_assessors"]
 
-# Debug mode toggle
-#debug = st.checkbox("Enable Airtable debug mode", value=False)
-debug = False
-
-# load airtable data
-air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
+air_assessors = api.table(base_id, table_name)
 
 assessor_emails = air_assessors['Email']
 
