@@ -14,17 +14,17 @@ st.title("Initiate a Review of an existing Assessment")
 #debug = st.checkbox("Enable Airtable debug mode", value=False)
 debug = False
 
-# Load shared secrets
+# ---------------------------------------------------------------------------------
+# initiate the pyairtable API
 api_key = st.secrets["general"]["airtable_api_key"]
-
 api = Api(api_key)
 
+#---------------------------------------------------------------------------------
 # The only options available should be for the support org associated with the reviewer
 
 # 1. Figure out which ventures are associated with the reviewers support org.
 # 2. Reviewer selects which assessment they would like to review
 # 3. Then move on to performing the review
-
 
 #---------------------------------------------------------------------------------
 # load airtable Reviewers table
@@ -35,11 +35,10 @@ air_reviewers = api.table(base_id, table_name)
 
 record = air_reviewers.all(formula=match({"Email": st.session_state.reviewer_email}))
 
-record
-
-st.session_state.reviewer_id = record.get("id")
-st.session_state.reviewer_first_name = record.get("First Name")
-st.session_state.reviewer_last_name = record.get("Last Name")
+df_record = pd.json_normalize(record)
+st.session_state.reviewer_id  = df_record['id']
+st.session_state.reviewer_first_name  = df_record['First Name']
+st.session_state.reviewer_last_name  = df_record['Last Name']
 
 st.session_state.reviewer_id
 st.session_state.reviewer_first_name
