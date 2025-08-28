@@ -10,7 +10,7 @@ base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_assessors"]
 
 api = Api('api_key')
-table = api.table('base_id', 'table_name')
+table = api.table(base_id, table_name)
 records = table.all()
 
 records
