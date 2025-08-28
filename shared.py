@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from pyairtable import Table
 from pyairtable.formulas import match
+from pyairtable import Api
 import requests
 import json
 import numpy as np
