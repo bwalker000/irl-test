@@ -42,9 +42,9 @@ st.session_state.reviewer_first_name  = df_record["fields.First Name"].tolist()
 st.session_state.reviewer_last_name  = df_record["fields.Last Name"].tolist()
 st.session_state.support_id  = df_record["fields.Support Organizations"].tolist()
 
-#st.session_state.reviewer_id
-#st.session_state.reviewer_first_name
-#st.session_state.reviewer_last_name
+st.session_state.reviewer_id
+st.session_state.reviewer_first_name
+st.session_state.reviewer_last_name
 st.session_state.support_id
 
 #---------------------------------------------------------------------------------
