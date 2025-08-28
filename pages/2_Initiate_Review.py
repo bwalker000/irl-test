@@ -59,9 +59,11 @@ records
 
 df_records = pd.json_normalize(records)
 
-st.session_state.support_id[0][0]
+st.session_state.support_id[0]
 
-record = air_support.all(formula=match({"id": st.session_state.support_id[0][0]}))
+air_support
+
+record = air_support.all(formula=match({"id": st.session_state.support_id[0]}))
 
 record
 
