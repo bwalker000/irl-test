@@ -40,8 +40,8 @@ df_record = pd.json_normalize(record)
 df_record
 
 st.session_state.reviewer_id  = df_record["id"].tolist()
-st.session_state.reviewer_first_name  = df_record["First Name"].tolist()
-st.session_state.reviewer_last_name  = df_record["Last Name"].tolist()
+st.session_state.reviewer_first_name  = df_record["fields.First Name"].tolist()
+st.session_state.reviewer_last_name  = df_record["fields.Last Name"].tolist()
 
 st.session_state.reviewer_id
 st.session_state.reviewer_first_name
