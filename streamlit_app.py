@@ -3,21 +3,21 @@ from shared import *
 st.title("Impact Readiness Level")
 
 # Load secrets
-api_key = st.secrets["general"]["airtable_api_key"]
-base_id = st.secrets["general"]["airtable_base_id"]
-table_name = st.secrets["general"]["airtable_table_assessors"]
+#api_key = st.secrets["general"]["airtable_api_key"]
+#base_id = st.secrets["general"]["airtable_base_id"]
+#table_name = st.secrets["general"]["airtable_table_assessors"]
 
-api = Api(api_key)
-table = api.table(base_id, table_name)
-records = table.all()
+#api = Api(api_key)
+#table = api.table(base_id, table_name)
+#records = table.all()
 
-records
+#records
 
 'testing match with Anissa'
 
-test = table.all(formula=match({"First Name": "Anissa"}))
+#test = table.all(formula=match({"First Name": "Anissa"}))
 
-test
+#test
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
