@@ -24,7 +24,8 @@ assessor_emails
 
 # Streamlit selectbox for choosing a the Assessor
 ### *** In the future this will happen automatically at login.
-st.session_state.assessor_email = st.selectbox('Select an Assessor:', options = assessor_emails)
+#st.session_state.assessor_email = st.selectbox('Select an Assessor:', options = assessor_emails)
+st.selectbox('Select an Assessor:', options=assessor_emails, key="assessor_email")
 
 if st.button("Assess"):
     st.switch_page("pages/1_New_Assessment.py")
