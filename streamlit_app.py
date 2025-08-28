@@ -15,7 +15,7 @@ records = table.all()
 
 records
 
-'testing match:'
+'testing match with wildcard'
 
 table.all(formula=match({"First Name": "*"}))
 
