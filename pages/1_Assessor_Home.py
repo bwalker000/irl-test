@@ -15,10 +15,7 @@ base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_assessors"]
 
 air_assessors = api.table(base_id, table_name)
-
 air_assessors = air_assessors.all()
-
-air_assessors
 
 df_assessors = pd.json_normalize(air_assessors)
 assessor_emails = df_assessors['fields.Email'].tolist()
@@ -27,7 +24,7 @@ assessor_emails
 
 # Streamlit selectbox for choosing a the Assessor
 ### *** In the future this will happen automatically at login.
-st.session_state.assessor_email = st.selectbox('Select an Assessor:', options=assessor_emails)
+st.session_state.assessor_email = st.selectbox('Select an Assessor:', options = assessor_emails)
 
 if st.button("Assess"):
     st.switch_page("pages/1_New_Assessment.py")
