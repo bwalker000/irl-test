@@ -54,7 +54,12 @@ st.session_state.support_id
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support = api.table(base_id, table_name)
 
+air_support
+
 record = air_support.all(formula=match({"id": st.session_state.support_id[0]}))
+
+record
+
 df_record = pd.json_normalize(record)
 
 st.session_state.support_name  = df_record["fields.Name"].tolist()
