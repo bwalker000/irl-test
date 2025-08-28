@@ -17,7 +17,9 @@ records
 
 'testing match with wildcard'
 
-table.all(formula=match({"First Name": "*"}))
+test = table.all(formula=match({"First Name": "*"}))
+
+test
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
