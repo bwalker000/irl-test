@@ -15,7 +15,7 @@ records = table.all()
 
 records
 
-records.all(formula=match({"First Name": "Anissa"}))
+table.all(formula=match({"First Name": "Anissa"}))
 
 
 if st.button("Home"):
