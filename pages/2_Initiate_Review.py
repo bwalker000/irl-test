@@ -56,6 +56,8 @@ air_support = api.table(base_id, table_name)
 
 air_support
 
+pd.json_normalize(air_support)
+
 record = air_support.all(formula=match({"id": st.session_state.support_id[0]}))
 
 record
