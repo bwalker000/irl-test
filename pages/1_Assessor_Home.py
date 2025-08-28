@@ -20,7 +20,9 @@ air_assessors = air_assessors.all()
 
 air_assessors
 
-assessor_emails = air_assessors['Email']
+assessor_emails = air_assessors.get("Email")
+
+assessor_emails
 
 # Streamlit selectbox for choosing a the Assessor
 ### *** In the future this will happen automatically at login.
