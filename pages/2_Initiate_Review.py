@@ -44,26 +44,19 @@ st.session_state.support_id  = df_record["fields.Support Organizations"].tolist(
 st.session_state.support_id = st.session_state.support_id[0][0]
 
 #---------------------------------------------------------------------------------
-# Load names an id of support organization
+# Load name of the id of support organization
 
 # load airtable Support table
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support = api.table(base_id, table_name)
 
-records = air_support.all()
-records
-
-st.session_state.support_id
-
 record = air_support.get(st.session_state.support_id)
-
-record
 
 df_record = pd.json_normalize(record)
 
 st.session_state.support_name = df_record["fields.Name"].tolist()
 
-st.session_state.support_name
+df_record
 
 #---------------------------------------------------------------------------------
 # Build a set of ventures associated with the support org
