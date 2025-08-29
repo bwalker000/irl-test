@@ -55,7 +55,7 @@ records
 
 st.session_state.support_id
 
-record = air_support.all(formula=match({"id": st.session_state.support_id}))
+record = air_support.get(st.session_state.support_id)
 
 record
 
