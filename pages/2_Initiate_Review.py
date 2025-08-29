@@ -59,8 +59,9 @@ records = air_support.all()
 records
 
 df_records = pd.json_normalize(records)
+df_records
 
-record = air_support.all(formula=match({"id": st.session_state.support_id[0]}))
+record = air_support.all(formula=match({"id": st.session_state.support_id}))
 
 record
 
