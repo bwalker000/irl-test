@@ -41,6 +41,7 @@ st.session_state.reviewer_id  = df_record["id"].tolist()
 st.session_state.reviewer_first_name  = df_record["fields.First Name"].tolist()
 st.session_state.reviewer_last_name  = df_record["fields.Last Name"].tolist()
 st.session_state.support_id  = df_record["fields.Support Organizations"].tolist()
+st.session_state.support_id = st.session_state.support_id[0]
 
 st.session_state.reviewer_id
 st.session_state.reviewer_first_name
@@ -59,10 +60,6 @@ records
 
 df_records = pd.json_normalize(records)
 
-st.session_state.support_id[0]
-
-air_support
-
 record = air_support.all(formula=match({"id": st.session_state.support_id[0]}))
 
 record
@@ -78,6 +75,12 @@ st.session_state.support_name
 
 # load airtable Data table for records corresponding to the support org
 table_name = st.secrets["general"]["airtable_table_data"]
+
+
+
+
+
+
 table = Table(api_key, base_id, table_name)
 formula = match({"Support Organization": st.session_state.support_id[0]})
 
@@ -85,6 +88,9 @@ records = table.all(formula=formula)
 record_ids = [record["id"] for record in records]
 
 records
+pd.json_normalize(records)
+
+
 record_ids
 
 
