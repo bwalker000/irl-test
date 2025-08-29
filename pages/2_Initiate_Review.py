@@ -41,7 +41,7 @@ st.session_state.reviewer_id  = df_record["id"].tolist()
 st.session_state.reviewer_first_name  = df_record["fields.First Name"].tolist()
 st.session_state.reviewer_last_name  = df_record["fields.Last Name"].tolist()
 st.session_state.support_id  = df_record["fields.Support Organizations"].tolist()
-st.session_state.support_id = st.session_state.support_id[0]
+st.session_state.support_id = st.session_state.support_id[0][0]
 
 #---------------------------------------------------------------------------------
 # Load names an id of support organization
@@ -61,7 +61,7 @@ record
 
 df_record = pd.json_normalize(record)
 
-st.session_state.support_name  = df_record["fields.Name"].tolist()
+st.session_state.support_name = df_record["fields.Name"].tolist()
 
 st.session_state.support_name
 
