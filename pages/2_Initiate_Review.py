@@ -56,10 +56,14 @@ df_record = pd.json_normalize(record)
 
 st.session_state.support_name = df_record["fields.Name"].tolist()
 
-df_record
 
 #---------------------------------------------------------------------------------
 # Build a set of ventures associated with the support org
+
+venture_names = df_record["fields.Ventures"].tolist()
+
+venture_names
+
 
 # load airtable Data table for records corresponding to the support org
 table_name = st.secrets["general"]["airtable_table_data"]
