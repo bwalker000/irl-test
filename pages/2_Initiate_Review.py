@@ -43,11 +43,6 @@ st.session_state.reviewer_last_name  = df_record["fields.Last Name"].tolist()
 st.session_state.support_id  = df_record["fields.Support Organizations"].tolist()
 st.session_state.support_id = st.session_state.support_id[0]
 
-#st.session_state.reviewer_id
-#st.session_state.reviewer_first_name
-#st.session_state.reviewer_last_name
-#st.session_state.support_id
-
 #---------------------------------------------------------------------------------
 # Load names an id of support organization
 
@@ -57,9 +52,6 @@ air_support = api.table(base_id, table_name)
 
 records = air_support.all()
 records
-
-df_records = pd.json_normalize(records)
-df_records
 
 st.session_state.support_id
 
