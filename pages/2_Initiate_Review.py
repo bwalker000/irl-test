@@ -72,16 +72,41 @@ st.session_state.review_mode = st.segmented_control(
     selection_mode="single",
 )
 
-st.session_state.review_mode
-
 #---------------------------------------------------------------------------------
+# no review mode selected
 
 if st.session_state.review_mode == None:
     st.write("Select a review mode to continue")
+
+#---------------------------------------------------------------------------------
+# Perform a review of an existing assessment
+
 elif st.session_state.review_mode == 0:
     st.write("Select among existing assessments to review")
+
+table_name = st.secrets["general"]["airtable_table_data"]
+air_data = api.table(base_id, table_name)
+
+air_data["Name"]
+
+# prepare a list of existing assessments
+# clean up the list for review. 
+# perhaps present a dataframe with a radio button?
+
+
+#---------------------------------------------------------------------------------
+# Perform an independent review
+
 elif st.session_state.review_mode == 1:
     st.write("Perform an independent review")
+
+# Easier to make a single list with all ventures and projects.
+
+# go into the "Support Organizations" table and select all ventures associated with this support org
+# then got into the "Ventures" table and select all the projects associated with those ventures
+
+
+
 
 
 
