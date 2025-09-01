@@ -89,9 +89,7 @@ elif st.session_state.review_mode == 0:
     st.session_state.support_id
     st.write(pd.json_normalize(air_data.all()))
 
-
-    id = st.session_state.support_id[0]
-    air_data_records = air_data.all(formula=match({"Support Organization": id}))
+    air_data_records = air_data.all(formula=match({"Support Organization": st.session_state.support_id[][0]}))
 
     df_air_data_records = pd.json_normalize(air_data_records)
 
