@@ -87,7 +87,7 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data = api.table(base_id, table_name)
 
-    st.session_state.support_id.tolist()
+    st.session_state.support_id
     st.write(pd.json_normalize(air_data.all()))
 
     air_data_records = air_data.all(formula=match({"Support Organization": st.session_state.support_id}))
