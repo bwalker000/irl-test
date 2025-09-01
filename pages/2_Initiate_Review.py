@@ -89,7 +89,7 @@ elif st.session_state.review_mode == 0:
     st.session_state.support_id
     st.write(pd.json_normalize(air_data.all()))
 
-    air_data_records = air_data.all(formula=match({"Support Organization": st.session_state.support_id[][0]}))
+    air_data_records = air_data.all(formula=match({"Support Organization": st.session_state.support_id}))
 
     df_air_data_records = pd.json_normalize(air_data_records)
 
@@ -229,7 +229,7 @@ if st.button("Continue to Review"):
 
     # Need to load in the assessment data.
 
-    st.switch_page("pages/12_Assess_&_Review.py")
+    st.switch_page("pages/12_Assess_&_Review.py")0
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
