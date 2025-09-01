@@ -87,9 +87,11 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data = api.table(base_id, table_name)
 
-    df_air_data = pd.json_normalize(air_data)
+    air_data_records = air_data.all(formula=match({"Support Organization": st.session_state.support_id}))
 
-    df_air_data["Name"].to_list()
+    df_air_data_records = pd.json_normalize(air_data_records)
+
+    df_air_data_records
 
 # prepare a list of existing assessments
 # clean up the list for review. 
