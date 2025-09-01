@@ -84,10 +84,12 @@ if st.session_state.review_mode == None:
 elif st.session_state.review_mode == 0:
     st.write("Select among existing assessments to review")
 
-table_name = st.secrets["general"]["airtable_table_data"]
-air_data = api.table(base_id, table_name)
+    table_name = st.secrets["general"]["airtable_table_data"]
+    air_data = api.table(base_id, table_name)
 
-air_data["Name"]
+    df_air_data = pd.json_normalize(air_data)
+
+    df_air_data["Name"].to_list()
 
 # prepare a list of existing assessments
 # clean up the list for review. 
