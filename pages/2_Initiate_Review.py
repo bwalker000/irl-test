@@ -88,7 +88,7 @@ elif st.session_state.review_mode == 0:
     air_data = api.table(base_id, table_name)
 
     st.session_state.support_id
-    st.write(air_data)
+    st.write(pd.json_normalize(air_data))
 
     air_data_records = air_data.all(formula=match({"Support Organization": st.session_state.support_id}))
 
