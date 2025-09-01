@@ -93,6 +93,7 @@ elif st.session_state.review_mode == 0:
 
     air_data_records = air_data.all(formula = match({"Support Organization": st.session_state.support_id[0][0]}))
 
+    st.write(air_data_records)
 
 # prepare a list of existing assessments
 # clean up the list for review. 
