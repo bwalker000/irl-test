@@ -76,9 +76,12 @@ st.session_state.review_mode
 
 #---------------------------------------------------------------------------------
 
-
-
-
+if st.session_state.review_mode == None:
+    st.write("Select a review mode to continue")
+elif st.session_state.review_mode == 0:
+    st.write("Select among existing assessments to review")
+elif st.session_state.review_mode == 1:
+    st.write("Perform an independent review")
 
 
 
