@@ -92,9 +92,7 @@ elif st.session_state.review_mode == 0:
 
     #air_data_records = air_data.all(formula = match({"Support Organization": st.session_state.support_id[0]}))
 
-    air_data_records = air_data.all(
-        formula='ARRAYJOIN({{Support Organization}}) = "{}"'.format(st.session_state.support_id[0])
-    )
+    air_data_records = air_data.all(formula='ARRAYJOIN({{Support Organization}}) = "{}"'.format(st.session_state.support_id[0]))
 
     st.write(air_data_records)
 
