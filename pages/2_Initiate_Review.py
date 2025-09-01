@@ -40,7 +40,7 @@ df_record = pd.json_normalize(record)
 st.session_state.reviewer_id  = df_record["id"].tolist()
 st.session_state.reviewer_first_name  = df_record["fields.First Name"].tolist()
 st.session_state.reviewer_last_name  = df_record["fields.Last Name"].tolist()
-st.session_state.support_id = df_record["fields.Support Organizations"].tolist()
+st.session_state.support_id = df_record["fields.Support Organizations"]
 
 #---------------------------------------------------------------------------------
 # Load name of the id of support organization
@@ -49,7 +49,7 @@ st.session_state.support_id = df_record["fields.Support Organizations"].tolist()
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support = api.table(base_id, table_name)
 
-record = air_support.get(st.session_state.support_id[0][0])
+record = air_support.get(st.session_state.support_id[0])
 
 df_record = pd.json_normalize(record)
 
@@ -87,11 +87,14 @@ elif st.session_state.review_mode == 0:
     air_data = api.table(base_id, table_name)
 
     st.session_state.support_id
- #   st.write(type(st.session_state.support_id))
 
     st.write(pd.json_normalize(air_data.all()))
 
-    air_data_records = air_data.all(formula = match({"Support Organization": st.session_state.support_id[0][0]}))
+    #air_data_records = air_data.all(formula = match({"Support Organization": st.session_state.support_id[0]}))
+
+    air_data_records = air_data.all(
+        formula='ARRAYJOIN({{Support Organization}}) = "{}"'.format(st.session_state.support_id[0])
+    )
 
     st.write(air_data_records)
 
