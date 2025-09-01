@@ -229,7 +229,7 @@ if st.button("Continue to Review"):
 
     # Need to load in the assessment data.
 
-    st.switch_page("pages/12_Assess_&_Review.py")0
+    st.switch_page("pages/12_Assess_&_Review.py")
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
