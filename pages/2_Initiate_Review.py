@@ -49,7 +49,7 @@ st.session_state.support_id = df_record["fields.Support Organizations"]
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support = api.table(base_id, table_name)
 
-record = air_support.get(st.session_state.support_id)
+record = air_support.get(st.session_state.support_id[0])
 
 df_record = pd.json_normalize(record)
 
