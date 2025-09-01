@@ -56,7 +56,33 @@ df_record = pd.json_normalize(record)
 
 st.session_state.support_name = df_record["fields.Name"].tolist()
 
+
 #---------------------------------------------------------------------------------
+# Select between independent review OR review of assessment
+
+option_map = {
+    0: "Review Existing Assessment",
+    1: "Perform Independent Review",
+}
+
+st.session_state.review_mode = st.segmented_control(
+    "",
+    options=option_map.keys(),
+    format_func=lambda option: option_map[option],
+    selection_mode="single",
+)
+
+st.session_state.review_mode
+
+#---------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 # Build a set of ventures associated with the support org
 
 venture_ids = df_record["fields.Ventures"].tolist()
