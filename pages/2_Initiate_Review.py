@@ -33,7 +33,7 @@ table_name = st.secrets["general"]["airtable_table_reviewers"]
 
 air_reviewers = api.table(base_id, table_name)
 
-record = air_reviewers.all(formula=match({"Email": st.session_state.reviewer_email}))
+record = air_reviewers.all(formula = match({"Email": st.session_state.reviewer_email}))
 
 df_record = pd.json_normalize(record)
 
@@ -92,9 +92,9 @@ elif st.session_state.review_mode == 0:
 
     st.write(pd.json_normalize(air_data.all()))
 
-    #air_data_records = air_data.all(formula = match({"Support Organization": st.session_state.support_id[0]}))
+    air_data_records = air_data.all(formula = match({"fields.Support Organization": st.session_state.support_id[0]}))
 
-    air_data_records = air_data.all(formula='ARRAYJOIN({{Support Organization}}) = "{}"'.format(st.session_state.support_id[0][0]))
+    #air_data_records = air_data.all(formula='ARRAYJOIN({{Support Organization}}) = "{}"'.format(st.session_state.support_id[0][0]))
 
     st.write(air_data_records)
 
