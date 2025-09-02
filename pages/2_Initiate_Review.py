@@ -88,7 +88,7 @@ elif st.session_state.review_mode == 0:
 
     st.session_state.support_id
 
-    air_date.all()
+    st.write(air_data.all())
 
     st.write(pd.json_normalize(air_data.all()))
 
