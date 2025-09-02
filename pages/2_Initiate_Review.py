@@ -92,7 +92,7 @@ elif st.session_state.review_mode == 0:
 
     st.write(pd.json_normalize(air_data.all()))
 
-    air_data_records = air_data.all(formula = match("id": "rec5qVDTjJU8oE49h"))
+    air_data_records = air_data.all(formula = match({"id": "rec5qVDTjJU8oE49h"}))
 
 #    air_data_records = air_data.all(formula = match({"Support Organization": st.session_state.support_id[0]}))
 
