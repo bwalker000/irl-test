@@ -44,7 +44,7 @@ st.session_state.support_id = row.iloc[0]["Support Organization"]
 table_name = st.secrets["general"]["airtable_table_support"]
 air_support, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-st.session_state.support_name = airtable_value_from_id(air_support, st.session_state.support_id[0], "Name"):
+st.session_state.support_name = airtable_value_from_id(air_support, st.session_state.support_id, "Name")
 
 #---------------------------------------------------------------------------------
 # Select between independent review OR review of assessment
