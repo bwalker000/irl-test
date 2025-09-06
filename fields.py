@@ -13,7 +13,5 @@ for i in range(1, 16):
     IRL_031_data_fields.append(string)
     string = f"TR_{i:02}"
     IRL_031_data_fields.append(string)
-
-
 #---------------------------------------------------------------------------------
 
