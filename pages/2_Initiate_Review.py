@@ -80,8 +80,7 @@ elif st.session_state.review_mode == 0:
 
     air_data
 
-    st.write(air_data["Review_date"])
-    st.write(type("Review_date"))
+    st.write(air_data[0]["Review_date"])
 
     # find all the assessments that match the reviewer's support organization and are not yet reviewed
     air_data_records = air_data.loc[
