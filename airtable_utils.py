@@ -1,6 +1,10 @@
 # airtable_utils.py
 from shared import *
 
+from fields import IRL_031_data_fields as expected_fields
+
+
+
 @st.cache_data
 def load_airtable(table_name, base_id, airtable_api_key, debug=False, view="Grid view"):
     """
@@ -24,9 +28,11 @@ def load_airtable(table_name, base_id, airtable_api_key, debug=False, view="Grid
     except Exception as e:
         data = {"error": f"JSON parse error: {e}"}
     records = data.get("records", [])
-    df = pd.DataFrame(
-        [{**r.get("fields", {}), "id": r["id"]} for r in records]
-    ) if records else pd.DataFrame()
+    df = pd.DataFrame([
+        {field: r.get("fields", {}).get(field, None) for field in expected_fields} | {"id": r["id"]}
+        for r in records
+    ]) if records else pd.DataFrame(columns=expected_fields + ["id"])
+
 
     debug_details = {
         "url": url,
