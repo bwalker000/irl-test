@@ -86,7 +86,7 @@ elif st.session_state.review_mode == 0:
         (air_data["Review_date"].isnull())
     ]
 
-    st.write(air_data_records)
+    st.write(air_data["Review_date"])
 
     assessment_names = air_data_records['Name']
 

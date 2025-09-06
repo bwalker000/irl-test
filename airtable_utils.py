@@ -28,9 +28,6 @@ def load_airtable(table_name, base_id, airtable_api_key, debug=True, view="Grid 
         data = {"error": f"JSON parse error: {e}"}
     records = data.get("records", [])
 
-    table_name
-    st.secrets["general"]["airtable_table_data"]
-
     if (table_name == st.secrets["general"]["airtable_table_data"]):
         df = pd.DataFrame([
             {field: r.get("fields", {}).get(field, None) for field in expected_fields} | {"id": r["id"]}
