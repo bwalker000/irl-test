@@ -27,11 +27,17 @@ def load_airtable(table_name, base_id, airtable_api_key, debug=True, view="Grid 
     except Exception as e:
         data = {"error": f"JSON parse error: {e}"}
     records = data.get("records", [])
-    df = pd.DataFrame([
-        {field: r.get("fields", {}).get(field, None) for field in expected_fields} | {"id": r["id"]}
-        for r in records
-    ]) if records else pd.DataFrame(columns=expected_fields + ["id"])
 
+    if (table_name == st.secrets["general"]["airtable_table_assessors"]):
+        df = pd.DataFrame([
+            {field: r.get("fields", {}).get(field, None) for field in expected_fields} | {"id": r["id"]}
+            for r in records
+        ]) if records else pd.DataFrame(columns=expected_fields + ["id"])
+        
+    else:
+        df = pd.DataFrame(
+            [{**r.get("fields", {}), "id": r["id"]} for r in records]
+        ) if records else pd.DataFrame()
 
     debug_details = {
         "url": url,
