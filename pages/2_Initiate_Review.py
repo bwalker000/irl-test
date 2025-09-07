@@ -76,7 +76,6 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-
     # Extract your support_id string
     support_id = st.session_state.support_id[0]
 
@@ -95,10 +94,6 @@ elif st.session_state.review_mode == 0:
     # Combine the two conditions
     filtered_records = air_data[support_match & review_blank]
 
-    # Show how many (for debugging)
-    st.write(filtered_records.shape[0])
-    st.write(filtered_records)
-
     # Proceed with selection logic
     assessment_names = filtered_records['Name']
     if not assessment_names.empty:
@@ -115,14 +110,8 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_assessors"]
     air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-    
     st.session_state.assessor_first_name = airtable_value_from_id(air_assessors, st.session_state.assessor_id, "First Name")
     st.session_state.assessor_last_name = airtable_value_from_id(air_assessors, st.session_state.assessor_id, "Last Name")
-
-    #row = air_assessors.loc[air_assessors["id"] == st.session_state.assessor_id]
-
-    #st.session_state.assessor_first_name = row.iloc[0]["First Name"]
-    #st.session_state.assessor_last_name = row.iloc[0]["Last Name"]
 
 #---------------------------------------------------------------------------------
 # Perform an independent review
