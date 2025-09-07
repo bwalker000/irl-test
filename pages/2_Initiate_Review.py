@@ -83,8 +83,7 @@ elif st.session_state.review_mode == 0:
     st.write(air_data["Review_date"])
 
     st.write(air_data["Review_date"].isnull())
-    st.write(air_data["Review_date"].isnull() | (air_data["Review_date"] == "") |
-        air_data["Review_date"] == pd.NaT)
+    st.write((air_data["Review_date"].isnull()) | (air_data["Review_date"] == "") | (air_data["Review_date"] == pd.NaT))
     st.write(air_data["Review_date"] == pd.NaT)
     st.write((air_data["Review_date"] == ""))
 
