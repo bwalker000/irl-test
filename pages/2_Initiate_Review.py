@@ -92,9 +92,21 @@ elif st.session_state.review_mode == 0:
     #st.write(air_data["Support Organization"] == st.session_state.support_id)
     #st.write(air_data["Support Organization"] == st.session_state.support_id[0])
 
+    # Extract your single support_id string
+    support_id = st.session_state.support_id[0]
 
-    st.write(repr(air_data["Support Organization"].iloc))   # Prints value of first row
-    st.write(air_data["Support Organization"].unique())        # Prints all unique values
+    # Create a boolean mask: True where support_id matches, accounting for both strings and lists
+    matches = air_data["Support Organization"].apply(
+        lambda x: support_id in x if isinstance(x, list) else x == support_id
+    )
+
+    # Show the result: how many matches, and which rows
+    st.write(matches.sum())  # Number of matches found
+    st.write(air_data[matches])  # DataFrame of matching rows
+
+
+    #st.write(repr(air_data["Support Organization"].iloc))   # Prints value of first row
+    #st.write(air_data["Support Organization"].unique())        # Prints all unique values
 
     # Clean and compare
     air_data["Support Organization"] = air_data["Support Organization"].astype(str).str.strip()
