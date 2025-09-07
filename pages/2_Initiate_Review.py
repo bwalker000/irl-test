@@ -106,43 +106,6 @@ elif st.session_state.review_mode == 0:
     else:
         st.warning("No available assessments to review for your Support Organization.")
 
-
-
-
-
-
-#    st.write((air_data["Review_date"].isnull()) | (air_data["Review_date"] == "") | (air_data["Review_date"] == pd.NaT))
-
-    # Extract your single support_id string
-#    support_id = st.session_state.support_id[0]
-
-    # Create a boolean mask: True where support_id matches, accounting for both strings and lists
-#    matches = air_data["Support Organization"].apply(
-#        lambda x: support_id in x if isinstance(x, list) else x == support_id
-#    )
-
-    # Show the result: how many matches, and which rows
-#    st.write(matches.sum())  # Number of matches found
-#    st.write(air_data[matches])  # DataFrame of matching rows
-
-    # Clean and compare
-#    air_data["Support Organization"] = air_data["Support Organization"].astype(str).str.strip()
-#    support_id = st.session_state.support_id.strip()
-#    st.write(air_data["Support Organization"] == support_id)
-#    st.write(air_data[air_data["Support Organization"] == support_id])
-
-
-    # find all the assessments that match the reviewer's support organization and are not yet reviewed
-#    air_data_records = air_data.loc[
-#        (air_data["Support Organization"] == st.session_state.support_id) &
-#        ((air_data["Review_date"].isnull()) | (air_data["Review_date"] == "") | (air_data["Review_date"] == pd.NaT))
-#    ]
-
-#   assessment_names = air_data_records['Name']
-
-    # Streamlit selectbox for choosing an assessment for review
-#    st.session_state.assessment_name = st.selectbox('Select an assessment for review:', options = assessment_names)
-
     air_data_record = air_data.loc[ air_data["Name"] == st.session_state.assessment_name ]
 
     st.session_state.assessor_id = air_data_record.iloc[0]["ASSESSOR"]
@@ -152,10 +115,14 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_assessors"]
     air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-    row = air_assessors.loc[air_assessors["id"] == st.session_state.assessor_id]
+    
+    st.session_state.assessor_first_name = airtable_value_from_id(air_assessors, st.session_state.assessor_id, "First Name")
+    st.session_state.assessor_last_name = airtable_value_from_id(air_assessors, st.session_state.assessor_id, "Last Name")
 
-    st.session_state.assessor_first_name = row.iloc[0]["First Name"]
-    st.session_state.assessor_last_name = row.iloc[0]["Last Name"]
+    #row = air_assessors.loc[air_assessors["id"] == st.session_state.assessor_id]
+
+    #st.session_state.assessor_first_name = row.iloc[0]["First Name"]
+    #st.session_state.assessor_last_name = row.iloc[0]["Last Name"]
 
 #---------------------------------------------------------------------------------
 # Perform an independent review
