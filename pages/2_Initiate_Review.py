@@ -76,55 +76,72 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-    air_data
 
-    st.write((air_data["Review_date"].isnull()) | (air_data["Review_date"] == "") | (air_data["Review_date"] == pd.NaT))
-
-    #st.write(st.session_state.support_id)
-    #st.write(type(st.session_state.support_id))
-
-    #st.write(st.session_state.support_id[0])
-    #st.write(type(st.session_state.support_id[0]))
-    
-    #st.write(air_data["Support Organization"])
-    #st.write(type(air_data["Support Organization"]))
-
-    #st.write(air_data["Support Organization"] == st.session_state.support_id)
-    #st.write(air_data["Support Organization"] == st.session_state.support_id[0])
-
-    # Extract your single support_id string
+    # Extract your support_id string
     support_id = st.session_state.support_id[0]
 
-    # Create a boolean mask: True where support_id matches, accounting for both strings and lists
-    matches = air_data["Support Organization"].apply(
+    # Build the boolean mask for support org match
+    support_match = air_data["Support Organization"].apply(
         lambda x: support_id in x if isinstance(x, list) else x == support_id
     )
 
+    # Build the boolean mask for blank review date
+    review_blank = (
+        air_data["Review_date"].isnull() |
+        (air_data["Review_date"] == "") |
+        (air_data["Review_date"] == pd.NaT)
+    )
+
+    # Combine the two conditions
+    filtered_records = air_data[support_match & review_blank]
+
+    # Show how many (for debugging)
+    st.write(filtered_records.shape[0])
+    st.write(filtered_records)
+
+    # Proceed with selection logic
+    assessment_names = filtered_records['Name']
+    if not assessment_names.empty:
+        st.session_state.assessment_name = st.selectbox('Select an assessment for review:', options=assessment_names)
+    else:
+        st.warning("No available assessments to review for your Support Organization.")
+
+
+
+
+
+
+#    st.write((air_data["Review_date"].isnull()) | (air_data["Review_date"] == "") | (air_data["Review_date"] == pd.NaT))
+
+    # Extract your single support_id string
+#    support_id = st.session_state.support_id[0]
+
+    # Create a boolean mask: True where support_id matches, accounting for both strings and lists
+#    matches = air_data["Support Organization"].apply(
+#        lambda x: support_id in x if isinstance(x, list) else x == support_id
+#    )
+
     # Show the result: how many matches, and which rows
-    st.write(matches.sum())  # Number of matches found
-    st.write(air_data[matches])  # DataFrame of matching rows
-
-
-    #st.write(repr(air_data["Support Organization"].iloc))   # Prints value of first row
-    #st.write(air_data["Support Organization"].unique())        # Prints all unique values
+#    st.write(matches.sum())  # Number of matches found
+#    st.write(air_data[matches])  # DataFrame of matching rows
 
     # Clean and compare
-    air_data["Support Organization"] = air_data["Support Organization"].astype(str).str.strip()
-    support_id = st.session_state.support_id.strip()
-    st.write(air_data["Support Organization"] == support_id)
-    st.write(air_data[air_data["Support Organization"] == support_id])
+#    air_data["Support Organization"] = air_data["Support Organization"].astype(str).str.strip()
+#    support_id = st.session_state.support_id.strip()
+#    st.write(air_data["Support Organization"] == support_id)
+#    st.write(air_data[air_data["Support Organization"] == support_id])
 
 
     # find all the assessments that match the reviewer's support organization and are not yet reviewed
-    air_data_records = air_data.loc[
-        (air_data["Support Organization"] == st.session_state.support_id) &
-        ((air_data["Review_date"].isnull()) | (air_data["Review_date"] == "") | (air_data["Review_date"] == pd.NaT))
-    ]
+#    air_data_records = air_data.loc[
+#        (air_data["Support Organization"] == st.session_state.support_id) &
+#        ((air_data["Review_date"].isnull()) | (air_data["Review_date"] == "") | (air_data["Review_date"] == pd.NaT))
+#    ]
 
-    assessment_names = air_data_records['Name']
+#   assessment_names = air_data_records['Name']
 
     # Streamlit selectbox for choosing an assessment for review
-    st.session_state.assessment_name = st.selectbox('Select an assessment for review:', options = assessment_names)
+#    st.session_state.assessment_name = st.selectbox('Select an assessment for review:', options = assessment_names)
 
     air_data_record = air_data.loc[ air_data["Name"] == st.session_state.assessment_name ]
 
