@@ -76,14 +76,15 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-    st.session_state.support_id
-
     air_data
 
     st.write(air_data["Review_date"])
 
     st.write(air_data["Review_date"].isnull())
     st.write((air_data["Review_date"].isnull()) | (air_data["Review_date"] == "") | (air_data["Review_date"] == pd.NaT))
+
+    st.write(st.session_state.support_id)
+    st.write(air_data["Support Organization"])
     st.write(air_data["Support Organization"] == st.session_state.support_id)
 
 
