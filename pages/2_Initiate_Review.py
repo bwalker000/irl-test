@@ -71,7 +71,7 @@ if st.session_state.review_mode == None:
 # Perform a review of an existing assessment
 
 elif st.session_state.review_mode == 0:
-    st.write("Select among existing assessments to review")
+    #st.write("Select among existing assessments to review")
 
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
