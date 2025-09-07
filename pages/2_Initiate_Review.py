@@ -93,9 +93,14 @@ elif st.session_state.review_mode == 0:
     #st.write(air_data["Support Organization"] == st.session_state.support_id[0])
 
 
-    st.write(air_data["Support Organization"].dtype)
-    st.write(repr(air_data["Support Organization"].iloc))
-    st.write(repr(st.session_state.support_id))
+    st.write(repr(air_data["Support Organization"].iloc))   # Prints value of first row
+    st.write(air_data["Support Organization"].unique())        # Prints all unique values
+
+    # Clean and compare
+    air_data["Support Organization"] = air_data["Support Organization"].astype(str).str.strip()
+    support_id = st.session_state.support_id.strip()
+    st.write(air_data["Support Organization"] == support_id)
+    st.write(air_data[air_data["Support Organization"] == support_id])
 
 
     # find all the assessments that match the reviewer's support organization and are not yet reviewed
