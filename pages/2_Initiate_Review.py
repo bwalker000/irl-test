@@ -78,19 +78,18 @@ elif st.session_state.review_mode == 0:
 
     air_data
 
-    st.write(air_data["Review_date"])
-
-    st.write(air_data["Review_date"].isnull())
     st.write((air_data["Review_date"].isnull()) | (air_data["Review_date"] == "") | (air_data["Review_date"] == pd.NaT))
 
     st.write(st.session_state.support_id)
-    st.write(st.session_state.support_id[0])
     st.write(type(st.session_state.support_id))
+
+    st.write(st.session_state.support_id[0])
+    st.write(type(st.session_state.support_id[0]))
+    
+    st.write(air_data["Support Organization"])
     st.write(type(air_data["Support Organization"]))
 
-    st.write(air_data["Support Organization"])
     st.write(air_data["Support Organization"] == st.session_state.support_id)
-
 
     # find all the assessments that match the reviewer's support organization and are not yet reviewed
     air_data_records = air_data.loc[
