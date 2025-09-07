@@ -85,7 +85,9 @@ elif st.session_state.review_mode == 0:
 
     st.write(st.session_state.support_id)
     st.write(st.session_state.support_id[0])
-
+    type(st.session_state.support_id)
+    type(air_data["Support Organization"])
+    
     st.write(air_data["Support Organization"])
     st.write(air_data["Support Organization"] == st.session_state.support_id)
 
