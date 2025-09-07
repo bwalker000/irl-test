@@ -122,8 +122,6 @@ elif st.session_state.review_mode == 1:
     table_name = st.secrets["general"]["airtable_table_ventures"]
     air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-    air_ventures
-
     ventures = air_ventures.loc[air_ventures["Support Organization"] == st.session_state.support_id]
 
     venture_names = ventures['Name']
