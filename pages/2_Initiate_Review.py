@@ -117,7 +117,7 @@ elif st.session_state.review_mode == 0:
 # Perform an independent review
 
 elif st.session_state.review_mode == 1:
-    st.write("_Perform an independent review_")
+    st.write("*Perform an independent review*")
 
     # load the table of all ventures
     table_name = st.secrets["general"]["airtable_table_ventures"]
@@ -134,14 +134,21 @@ elif st.session_state.review_mode == 1:
     # Filter the ventures that are managed by the current support org
     filtered_records = air_ventures[support_match]
 
-    # Proceed with selection logic
+    # Proceed with selection logic for the ventures
     venture_names = filtered_records['Name']
     if not venture_names.empty:
-        st.session_state.venture_names = st.selectbox('Select a venture for review:', options=venture_names)
+        st.session_state.venture_name = st.selectbox('Select a venture for review:', options=venture_names)
+        row = air_ventures.loc[air_ventures["Name"] == st.session_state.venture_name]
+        st.session_state.venture_id = row["id"].tolist()
+
+        st.session_state.venture_name
+        st.session_state.venture_id
+
+
     else:
         st.warning("No available ventures to review for your Support Organization.")
 
-    
+
 
 
 
