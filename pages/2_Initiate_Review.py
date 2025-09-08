@@ -86,7 +86,7 @@ elif st.session_state.review_mode == 0:
 
     # Build the boolean mask for blank review date
     review_blank = (
-        air_data["Review_date"].isnull() |
+        (air_data["Review_date"].isnull()) |
         (air_data["Review_date"] == "") |
         (air_data["Review_date"] == pd.NaT)
     )
@@ -117,8 +117,9 @@ elif st.session_state.review_mode == 0:
 # Perform an independent review
 
 elif st.session_state.review_mode == 1:
-    st.write("Perform an independent review")
+    st.write("_Perform an independent review_")
 
+    # load the table of all ventures
     table_name = st.secrets["general"]["airtable_table_ventures"]
     air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
@@ -130,7 +131,7 @@ elif st.session_state.review_mode == 1:
         lambda x: support_id in x if isinstance(x, list) else x == support_id
     )
 
-    # Combine the two conditions
+    # Filter the ventures that are managed by the current support org
     filtered_records = air_ventures[support_match]
 
     # Proceed with selection logic
@@ -140,7 +141,7 @@ elif st.session_state.review_mode == 1:
     else:
         st.warning("No available ventures to review for your Support Organization.")
 
-
+    
 
 
 
