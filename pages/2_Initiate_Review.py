@@ -8,7 +8,7 @@ from shared import *
 #        The ASSESSOR can select which project they are interested in assessing.
 
 
-st.title("Initiate a Review of an existing Assessment")
+st.title("Initiate a Review")
 
 # Debug mode toggle
 #debug = st.checkbox("Enable Airtable debug mode", value=False)
@@ -50,8 +50,8 @@ st.session_state.support_name = airtable_value_from_id(air_support, st.session_s
 # Select between independent review OR review of assessment
 
 option_map = {
-    0: "Review Existing Assessment",
-    1: "Perform Independent Review",
+    0: "Review an Existing Assessment",
+    1: "Perform an Independent Review",
 }
 
 st.session_state.review_mode = st.segmented_control(
