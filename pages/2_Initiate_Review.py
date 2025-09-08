@@ -141,9 +141,20 @@ elif st.session_state.review_mode == 1:
         row = air_ventures.loc[air_ventures["Name"] == st.session_state.venture_name]
         st.session_state.venture_id = row["id"].tolist()
 
-        st.session_state.venture_name
-        st.session_state.venture_id
+        project_ids = filtered_records['Projects']
 
+        # load the table of all projects
+        table_name = st.secrets["general"]["airtable_table_projects"]
+        air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
+
+        # select out only those projects associated with the selected venture
+        if isinstance(project_ids.iloc[0], list):
+            filtered_projects = air_projects[air_projects["id"].isin(project_ids.iloc[0])]
+            project_names = filtered_projects['Name']
+        else:
+            st.warning("No available projects to review for ythe selected Venture.")
+                
+        st.session_state.project_name = st.selectbox('Select a project for review:', options=project_names)
 
     else:
         st.warning("No available ventures to review for your Support Organization.")
