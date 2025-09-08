@@ -137,24 +137,6 @@ elif st.session_state.review_mode == 1:
     # Proceed with selection logic for the ventures
     venture_names = filtered_records['Name']
     if not venture_names.empty:
-#        st.session_state.venture_name = st.selectbox('Select a venture for review:', options=venture_names)
-#        row = air_ventures.loc[air_ventures["Name"] == st.session_state.venture_name]
-#        st.session_state.venture_id = row["id"].tolist()
-
-#        project_ids = filtered_records['Projects']
-
-        # load the table of all projects
-#        table_name = st.secrets["general"]["airtable_table_projects"]
-#        air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
-
-        # select out only those projects associated with the selected venture
-#        if isinstance(project_ids.iloc[0], list):
-#            filtered_projects = air_projects[air_projects["id"].isin(project_ids.iloc[0])]
-#            project_names = filtered_projects['Name']
-#        else:
-#            st.warning("No available projects to review for ythe selected Venture.")
-                
-#        st.session_state.project_name = st.selectbox('Select a project for review:', options=project_names)
 
 # After venture selection
         st.session_state.venture_name = st.selectbox('Select a venture for review:', options=venture_names)
@@ -178,44 +160,9 @@ elif st.session_state.review_mode == 1:
                 st.warning("No available projects for the selected Venture.")
         else:
             st.warning("Selected Venture not found.")
-
-
-
-
-
     else:
         st.warning("No available ventures to review for your Support Organization.")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-#    ventures = air_ventures.loc[air_ventures["Support Organization"] == st.session_state.support_id]
-
-#    venture_names = ventures['Name']
-#    st.session_state.venture_name = st.selectbox('Select a venture for a new review:', options = venture_names)
-
-#    st.session_state.venture_id = air_ventures.loc[air_ventures["Name"] == st.session_state.venture_name]
-
-
- #   table_name = st.secrets["general"]["airtable_table_projects"]
- #   air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
-
-#    projects = air_projects.loc[air_projects["Venture"] == st.session_state.venture_id]
-
-#    project_names = projects['Name']
-#    st.session_state.project_name = st.selectbox('Select a project for a new review:', options = project_names)
-
-#    st.session_state.project_id = air_projects.loc[ air_projects["Name"] == st.session_state.project_name]
 
 #---------------------------------------------------------------------------------
 
