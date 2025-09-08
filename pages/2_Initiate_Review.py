@@ -117,7 +117,7 @@ elif st.session_state.review_mode == 0:
 # Perform an independent review
 
 elif st.session_state.review_mode == 1:
-    st.write("*Perform an independent review*")
+    st.write("Perform an independent review")
 
     # load the table of all ventures
     table_name = st.secrets["general"]["airtable_table_ventures"]
@@ -137,24 +137,51 @@ elif st.session_state.review_mode == 1:
     # Proceed with selection logic for the ventures
     venture_names = filtered_records['Name']
     if not venture_names.empty:
-        st.session_state.venture_name = st.selectbox('Select a venture for review:', options=venture_names)
-        row = air_ventures.loc[air_ventures["Name"] == st.session_state.venture_name]
-        st.session_state.venture_id = row["id"].tolist()
+#        st.session_state.venture_name = st.selectbox('Select a venture for review:', options=venture_names)
+#        row = air_ventures.loc[air_ventures["Name"] == st.session_state.venture_name]
+#        st.session_state.venture_id = row["id"].tolist()
 
-        project_ids = filtered_records['Projects']
+#        project_ids = filtered_records['Projects']
 
         # load the table of all projects
-        table_name = st.secrets["general"]["airtable_table_projects"]
-        air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
+#        table_name = st.secrets["general"]["airtable_table_projects"]
+#        air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
         # select out only those projects associated with the selected venture
-        if isinstance(project_ids.iloc[0], list):
-            filtered_projects = air_projects[air_projects["id"].isin(project_ids.iloc[0])]
-            project_names = filtered_projects['Name']
-        else:
-            st.warning("No available projects to review for ythe selected Venture.")
+#        if isinstance(project_ids.iloc[0], list):
+#            filtered_projects = air_projects[air_projects["id"].isin(project_ids.iloc[0])]
+#            project_names = filtered_projects['Name']
+#        else:
+#            st.warning("No available projects to review for ythe selected Venture.")
                 
-        st.session_state.project_name = st.selectbox('Select a project for review:', options=project_names)
+#        st.session_state.project_name = st.selectbox('Select a project for review:', options=project_names)
+
+# After venture selection
+        st.session_state.venture_name = st.selectbox('Select a venture for review:', options=venture_names)
+
+        # Get the row for the selected venture
+        selected_venture_row = filtered_records.loc[filtered_records["Name"] == st.session_state.venture_name]
+        if not selected_venture_row.empty:
+            # Get associated project IDs
+            project_ids = selected_venture_row.iloc[0]['Projects']
+            # Load all projects
+            table_name = st.secrets["general"]["airtable_table_projects"]
+            air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
+            if isinstance(project_ids, list):
+                filtered_projects = air_projects[air_projects["id"].isin(project_ids)]
+                project_names = filtered_projects['Name']
+                if not project_names.empty:
+                    st.session_state.project_name = st.selectbox('Select a project for review:', options=project_names)
+                else:
+                    st.warning("No available projects for the selected Venture.")
+            else:
+                st.warning("No available projects for the selected Venture.")
+        else:
+            st.warning("Selected Venture not found.")
+
+
+
+
 
     else:
         st.warning("No available ventures to review for your Support Organization.")
