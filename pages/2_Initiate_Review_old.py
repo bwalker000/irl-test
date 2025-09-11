@@ -8,6 +8,8 @@ from shared import *
 #        The ASSESSOR can select which project they are interested in assessing.
 
 
+st.session_state.mode = "REVIEWER"
+
 st.title("Initiate a Review of an existing Assessment")
 
 # Debug mode toggle

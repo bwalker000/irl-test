@@ -1,16 +1,10 @@
 from shared import *
 
-""" Assumptions:
-        A specific ASSESSOR is intrinsically tied to:
-            A specific venture
-        A specific venture is intrinsically tied to:
-            A specific support organization
-        The ASSESSOR can select which project they are interested in assessing.
-"""
-
 st.title("Create a New Assessment")
 
 #st.write(st.session_state.assessor)
+
+st.session_state.mode = "ASSESSOR"
 
 # Debug mode toggle
 #debug = st.checkbox("Enable Airtable debug mode", value=False)

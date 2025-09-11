@@ -36,27 +36,26 @@ numQ = 10
 
 ### fix the following to recognize that things are different for ASSESSOR and REVIEWER
 if ('dim' not in st.session_state):
-    st.session_state.dim = 0
+    st.session_state.dim = 0        # start with the first dimension
 
-    # ASSESSOR Question answers
-    st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
+    if st.session_state.mode == "ASSESSOR":
 
-    # REVIEWER Question answers
-    st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
+        # ASSESSOR Question answers
+        st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
 
-    # ASSESSOR Text responses
-    st.session_state.TA = [""]*num_dims
+        # REVIEWER Question answers
+        st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
 
-    # REVIEWER Text responses
-    st.session_state.TR = [""]*num_dims
+        # ASSESSOR Text responses
+        st.session_state.TA = [""]*num_dims
+
+        # REVIEWER Text responses
+        st.session_state.TR = [""]*num_dims
 
 #
 #-----------------------------------------------------------------------------------------
 # Present the page
 # 
-
-# the following presents the project id, not name
-#st.session_state.project
 
 # create a list of all the dimensions
 dims = (
