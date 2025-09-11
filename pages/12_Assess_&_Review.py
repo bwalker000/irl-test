@@ -63,8 +63,8 @@ if ('dim' not in st.session_state):
         for dim in range(num_dims):
             for i in range(numQ):
                 field_name = f"QA_{dim:02d}_{i}"
-                if field_name in air_data_record:
-                    st.session_state.QA[dim, i] = air_data_record.iloc[0][field_name]
+                if field_name in air_data_record.columns:
+                    st.session_state.QA[dim, i] = bool(air_data_record.iloc[0][field_name])
                 else:
                     st.session_state.QA[dim, i] = False
 
