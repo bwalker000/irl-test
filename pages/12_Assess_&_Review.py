@@ -59,6 +59,8 @@ if ('dim' not in st.session_state):
         air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
         air_data_record = air_data.loc[ air_data["Name"] == st.session_state.assessment_name ]
 
+        st.write("Columns:\n", list(air_data_record.columns))
+
         # load the assessment question responses
         for dim in range(num_dims):
             for i in range(numQ):
@@ -68,7 +70,7 @@ if ('dim' not in st.session_state):
                 else:
                     st.session_state.QA[dim, i] = False
 
-        st.session_state.QA
+        #st.session_state.QA
 
         # load the assessment text responses
         for dim in range(num_dims):
