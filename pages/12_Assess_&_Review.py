@@ -68,6 +68,8 @@ if ('dim' not in st.session_state):
                 else:
                     st.session_state.QA[dim, i] = False
 
+        st.session_state.QA
+
         # load the assessment text responses
         for dim in range(num_dims):
             field_name = f"TA_{dim:02d}"
