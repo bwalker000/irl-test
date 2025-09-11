@@ -101,6 +101,7 @@ elif st.session_state.review_mode == 0:
     else:
         st.warning("No available assessments to review for your Support Organization.")
 
+    # This identifies the specific assessment to be reviewed
     air_data_record = air_data.loc[ air_data["Name"] == st.session_state.assessment_name ]
 
     st.session_state.assessor_id = air_data_record.iloc[0]["ASSESSOR"]

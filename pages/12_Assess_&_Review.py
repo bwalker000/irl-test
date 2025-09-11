@@ -38,19 +38,43 @@ numQ = 10
 if ('dim' not in st.session_state):
     st.session_state.dim = 0        # start with the first dimension
 
-    if st.session_state.mode == "ASSESSOR":
+    # initiate all the variables as empty
+    # ASSESSOR Question answers
+    st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
 
-        # ASSESSOR Question answers
-        st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
+    # REVIEWER Question answers
+    st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
 
-        # REVIEWER Question answers
-        st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
+    # ASSESSOR Text responses
+    st.session_state.TA = [""]*num_dims
 
-        # ASSESSOR Text responses
-        st.session_state.TA = [""]*num_dims
+    # REVIEWER Text responses
+    st.session_state.TR = [""]*num_dims
+    
+    # if this is a reivew, then load the assessment data
+    if st.session_state.mode == "REVIEWER":
 
-        # REVIEWER Text responses
-        st.session_state.TR = [""]*num_dims
+        # load the data for the specific assessment
+        table_name = st.secrets["general"]["airtable_table_data"]
+        air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
+        air_data_record = air_data.loc[ air_data["Name"] == st.session_state.assessment_name ]
+
+        # load the assessment question responses
+        for dim in range(num_dims):
+            for i in range(numQ):
+                field_name = f"QA_{dim:02d}_{i}"
+                if field_name in air_data_record:
+                    st.session_state.QA[dim, i] = air_data_record.iloc[0][field_name]
+                else:
+                    st.session_state.QA[dim, i] = False
+
+        # load the assessment text responses
+        for dim in range(num_dims):
+            field_name = f"TA_{dim:02d}"
+            if field_name in air_data_record:
+                st.session_state.TA[dim] = air_data_record.iloc[0][field_name]
+            else:
+                st.session_state.TA[dim] = ""
 
 #
 #-----------------------------------------------------------------------------------------

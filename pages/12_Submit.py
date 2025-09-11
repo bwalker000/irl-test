@@ -59,8 +59,8 @@ for k, v in responses.items():
         v = v.item()  # Converts numpy types to native types
     cleaned_responses[k] = v
 
-#cleaned_responses
 
+# write the new table to airtable
 table.create(cleaned_responses)
 
 
