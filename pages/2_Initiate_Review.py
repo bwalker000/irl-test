@@ -113,6 +113,14 @@ elif st.session_state.review_mode == 0:
     st.session_state.assessor_first_name = airtable_value_from_id(air_assessors, st.session_state.assessor_id, "First Name")
     st.session_state.assessor_last_name = airtable_value_from_id(air_assessors, st.session_state.assessor_id, "Last Name")
 
+    table_name = st.secrets["general"]["airtable_table_ventures"]
+    air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
+    st.session_state.venture_name = airtable_value_from_id(air_ventures, st.session_state.venture_id, "Name")
+
+    table_name = st.secrets["general"]["airtable_table_projects"]
+    air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
+    st.session_state.project_name = airtable_value_from_id(air_projects, st.session_state.project_id, "Name")
+
 #---------------------------------------------------------------------------------
 # Perform an independent review
 
