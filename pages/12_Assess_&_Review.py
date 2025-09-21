@@ -135,10 +135,10 @@ st.write("\n\n")
 
 if mode == "ASSESSOR":
     st.write("__General Instructions:__")
-    st.write("A yes answer must be supported by written data.")
+    st.write("A positive response must be supported by written data.")
 elif mode == "REVIEWER":
     st.write("__General Instructions:__")
-    st.write("All Founders believe in their venture. You must help them by applying healthy skepticism.")
+    st.write("All Founders believe in their venture. You must help them by applying healthy skepticism. Positive responses must be supported by written data and documented.")
 
 st.write("\n\n")
 

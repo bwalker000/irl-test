@@ -1,6 +1,9 @@
 # import dependencies
 import streamlit as st
 import pandas as pd
+import matplotlib as mp
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 from pyairtable import Table
 from pyairtable.formulas import match
 from pyairtable import Api
