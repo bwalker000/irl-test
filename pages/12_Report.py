@@ -35,7 +35,7 @@ if air_data.empty:
 
 # if REVIEWER, then only show assessments associated with the reviewer
 if st.session_state.mode == "REVIEWER":
-    air_data = air_data.loc[ air_data["Reviewer"] == st.session_state.reviewer_id[0] ]
+    air_data = air_data.loc[ air_data["REVIEWER"] == st.session_state.reviewer_id[0] ]
 
 # if ASSESSOR, then only show assessments associated with the assessor
 if st.session_state.mode == "ASSESSOR":
