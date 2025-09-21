@@ -26,6 +26,8 @@ st.session_state.reviewer_email = st.selectbox('Select a REVIEWER:', options=rev
 
 if st.button("Initiate Review"):
     st.switch_page("pages/2_Initiate_Review.py")
+if st.button("Report"):
+    st.switch_page("pages/12_Report.py")
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
 

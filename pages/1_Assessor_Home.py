@@ -32,5 +32,7 @@ st.session_state.assessor_email = st.selectbox('Select an Assessor:', options = 
 
 if st.button("Assess"):
     st.switch_page("pages/1_New_Assessment.py")
+if st.button("Report"):
+    st.switch_page("pages/12_Report.py")
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
