@@ -6,7 +6,7 @@ if st.button("Home"):
     st.switch_page("streamlit_app.py")
 
 if st.button("Log in"):
-    st.login()
+    st.login("auth0")
 if st.user.is_logged_in:
     if st.button("Log out"):
         st.login("auth0")
