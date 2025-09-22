@@ -9,7 +9,7 @@ if st.button("Log in"):
     st.login()
 if st.user.is_logged_in:
     if st.button("Log out"):
-        st.logout()
+        st.login("auth0")
 #st.write(f"Hello, {st.user.name}!")
              
 
