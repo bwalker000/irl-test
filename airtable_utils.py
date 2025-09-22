@@ -85,3 +85,23 @@ def airtable_value_from_id(table, id, field, debug=False):
     values = row.iloc[0][field]
 
     return values
+
+
+
+def load_airtable_record(table_name, base_id, api_key, record_id, debug=False):
+    """
+    Load a specific record from Airtable into a pandas DataFrame.
+    
+    Parameters:
+        api_key (str): Your Airtable API key.
+        base_id (str): The base ID of your Airtable base.
+        table_name (str): The table name within your base.
+        record_id (str): The unique Airtable record ID you wish to retrieve.
+    
+    Returns:
+        pd.DataFrame: DataFrame with a single row representing the record's fields.
+    """
+    table = Table(api_key, base_id, table_name)
+    record = table.get(record_id)
+    return pd.DataFrame([record["fields"]])
+
