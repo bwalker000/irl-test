@@ -21,8 +21,26 @@ st.title("Impact Readiness Level")
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
-if st.button("Login"):
-    st.switch_page("pages/0_Login.py")
+if st.button("Log in"):
+    st.login("auth0")
+if st.user.is_logged_in:
+
+    if 'mode' not in st.session_state:
+        assessor_or_reviewer()
+
+    if st.session_state.mode == "ASSESSOR":
+        if st.button("Assess"):
+            st.switch_page("pages/1_New_Assessment.py")
+        if st.button("Report"):
+            st.switch_page("pages/12_Report.py")
+
+    elif st.session_state.mode == "REVIEWER":
+        if st.button("Review"):
+            st.switch_page("pages/2_Initiate_Review.py")
+        if st.button("Report"):
+            st.switch_page("pages/12_Report.py")    
+
+    if st.button("Log out"):
+        st.login("auth0")
 if st.button("Demo Request"):
     st.switch_page("pages/0_Demo_Request.py")
-

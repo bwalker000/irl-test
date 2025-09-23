@@ -105,3 +105,40 @@ def load_airtable_record(table_name, base_id, api_key, record_id, debug=False):
     record = table.get(record_id)
     return pd.DataFrame([record["fields"]])
 
+def assessor_or_reviewer():
+    if 'mode' not in st.session_state:
+        user_email = st.user.email
+        # Load secrets
+        api_key = st.secrets["general"]["airtable_api_key"]
+        base_id = st.secrets["general"]["airtable_base_id"]
+        table_name_assessors = st.secrets["general"]["airtable_table_assessors"]
+        table_name_reviewers = st.secrets["general"]["airtable_table_reviewers"]
+
+        # Debug mode toggle
+        #debug = st.checkbox("Enable Airtable debug mode", value=False)
+        debug = False
+
+        # load airtable data for assessors
+        air_assessors, debug_details = load_airtable(table_name_assessors, base_id, api_key, debug)
+        assessor_emails = air_assessors['Email'].tolist()
+        air_assessors = air_assessors.loc[ air_assessors["Email"] == user_email ]
+        st.session_state.assessor_id = air_assessors['id'].tolist()
+        #st.write(st.session_state.assessor_id)
+        # load airtable data for reviewers
+        air_reviewers, debug_details = load_airtable(table_name_reviewers, base_id, api_key, debug)
+        reviewer_emails = air_reviewers['Email'].tolist()
+        air_reviewers = air_reviewers.loc[ air_reviewers["Email"] == user_email ]
+        st.session_state.reviewer_id = air_reviewers['id'].tolist()
+        #st.write(st.session_state.reviewer_id)             
+
+        # set the mode based on the email found
+        if user_email in assessor_emails:
+            st.session_state.mode = 'ASSESSOR'
+        elif user_email in reviewer_emails:
+
+            st.session_state.mode = 'REVIEWER'
+        else:
+            st.warning("Your email is not registered as an ASSESSOR or REVIEWER. Please contact the system administrator.")
+            st.stop()
+    return st.session_state.mode 
+
