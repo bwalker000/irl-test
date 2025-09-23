@@ -31,12 +31,13 @@ if 'mode' not in st.session_state:
         assessor_emails = air_assessors['Email'].tolist()
         air_assessors = air_assessors.loc[ air_assessors["Email"] == user_email ]
         st.session_state.assessor_id = air_assessors['id'].tolist()
+
         # load airtable data for reviewers
-        air_reviewers, debug_details = load_airtable(table_name_reviewers, base_id,
-                                                    api_key, debug)
+        air_reviewers, debug_details = load_airtable(table_name_reviewers, base_id, api_key, debug)
         reviewer_emails = air_reviewers['Email'].tolist()
         air_reviewers = air_reviewers.loc[ air_reviewers["Email"] == user_email ]
         st.session_state.reviewer_id = air_reviewers['id'].tolist()
+
         # set the mode based on the email found
         if user_email in assessor_emails:
             st.session_state.mode = 'ASSESSOR'
@@ -47,6 +48,7 @@ if 'mode' not in st.session_state:
     else:
         st.warning("You are not logged in. Please log in to continue.")
         st.stop()
+
 # Display the user role
 st.title(f"{st.session_state.mode} Home")
 #st.write(f"Hello, {st.user.name}!")
@@ -55,6 +57,7 @@ st.title(f"{st.session_state.mode} Home")
 #st.write(f"Your role: {st.session_state.mode}")
 #st.write(f"Your assessor ID: {st.session_state.assessor_id}")
 #st.write(f"Your reviewer ID: {st.session_state.reviewer_id}")
+
 # Navigate based on the user role
 if st.session_state.mode == "ASSESSOR":
     if st.button("Assess"):
