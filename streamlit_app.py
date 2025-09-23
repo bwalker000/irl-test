@@ -45,11 +45,7 @@ if st.user.is_logged_in:
             st.switch_page("pages/12_Report.py")    
 
     if st.button("Log out"):
-        st.logout(
-            auth0_domain = st.secrets["auth"]["auth0_domain"],
-            client_id = st.secrets["auth"]["auth0"]["client_id"],
-            redirect_uri = st.secrets["auth"]["logout_uri"]
-        )
+        st.logout()
 
 if st.button("Demo Request"):
     st.switch_page("pages/0_Demo_Request.py")
