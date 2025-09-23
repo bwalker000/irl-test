@@ -31,19 +31,25 @@ if st.user.is_logged_in:
         assessor_or_reviewer()
 
     if st.session_state.mode == "ASSESSOR":
+        st.session_state.assessor_email = st.user.email
         if st.button("Assess"):
             st.switch_page("pages/1_New_Assessment.py")
         if st.button("Report"):
             st.switch_page("pages/12_Report.py")
 
     elif st.session_state.mode == "REVIEWER":
+        st.session_state.reviewer_email = st.user.email
         if st.button("Review"):
             st.switch_page("pages/2_Initiate_Review.py")
         if st.button("Report"):
             st.switch_page("pages/12_Report.py")    
 
     if st.button("Log out"):
-        st.login("auth0")
+        st.logout(
+            auth0_domain = st.secrets["auth"]["auth0_domain"],
+            client_id = st.secrets["auth"]["client_id"],
+            redirect_uri = st.secrets["auth"]["logout_uri"]
+        )
 
 if st.button("Demo Request"):
     st.switch_page("pages/0_Demo_Request.py")
