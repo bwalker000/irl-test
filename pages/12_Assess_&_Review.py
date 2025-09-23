@@ -117,7 +117,10 @@ with st.container(border=True):
     col_widths = [0.3, 0.7]
     col1, col2 = st.columns(col_widths)
     col1.write("__Assessor:__")
-    col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
+    if "assessor_first_name" in st.session_state:
+        col2.write(f"{st.session_state.assessor_first_name} {st.session_state.assessor_last_name}")
+    else:
+        col2.write("N/A")
 
     col1.write("__Support Organization:__")
     col2.write(st.session_state.support_name)
