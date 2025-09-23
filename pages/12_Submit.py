@@ -72,3 +72,4 @@ elif st.session_state.mode == "REVIEWER":
 
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
+    st.stop()
