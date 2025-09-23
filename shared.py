@@ -13,4 +13,6 @@ import numpy as np
 import os
 from airtable_utils import load_airtable
 from airtable_utils import airtable_value_from_id
+from airtable_utils import load_airtable_record
+from airtable_utils import assessor_or_reviewer
 from datetime import datetime, date
