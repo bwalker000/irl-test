@@ -254,7 +254,7 @@ with st.container(border=True):
 # Navigate
 # 
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 with col1:
     if st.session_state.dim > 0:
         if st.button("Previous"):
@@ -270,7 +270,7 @@ with col3:
         if st.button("Submit", disabled = st.session_state.submitted):
             submit_record()
             st.session_state.submitted = True
-
-if st.button("Home"):
-    st.switch_page("streamlit_app.py")
+with col4:
+    if st.button("Home"):
+        st.switch_page("streamlit_app.py")
 
