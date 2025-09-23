@@ -19,13 +19,16 @@ st.title("Impact Readiness Level")
 
 #test
 
-if st.button("Home"):
-    st.switch_page("streamlit_app.py")
-if st.button("Log in"):
-    st.login("auth0")
+#if st.button("Home"):
+#    st.switch_page("streamlit_app.py")
+
+if not st.user.is_logged_in:
+    if st.button("Log in"):
+        st.login("auth0")
+
 if st.user.is_logged_in:
 
-    st.write(f"Welcome {st.user.email}!")
+    st.write(f"Welcome {st.user.email}!\n\n")
 
     if 'mode' not in st.session_state:
         assessor_or_reviewer()
