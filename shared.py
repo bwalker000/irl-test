@@ -17,3 +17,4 @@ from airtable_utils import load_airtable_record
 from airtable_utils import assessor_or_reviewer
 from airtable_utils import submit_record
 from datetime import datetime, date
+datetime = datetime
