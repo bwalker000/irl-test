@@ -42,8 +42,8 @@ if st.user.is_logged_in:
             st.switch_page("pages/12_Report.py")
 
     elif st.session_state.mode == "REVIEWER":
-         st.write("User Mode: REVIEWER")
-       st.session_state.reviewer_email = st.user.email
+        st.write("User Mode: REVIEWER")
+        st.session_state.reviewer_email = st.user.email
         if st.button("Review"):
             st.switch_page("pages/2_Initiate_Review.py")
         if st.button("Report"):
