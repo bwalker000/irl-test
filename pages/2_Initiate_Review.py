@@ -128,6 +128,10 @@ elif st.session_state.review_mode == 0:
 elif st.session_state.review_mode == 1:
     st.write("Perform an independent review")
 
+    st.session_state.assessor_first_name = "N/A"
+    st.session_state.assessor_last_name = ""
+    st.session_state.assessor_id = ""
+
     # load the table of all ventures
     table_name = st.secrets["general"]["airtable_table_ventures"]
     air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
