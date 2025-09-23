@@ -47,7 +47,7 @@ if st.user.is_logged_in:
     if st.button("Log out"):
         st.logout(
             auth0_domain = st.secrets["auth"]["auth0_domain"],
-            client_id = st.secrets["auth"]["client_id"],
+            client_id = st.secrets["auth.auth0"]["client_id"],
             redirect_uri = st.secrets["auth"]["logout_uri"]
         )
 
