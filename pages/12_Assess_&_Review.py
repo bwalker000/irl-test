@@ -272,6 +272,5 @@ with col3:
             st.session_state.submitted = True
 
 if st.button("Home"):
-    st.session_state.submitted = False
     st.switch_page("streamlit_app.py")
 
