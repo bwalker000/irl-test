@@ -105,9 +105,12 @@ def load_airtable_record(table_name, base_id, api_key, record_id, debug=False):
     record = table.get(record_id)
     return pd.DataFrame([record["fields"]])
 
+
+
 def assessor_or_reviewer():
     if 'mode' not in st.session_state:
         user_email = st.user.email
+
         # Load secrets
         api_key = st.secrets["general"]["airtable_api_key"]
         base_id = st.secrets["general"]["airtable_base_id"]
@@ -124,6 +127,7 @@ def assessor_or_reviewer():
         air_assessors = air_assessors.loc[ air_assessors["Email"] == user_email ]
         st.session_state.assessor_id = air_assessors['id'].tolist()
         #st.write(st.session_state.assessor_id)
+
         # load airtable data for reviewers
         air_reviewers, debug_details = load_airtable(table_name_reviewers, base_id, api_key, debug)
         reviewer_emails = air_reviewers['Email'].tolist()
@@ -141,4 +145,5 @@ def assessor_or_reviewer():
             st.warning("Your email is not registered as an ASSESSOR or REVIEWER. Please contact the system administrator.")
             st.stop()
     return st.session_state.mode 
+
 

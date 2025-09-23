@@ -44,21 +44,43 @@ if st.session_state.mode == "ASSESSOR":
 #-----------------------------------------------------------------------------------------
 # Use a pulldown menu to select the assessment to be reported on
 
+# Role-specific assessment selection
 if st.session_state.mode == "REVIEWER":
     assessment_names = air_data['Name']
-    if not assessment_names.empty:
-        st.session_state.assessment_name = st.selectbox('Select an assessment for reporting:', options=assessment_names)
-    else:
+    if assessment_names.empty:
         st.warning("No available assessments to report for you as a REVIEWER.")
+        st.stop()
+    selected_assessment = st.selectbox('Select an assessment for reporting:', options=assessment_names)
 
-if st.session_state.mode == "ASSESSOR":
+elif st.session_state.mode == "ASSESSOR":
     assessment_names = air_data['Name']
-    if not assessment_names.empty:
-        st.session_state.assessment_name = st.selectbox('Select an assessment for reporting:', options=assessment_names)
-    else:
+    if assessment_names.empty:
         st.warning("No available assessments to report for you as an ASSESSOR.")
+        st.stop()
+    selected_assessment = st.selectbox('Select an assessment for reporting:', options=assessment_names)
 
-air_data = air_data.loc[ air_data["Name"] == st.session_state.assessment_name ]
+else:
+    st.warning("Unknown mode.")
+    st.stop()
+
+# Don't run report immediately after selection!
+# Instead, wait for user to click a button
+
+if selected_assessment:
+    if st.button("Generate Report"):
+        # Filter for chosen assessment
+        filtered_data = air_data.loc[air_data["Name"] == selected_assessment]
+        if filtered_data.empty:
+            st.warning("No data found for the selected assessment.")
+            st.stop()
+
+        with st.spinner("Generating your report, please wait..."):
+            # ===== Place your report generation code here =====
+            # Example:
+            # generate_report(filtered_data)
+            pass
+else:
+    st.info("Please select an assessment to enable report generation.")
 
 #-----------------------------------------------------------------------------------------
 # Prepare the report
@@ -219,8 +241,9 @@ for dim in range(n_rows):
         ax.add_patch(diamond)
 
 
+st.pyplot(fig)
 
-plt.show()
+#plt.show()
 
 # Save as PDF
 # plt.savefig('letter_figure.pdf', bbox_inches='tight')
