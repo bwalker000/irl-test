@@ -153,6 +153,9 @@ elif st.session_state.review_mode == 1:
 
 # After venture selection
         st.session_state.venture_name = st.selectbox('Select a venture for review:', options=venture_names)
+        
+        air_ventures_record = air_ventures.loc[ air_ventures["Name"] == st.session_state.venture_name ]
+        st.session_state.venture_id = air_ventures_record["id"]
 
         # Get the row for the selected venture
         selected_venture_row = filtered_records.loc[filtered_records["Name"] == st.session_state.venture_name]
@@ -167,6 +170,9 @@ elif st.session_state.review_mode == 1:
                 project_names = filtered_projects['Name']
                 if not project_names.empty:
                     st.session_state.project_name = st.selectbox('Select a project for review:', options=project_names)
+
+                    air_projects_record = air_projects.loc[ air_projects["Name"] == st.session_state.project_name ]
+                    st.session_state.project_id = air_projects_record["id"]
                 else:
                     st.warning("No available projects for the selected Venture.")
             else:
