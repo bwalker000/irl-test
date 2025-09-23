@@ -41,6 +41,7 @@ if st.session_state.mode == "ASSESSOR":
     responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date
     responses["Assess_date"] = airtable_date
 elif st.session_state.mode == "REVIEWER":
+    responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date   
     responses["Review_date"] = airtable_date
 
 
