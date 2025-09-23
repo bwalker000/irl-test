@@ -57,7 +57,8 @@ if ('dim' not in st.session_state):
         # load the data for the specific assessment
         table_name = st.secrets["general"]["airtable_table_data"]
         air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
-        air_data_record = air_data.loc[ air_data["Name"] == st.session_state.assessment_name ]
+        if "assessment_name" in st.session_state:
+            air_data_record = air_data.loc[ air_data["Name"] == st.session_state.assessment_name ]
 
         # load the assessment question responses
         for dim in range(num_dims):
