@@ -25,6 +25,8 @@ if st.button("Log in"):
     st.login("auth0")
 if st.user.is_logged_in:
 
+    st.write(f"Welcome {st.user.email}!")
+
     if 'mode' not in st.session_state:
         assessor_or_reviewer()
 
@@ -42,5 +44,6 @@ if st.user.is_logged_in:
 
     if st.button("Log out"):
         st.login("auth0")
+
 if st.button("Demo Request"):
     st.switch_page("pages/0_Demo_Request.py")
