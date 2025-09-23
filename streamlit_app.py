@@ -28,12 +28,13 @@ if not st.user.is_logged_in:
 
 if st.user.is_logged_in:
 
-    st.write(f"Welcome {st.user.email}!\n\n")
+    st.write(f"User Email: {st.user.email}\n\n")
 
     if 'mode' not in st.session_state:
         assessor_or_reviewer()
 
     if st.session_state.mode == "ASSESSOR":
+        st.write("User Mode: ASSESSOR")
         st.session_state.assessor_email = st.user.email
         if st.button("Assess"):
             st.switch_page("pages/1_New_Assessment.py")
@@ -41,7 +42,8 @@ if st.user.is_logged_in:
             st.switch_page("pages/12_Report.py")
 
     elif st.session_state.mode == "REVIEWER":
-        st.session_state.reviewer_email = st.user.email
+         st.write("User Mode: REVIEWER")
+       st.session_state.reviewer_email = st.user.email
         if st.button("Review"):
             st.switch_page("pages/2_Initiate_Review.py")
         if st.button("Report"):
