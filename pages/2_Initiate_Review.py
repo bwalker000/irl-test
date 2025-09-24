@@ -130,7 +130,7 @@ elif st.session_state.review_mode == 1:
 
     st.session_state.assessor_first_name = "N/A"
     st.session_state.assessor_last_name = ""
-    st.session_state.assessor_id = ""
+    st.session_state.assessor_id = []
 
     # load the table of all ventures
     table_name = st.secrets["general"]["airtable_table_ventures"]
