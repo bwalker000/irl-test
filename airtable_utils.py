@@ -1,5 +1,14 @@
 # airtable_utils.py
-from shared import *
+
+import streamlit as st
+import pandas as pd
+from datetime import datetime, date
+import pandas as pd
+from pyairtable import Table
+from pyairtable.formulas import match
+from pyairtable import Api
+import requests
+import numpy as np
 
 from fields import IRL_031_data_fields as expected_fields
 
@@ -154,7 +163,6 @@ def submit_record():
 
     #st.write(type(st.session_state.QA))
     #st.write(st.session_state.QA)
-
 
     for dim in range(st.session_state.QA.shape[0]):
         for i, value in enumerate(st.session_state.QA[dim]):
