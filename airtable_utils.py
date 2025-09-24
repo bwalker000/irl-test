@@ -215,12 +215,27 @@ def submit_record():
 
 
     # Convert numpy types to native Python types before sending to Airtable
+    #cleaned_responses = {}
+    #for k, v in responses.items():
+        # Convert numpy bool to plain Python bool
+    #    if isinstance(v, np.generic):
+    #        v = v.item()  # Converts numpy types to native types
+    #    cleaned_responses[k] = v
+
     cleaned_responses = {}
     for k, v in responses.items():
-        # Convert numpy bool to plain Python bool
         if isinstance(v, np.generic):
-            v = v.item()  # Converts numpy types to native types
+            v = v.item()
+        elif isinstance(v, pd.Series):
+            # If Series is a single value
+            if v.shape == (1,):
+                v = v.item()
+            else:
+                v = v.tolist()
+        elif isinstance(v, pd.DataFrame):
+            v = v.to_dict(orient="records")
         cleaned_responses[k] = v
+
 
 
     # write the new table to airtable
