@@ -190,10 +190,22 @@ def submit_record():
         field_name = f"TR_{dim:02d}"
         responses[field_name] = value
 
-    responses["Venture"] = st.session_state.venture_id
-    responses["Project"] = st.session_state.project_id
-    responses["Support Organization"] = st.session_state.support_id
-    responses["ASSESSOR"] = st.session_state.assessor_id
+    # Convert IDs to lists if they aren't already
+    responses["Venture"] = ([st.session_state.venture_id] if isinstance(st.session_state.venture_id, str) 
+                          else list(st.session_state.venture_id) if isinstance(st.session_state.venture_id, (list, tuple)) 
+                          else [])
+    
+    responses["Project"] = ([st.session_state.project_id] if isinstance(st.session_state.project_id, str)
+                          else list(st.session_state.project_id) if isinstance(st.session_state.project_id, (list, tuple))
+                          else [])
+    
+    responses["Support Organization"] = ([st.session_state.support_id[0]] if isinstance(st.session_state.support_id, (list, tuple))
+                                       else [st.session_state.support_id] if st.session_state.support_id
+                                       else [])
+    
+    responses["ASSESSOR"] = ([st.session_state.assessor_id[0]] if isinstance(st.session_state.assessor_id, (list, tuple))
+                           else [st.session_state.assessor_id] if st.session_state.assessor_id
+                           else [])
 
     today = datetime.now().date()
     airtable_date = today.isoformat()
