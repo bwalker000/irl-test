@@ -128,9 +128,15 @@ elif st.session_state.review_mode == 0:
 elif st.session_state.review_mode == 1:
     st.write("Perform an independent review")
 
+    # Set default values for assessor-related session state fields since there is no assessment being reviewed.
+    # This ensures the review process can proceed independently of any existing assessment.
+    
+    # Set assessor info to default values since this is an independent review
     st.session_state.assessor_first_name = "N/A"
     st.session_state.assessor_last_name = ""
     st.session_state.assessor_id = []
+    st.session_state.assessment_name = None  # No associated assessment
+    st.session_state.assessment_date = None  # No assessment date
 
     # load the table of all ventures
     table_name = st.secrets["general"]["airtable_table_ventures"]
