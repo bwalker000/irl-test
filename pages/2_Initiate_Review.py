@@ -55,10 +55,11 @@ option_map = {
 }
 
 st.session_state.review_mode = st.segmented_control(
-    "",
-    options=option_map.keys(),
+    "Review Mode",
+    options=list(option_map.keys()),  # Convert to list to ensure hashable type
     format_func=lambda option: option_map[option],
     selection_mode="single",
+    label_visibility="collapsed"  # Hide the label but maintain accessibility
 )
 
 #---------------------------------------------------------------------------------
@@ -137,6 +138,10 @@ elif st.session_state.review_mode == 1:
     st.session_state.assessor_id = []
     st.session_state.assessment_name = None  # No associated assessment
     st.session_state.assessment_date = None  # No assessment date
+    
+    # Initialize QA matrix if not already present
+    if 'QA' not in st.session_state:
+        st.session_state.QA = pd.DataFrame()
 
     # load the table of all ventures
     table_name = st.secrets["general"]["airtable_table_ventures"]

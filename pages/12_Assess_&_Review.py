@@ -65,9 +65,19 @@ if ('dim' not in st.session_state):
                 for i in range(numQ):
                     field_name = f"QA_{dim:02d}_{i}"
                     if field_name in air_data_record.columns:
-                        st.session_state.QA[dim, i] = bool(air_data_record.iloc[0][field_name])
+                        if isinstance(st.session_state.QA, pd.DataFrame):
+                            st.session_state.QA.at[dim, i] = bool(air_data_record.iloc[0][field_name])
+                        else:
+                            # Initialize DataFrame if not already done
+                            st.session_state.QA = pd.DataFrame()
+                            st.session_state.QA.at[dim, i] = bool(air_data_record.iloc[0][field_name])
                     else:
-                        st.session_state.QA[dim, i] = False
+                        if isinstance(st.session_state.QA, pd.DataFrame):
+                            st.session_state.QA.at[dim, i] = False
+                        else:
+                            # Initialize DataFrame if not already done
+                            st.session_state.QA = pd.DataFrame()
+                            st.session_state.QA.at[dim, i] = False
 
             # load the assessment text responses
             for dim in range(num_dims):
