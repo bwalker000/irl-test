@@ -117,11 +117,20 @@ with st.spinner("Generating your report, please wait..."):
     # Prepare the report
 
     # Helper function to get name from ID
-    def get_name_from_id(table_df, record_id):
+    def get_name_from_id(table_df, record_id, name_field='Name'):
         if isinstance(record_id, (list, tuple)):
             record_id = record_id[0]
+        st.write(f"Looking up ID: {record_id}")
+        st.write(f"Available columns: {table_df.columns.tolist()}")
         matches = table_df[table_df['id'] == record_id]
-        return matches.iloc[0]['Name'] if not matches.empty else record_id
+        if matches.empty:
+            st.write(f"No matches found for ID {record_id}")
+            return record_id
+        st.write(f"Found match: {matches.iloc[0].to_dict()}")
+        if name_field not in matches.columns:
+            st.write(f"'{name_field}' column not found in table")
+            return record_id
+        return matches.iloc[0][name_field]
 
     # Load ventures table for name lookups
     table_name = st.secrets["general"]["airtable_table_ventures"]
@@ -210,9 +219,9 @@ ax.text(0.00, 9.9, "Venture:", fontsize=12, ha='left', va='bottom', fontweight='
 ax.text(0.00, 9.65, "ASSESSOR:", fontsize=12, ha='left', va='bottom', fontweight='bold')
 ax.text(0.00, 9.4, "REVIEWER:", fontsize=12, ha='left', va='bottom', fontweight='bold')
 
-ax.text(2.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(2.0, 9.65, get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(2.0, 9.4, get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(2.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"], 'Venture Name'), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(2.0, 9.65, get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"], 'Full Name'), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(2.0, 9.4, get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'Full Name'), fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 ax.text(3.75, 9.9, "Project / Product:", fontsize=12, ha='left', va='bottom', fontweight='bold')
 ax.text(3.75, 9.65, "Date:", fontsize=12, ha='left', va='bottom', fontweight='bold')
