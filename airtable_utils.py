@@ -264,13 +264,27 @@ def submit_record():
     table.create(cleaned_responses)
 
 
-    if st.session_state.mode == "ASSESSOR":
+    # Store current user state that we want to preserve
+    preserved_state = {
+        'mode': st.session_state.mode,  # ASSESSOR or REVIEWER
+        'assessor_id': st.session_state.get('assessor_id'),  # Keep user's assessor ID if they have one
+        'reviewer_id': st.session_state.get('reviewer_id'),   # Keep user's reviewer ID if they have one
+    }
+
+    # Clear all session state
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    
+    # Restore preserved state
+    for key, value in preserved_state.items():
+        st.session_state[key] = value
+
+    if preserved_state['mode'] == "ASSESSOR":
         st.success("Assessment submitted successfully!")
-    elif st.session_state.mode == "REVIEWER":
+    elif preserved_state['mode'] == "REVIEWER":
         st.success("Review submitted successfully!")
 
-    if st.button("Home"):
-        st.switch_page("streamlit_app.py")
-        st.stop()
+    # Return to home
+    st.switch_page("streamlit_app.py")
 
 

@@ -2,8 +2,9 @@ from shared import *
 
 st.title("Impact Readiness Level")
 
-# this resets a flag telling whether a review / assessment has been submitted.
-st.session_state.submitted = False
+# Initialize session state for submission tracking
+if 'submitted' not in st.session_state:
+    st.session_state.submitted = False
 
 # Load secrets
 #api_key = st.secrets["general"]["airtable_api_key"]

@@ -272,9 +272,13 @@ with col2:
             st.rerun()
 with col3:
     if st.session_state.dim == num_dims - 1:
-        if st.button("Submit", disabled=st.session_state.submitted, key="submit_button"):
-            submit_record()
-            st.session_state.submitted = True
+        if not st.session_state.submitted:  # Only show submit button if not submitted
+            if st.button("Submit", key="submit_button"):
+                submit_record()
+                st.session_state.submitted = True
+                st.rerun()  # Rerun to update UI
+        else:
+            st.success("✓ Successfully submitted!")
 with col4:
     if st.button("Home", key="home_button"):
         st.switch_page("streamlit_app.py")
