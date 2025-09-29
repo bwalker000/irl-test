@@ -2,6 +2,8 @@ from shared import *
 
 st.title("Create a Report")
 
+# Clear the cache when entering this page
+st.cache_data.clear()
 
 #-----------------------------------------------------------------------------------------
 # Load the assessment data from airtable

@@ -9,6 +9,8 @@ from shared import num_dims, numQ
 #            A specific support organization
 #        The ASSESSOR can select which project they are interested in assessing.
 
+# Clear the cache when entering this page
+st.cache_data.clear()
 
 st.title("Initiate a Review")
 

@@ -15,7 +15,7 @@ from datetime import datetime, date
 from fields import IRL_031_data_fields as expected_fields
 
 
-@st.cache_data
+@st.cache_data(ttl=60)  # Cache for 60 seconds max
 def load_airtable(table_name, base_id, airtable_api_key, debug=True, view="Grid view"):
     """
     Loads records from an Airtable table.
