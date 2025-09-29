@@ -30,27 +30,38 @@ if not st.user.is_logged_in:
         st.login("auth0")
 
 if st.user.is_logged_in:
-
     st.write(f"User Email: {st.user.email}\n\n")
 
-    if 'mode' not in st.session_state:
-        assessor_or_reviewer()
+    # Check if user is registered as assessor or reviewer
+    is_registered = assessor_or_reviewer()
+    
+    if not is_registered:
+        st.error("Your email is not registered as an ASSESSOR or REVIEWER.")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("Log out", key="logout_unregistered"):
+                # Clear session state
+                for key in list(st.session_state.keys()):
+                    del st.session_state[key]
+                # Log out of Auth0
+                st.logout()
+                st.rerun()
+    else:
+        if st.session_state.mode == "ASSESSOR":
+            st.write("User Mode: ASSESSOR")
+            st.session_state.assessor_email = st.user.email
+            if st.button("Assess"):
+                st.switch_page("pages/1_New_Assessment.py")
+            if st.button("Report"):
+                st.switch_page("pages/12_Report.py")
 
-    if st.session_state.mode == "ASSESSOR":
-        st.write("User Mode: ASSESSOR")
-        st.session_state.assessor_email = st.user.email
-        if st.button("Assess"):
-            st.switch_page("pages/1_New_Assessment.py")
-        if st.button("Report"):
-            st.switch_page("pages/12_Report.py")
-
-    elif st.session_state.mode == "REVIEWER":
-        st.write("User Mode: REVIEWER")
-        st.session_state.reviewer_email = st.user.email
-        if st.button("Review"):
-            st.switch_page("pages/2_Initiate_Review.py")
-        if st.button("Report"):
-            st.switch_page("pages/12_Report.py")    
+        elif st.session_state.mode == "REVIEWER":
+            st.write("User Mode: REVIEWER")
+            st.session_state.reviewer_email = st.user.email
+            if st.button("Review"):
+                st.switch_page("pages/2_Initiate_Review.py")
+            if st.button("Report"):
+                st.switch_page("pages/12_Report.py")    
 
     if st.button("Log out"):
         st.logout()

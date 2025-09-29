@@ -155,13 +155,13 @@ def assessor_or_reviewer():
         # set the mode based on the email found
         if user_email in assessor_emails:
             st.session_state.mode = 'ASSESSOR'
+            return True
         elif user_email in reviewer_emails:
-
             st.session_state.mode = 'REVIEWER'
+            return True
         else:
-            st.warning("Your email is not registered as an ASSESSOR or REVIEWER. Please contact the system administrator.")
-            st.stop()
-    return st.session_state.mode 
+            return False
+    return True if 'mode' in st.session_state else False
 
 
 
