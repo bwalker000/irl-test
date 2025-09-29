@@ -86,61 +86,36 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-    # Get the support_id (handle both string and tuple cases)
-    support_id = st.session_state.support_id[0] if isinstance(st.session_state.support_id, (list, tuple)) else st.session_state.support_id
+    # Keep support_id as tuple for exact matching
+    support_id = st.session_state.support_id
     st.write("Support ID:", support_id)
 
     # Show more detailed debug info about the data
     st.write("Number of records in air_data:", len(air_data))
     
-    # Let's look at the actual data we're trying to match
+    # Show the Support Organization values for debugging
     st.write("Support Organization values in air_data:")
     for idx, row in air_data.iterrows():
         org = row.get("Support Organization")
         st.write(f"Record {idx}: {org} (type: {type(org).__name__})")
 
-    # Modified support org matching logic that handles all cases
-    def check_support_match(org_value):
-        if pd.isna(org_value):
-            return False
-            
-        # If the organization is stored as a tuple/list, check each element
-        if isinstance(org_value, (tuple, list)):
-            return any(support_id == str(item) for item in org_value)
-            
-        # If it's a string, direct comparison
-        if isinstance(org_value, str):
-            return support_id == org_value
-            
-        # For any other case, try string comparison
-        return str(support_id) == str(org_value)
-
-    # Apply the matching logic and show detailed results
-    matches = []
-    for idx, row in air_data.iterrows():
-        org = row.get("Support Organization")
-        is_match = check_support_match(org)
-        if is_match:
-            matches.append(idx)
-            st.write(f"Found match in record {idx}:")
-            st.write(f"- Name: {row.get('Name')}")
-            st.write(f"- Support Organization: {org}")
-
-    # Create the filtered records
-    filtered_records = air_data.loc[matches] if matches else pd.DataFrame()
-
-    # Build the boolean mask for blank review date
-    review_blank = (
-        (air_data["Review_date"].isnull()) |
-        (air_data["Review_date"] == "") |
-        (air_data["Review_date"] == pd.NaT)
-    )
+    # First filter by exact tuple matching on support organization
+    filtered_records = air_data[air_data["Support Organization"] == support_id]
     
-    # Show how many records have blank review dates
-    st.write("Records with blank review date:", review_blank.sum())
+    # Show matching records
+    for idx, row in filtered_records.iterrows():
+        st.write(f"Found match in record {idx}:")
+        st.write(f"- Name: {row.get('Name')}")
+        st.write(f"- Support Organization: {row.get('Support Organization')}")
 
-    # Combine the two conditions
-    filtered_records = air_data[support_match & review_blank]
+    # Then filter for blank review dates
+    filtered_records = filtered_records[
+        (filtered_records["Review_date"].isnull()) |
+        (filtered_records["Review_date"] == "") |
+        (filtered_records["Review_date"] == pd.NaT)
+    ]
+    
+    st.write("Records with blank review date:", len(filtered_records))
     
     # Show final filtered count
     st.write("Final filtered record count:", len(filtered_records))
