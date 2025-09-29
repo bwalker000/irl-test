@@ -41,13 +41,6 @@ st.session_state.reviewer_first_name = row.iloc[0]["First Name"]
 st.session_state.reviewer_last_name = row.iloc[0]["Last Name"]
 st.session_state.support_id = row.iloc[0]["Support Organization"]
 
-# Debug reviewer info
-st.write("Debug - Reviewer info:")
-st.write("Reviewer Name:", st.session_state.reviewer_first_name, st.session_state.reviewer_last_name)
-st.write("Support ID (raw):", row.iloc[0]["Support Organization"])
-st.write("Support ID (session):", st.session_state.support_id)
-st.write("Support ID type:", type(st.session_state.support_id).__name__)
-
 #---------------------------------------------------------------------------------
 # Load Support Organization info
 table_name = st.secrets["general"]["airtable_table_support"]
@@ -81,44 +74,16 @@ if st.session_state.review_mode == None:
 # Perform a review of an existing assessment
 
 elif st.session_state.review_mode == 0:
-    #st.write("Select among existing assessments to review")
-
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-    # Keep support_id as tuple for exact matching
-    support_id = st.session_state.support_id
-    st.write("Support ID:", support_id)
-
-    # Show more detailed debug info about the data
-    st.write("Number of records in air_data:", len(air_data))
-    
-    # Show the Support Organization values for debugging
-    st.write("Support Organization values in air_data:")
-    for idx, row in air_data.iterrows():
-        org = row.get("Support Organization")
-        st.write(f"Record {idx}: {org} (type: {type(org).__name__})")
-
-    # First filter by exact tuple matching on support organization
-    filtered_records = air_data[air_data["Support Organization"] == support_id]
-    
-    # Show matching records
-    for idx, row in filtered_records.iterrows():
-        st.write(f"Found match in record {idx}:")
-        st.write(f"- Name: {row.get('Name')}")
-        st.write(f"- Support Organization: {row.get('Support Organization')}")
-
-    # Then filter for blank review dates
+    # Filter records by support organization and blank review dates
+    filtered_records = air_data[air_data["Support Organization"] == st.session_state.support_id]
     filtered_records = filtered_records[
         (filtered_records["Review_date"].isnull()) |
         (filtered_records["Review_date"] == "") |
         (filtered_records["Review_date"] == pd.NaT)
     ]
-    
-    st.write("Records with blank review date:", len(filtered_records))
-    
-    # Show final filtered count
-    st.write("Final filtered record count:", len(filtered_records))
 
     # Proceed with selection logic
     assessment_names = filtered_records['Name']
