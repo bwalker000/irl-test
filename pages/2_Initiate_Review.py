@@ -162,7 +162,7 @@ elif st.session_state.review_mode == 1:
 
     # Build the boolean mask for support org match
     support_match = air_ventures["Support Organization"].apply(
-        lambda x: support_id in x if isinstance(x, list) else x == support_id
+        lambda x: support_id in x if isinstance(x, (list, tuple)) else x == support_id
     )
 
     # Filter the ventures that are managed by the current support org
@@ -186,8 +186,9 @@ elif st.session_state.review_mode == 1:
             # Load all projects
             table_name = st.secrets["general"]["airtable_table_projects"]
             air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
-            if isinstance(project_ids, list):
-                filtered_projects = air_projects[air_projects["id"].isin(project_ids)]
+            if isinstance(project_ids, (list, tuple)):
+                project_ids_list = list(project_ids)  # Convert tuple to list if needed
+                filtered_projects = air_projects[air_projects["id"].isin(project_ids_list)]
                 project_names = filtered_projects['Name']
                 if not project_names.empty:
                     st.session_state.project_name = st.selectbox('Select a project for review:', options=project_names)
