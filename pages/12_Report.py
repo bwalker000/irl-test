@@ -101,27 +101,28 @@ else:
 # Don't run report immediately after selection!
 # Instead, wait for user to click a button
 
-if selected_assessment:
-    if st.button("Generate Report"):
-        # Filter for chosen assessment
-        filtered_data = air_data.loc[air_data["Name"] == selected_assessment]
-        if filtered_data.empty:
-            st.warning("No data found for the selected assessment.")
-            st.stop()
-
-        with st.spinner("Generating your report, please wait..."):
-            # ===== Place your report generation code here =====
-            # Example:
-            # generate_report(filtered_data)
-            pass
-else:
+if not selected_assessment:
     st.info("Please select an assessment to enable report generation.")
+    st.stop()
 
-#-----------------------------------------------------------------------------------------
-# Prepare the report
+if not st.button("Generate Report"):
+    st.stop()
 
+# Filter for chosen assessment
+filtered_data = air_data.loc[air_data["Name"] == selected_assessment]
+if filtered_data.empty:
+    st.warning("No data found for the selected assessment.")
+    st.stop()
 
-# Load secrets
+with st.spinner("Generating your report, please wait..."):
+    # Initialize arrays for the selected assessment
+    st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
+    st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
+    
+    #-----------------------------------------------------------------------------------------
+    # Prepare the report
+
+    # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_assessment"]
