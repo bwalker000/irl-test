@@ -41,6 +41,13 @@ st.session_state.reviewer_first_name = row.iloc[0]["First Name"]
 st.session_state.reviewer_last_name = row.iloc[0]["Last Name"]
 st.session_state.support_id = row.iloc[0]["Support Organization"]
 
+# Debug reviewer info
+st.write("Debug - Reviewer info:")
+st.write("Reviewer Name:", st.session_state.reviewer_first_name, st.session_state.reviewer_last_name)
+st.write("Support ID (raw):", row.iloc[0]["Support Organization"])
+st.write("Support ID (session):", st.session_state.support_id)
+st.write("Support ID type:", type(st.session_state.support_id).__name__)
+
 #---------------------------------------------------------------------------------
 # Load Support Organization info
 table_name = st.secrets["general"]["airtable_table_support"]
@@ -83,17 +90,35 @@ elif st.session_state.review_mode == 0:
     support_id = st.session_state.support_id[0]
     st.write("Support ID:", support_id)
 
-    # Show the unique support organizations in the data
-    st.write("Available Support Organizations in data:", 
-             air_data["Support Organization"].dropna().unique())
-
-    # Build the boolean mask for support org match
-    support_match = air_data["Support Organization"].apply(
-        lambda x: support_id in x if isinstance(x, list) else x == support_id
-    )
+    # Show more detailed debug info about the data
+    st.write("Number of records in air_data:", len(air_data))
+    st.write("Columns in air_data:", air_data.columns.tolist())
     
-    # Show how many records match the support org
+    # Display the Support Organization column data types and values
+    st.write("Support Organization column data:")
+    st.write(air_data["Support Organization"].apply(lambda x: (type(x).__name__, x)).head())
+
+    # Modified support org matching logic
+    def check_support_match(x):
+        if pd.isna(x):
+            return False
+        if isinstance(x, (list, tuple)):
+            return support_id in x
+        if isinstance(x, str):
+            return support_id == x
+        # If it's a single value wrapped in a list/tuple
+        if isinstance(x, (list, tuple)) and len(x) == 1:
+            return support_id == x[0]
+        return False
+
+    # Build the boolean mask for support org match with more detailed logging
+    support_match = air_data["Support Organization"].apply(check_support_match)
+    
+    # Show matching records for debugging
     st.write("Records matching support org:", support_match.sum())
+    if support_match.sum() > 0:
+        st.write("Matching records:")
+        st.write(air_data[support_match][["Name", "Support Organization"]].head())
 
     # Build the boolean mask for blank review date
     review_blank = (
