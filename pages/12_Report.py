@@ -214,19 +214,23 @@ ax.set_axis_off()
 
 ax.text(7.5/2, 10.25, "Impact Readiness Level\u2122", fontsize=12, ha='center', va='bottom', fontweight='bold')
 
-ax.text(0.00, 9.9, "Venture:", fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(0.00, 9.65, "ASSESSOR:", fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(0.00, 9.4, "REVIEWER:", fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(0.00, 9.9, "Venture:", fontsize=12, ha='left', va='bottom', fontweight='italic')
+ax.text(0.00, 9.65, "ASSESSOR:", fontsize=12, ha='left', va='bottom', fontweight='italic')
+ax.text(0.00, 9.4, "REVIEWER:", fontsize=12, ha='left', va='bottom', fontweight='italic')
 
-ax.text(2.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"], 'single'), fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(2.0, 9.65, get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"], 'full'), fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(2.0, 9.4, get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'full'), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(1.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"], 'single'), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(1.0, 9.65, get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"], 'full'), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(1.0, 9.4, get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'full'), fontsize=12, ha='left', va='bottom', fontweight='bold')
 
-ax.text(3.75, 9.9, "Project / Product:", fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(3.75, 9.65, "Date:", fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(3.75, 9.4, "Date:", fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(3.75, 9.9, "Project / Product:", fontsize=12, ha='left', va='bottom', fontweight='italic')
+ax.text(3.75, 9.65, "Date:", fontsize=12, ha='left', va='bottom', fontweight='italic')
+ax.text(3.75, 9.4, "Date:", fontsize=12, ha='left', va='bottom', fontweight='italic')
 
-ax.text(5.75, 9.9, air_data.iloc[0]["Project"], fontsize=12, ha='left', va='bottom', fontweight='bold')
+# Load projects table for project name lookup
+table_name = st.secrets["general"]["airtable_table_projects"]
+air_projects, _ = load_airtable(table_name, base_id, api_key, False)
+project_name = get_name_from_id(air_projects, air_data.iloc[0]["Project"], 'single')
+ax.text(5.75, 9.9, project_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 # Convert dates to abbreviated month format
 def format_date(date_str):
@@ -281,15 +285,36 @@ for dim in range(n_rows):
             # find the milestone associated with this particular question
             milestone = f"Q{i} Milestone"
             milestone_id = air_assessment.iloc[i][milestone]
+            
+            # Debug milestone lookup
+            st.write(f"\nProcessing milestone for Q{i}:")
+            st.write(f"- Milestone field: {milestone}")
+            st.write(f"- Raw milestone_id: {milestone_id}")
+            
+            # Handle case where milestone_id is a tuple/list
+            if isinstance(milestone_id, (list, tuple)):
+                milestone_id = milestone_id[0]
+                st.write(f"- Extracted milestone_id from tuple: {milestone_id}")
+            
+            # Look up the milestone
             matching_milestones = air_milestones.loc[air_milestones["id"] == milestone_id]
+            st.write(f"- Found matching milestones: {len(matching_milestones)}")
             
             if matching_milestones.empty:
-                color = '#FFFFFF'  # Default to white if milestone not found
+                st.write("- No matching milestone found, using white")
+                color = '#FFFFFF'
             else:
-                color = matching_milestones.iloc[0]["Color"]
+                raw_color = matching_milestones.iloc[0]["Color"]
+                st.write(f"- Raw color value: {raw_color}")
+                if pd.isna(raw_color) or not raw_color:
+                    st.write("- Color is missing or empty, using white")
+                    color = '#FFFFFF'
+                else:
+                    color = raw_color if raw_color.startswith('#') else f"#{raw_color}"
+                    st.write(f"- Final color value: {color}")
         except Exception as e:
             st.error(f"Error processing milestone {i}: {str(e)}")
-            color = '#FFFFFF'  # Default to white on error
+            color = '#FFFFFF'
 
         rect = patches.Rectangle((x0, y0), dx, dy, facecolor=color, edgecolor='black', lw=1)
         ax.add_patch(rect)
