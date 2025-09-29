@@ -25,10 +25,17 @@ st.session_state.submitted = False
 #if st.button("Home"):
 #    st.switch_page("streamlit_app.py")
 
+# Show Demo Request button only on the main screen when not logged in
 if not st.user.is_logged_in:
-    if st.button("Log in"):
-        st.login("auth0")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Log in"):
+            st.login("auth0")
+    with col2:
+        if st.button("Demo Request"):
+            st.switch_page("pages/0_Demo_Request.py")
 
+# Handle logged-in state
 if st.user.is_logged_in:
     st.write(f"User Email: {st.user.email}\n\n")
 
@@ -37,34 +44,38 @@ if st.user.is_logged_in:
     
     if not is_registered:
         st.error("Your email is not registered as an ASSESSOR or REVIEWER.")
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            if st.button("Log out", key="logout_unregistered"):
-                # Clear session state
-                for key in list(st.session_state.keys()):
-                    del st.session_state[key]
-                # Log out of Auth0
-                st.logout()
-                st.rerun()
+        if st.button("Log out"):
+            # Clear session state
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            # Log out of Auth0
+            st.logout()
     else:
+        # Show interface for registered users
         if st.session_state.mode == "ASSESSOR":
             st.write("User Mode: ASSESSOR")
             st.session_state.assessor_email = st.user.email
-            if st.button("Assess"):
-                st.switch_page("pages/1_New_Assessment.py")
-            if st.button("Report"):
-                st.switch_page("pages/12_Report.py")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                if st.button("Assess"):
+                    st.switch_page("pages/1_New_Assessment.py")
+            with col2:
+                if st.button("Report"):
+                    st.switch_page("pages/12_Report.py")
+            with col3:
+                if st.button("Log out"):
+                    st.logout()
 
         elif st.session_state.mode == "REVIEWER":
             st.write("User Mode: REVIEWER")
             st.session_state.reviewer_email = st.user.email
-            if st.button("Review"):
-                st.switch_page("pages/2_Initiate_Review.py")
-            if st.button("Report"):
-                st.switch_page("pages/12_Report.py")    
-
-    if st.button("Log out"):
-        st.logout()
-
-if st.button("Demo Request"):
-    st.switch_page("pages/0_Demo_Request.py")
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                if st.button("Review"):
+                    st.switch_page("pages/2_Initiate_Review.py")
+            with col2:
+                if st.button("Report"):
+                    st.switch_page("pages/12_Report.py")
+            with col3:
+                if st.button("Log out"):
+                    st.logout()
