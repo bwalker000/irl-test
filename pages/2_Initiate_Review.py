@@ -86,39 +86,48 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-    # Extract your support_id string and show it for debugging
-    support_id = st.session_state.support_id[0]
+    # Get the support_id (handle both string and tuple cases)
+    support_id = st.session_state.support_id[0] if isinstance(st.session_state.support_id, (list, tuple)) else st.session_state.support_id
     st.write("Support ID:", support_id)
 
     # Show more detailed debug info about the data
     st.write("Number of records in air_data:", len(air_data))
-    st.write("Columns in air_data:", air_data.columns.tolist())
     
-    # Display the Support Organization column data types and values
-    st.write("Support Organization column data:")
-    st.write(air_data["Support Organization"].apply(lambda x: (type(x).__name__, x)).head())
+    # Let's look at the actual data we're trying to match
+    st.write("Support Organization values in air_data:")
+    for idx, row in air_data.iterrows():
+        org = row.get("Support Organization")
+        st.write(f"Record {idx}: {org} (type: {type(org).__name__})")
 
-    # Modified support org matching logic
-    def check_support_match(x):
-        if pd.isna(x):
+    # Modified support org matching logic that handles all cases
+    def check_support_match(org_value):
+        if pd.isna(org_value):
             return False
-        if isinstance(x, (list, tuple)):
-            return support_id in x
-        if isinstance(x, str):
-            return support_id == x
-        # If it's a single value wrapped in a list/tuple
-        if isinstance(x, (list, tuple)) and len(x) == 1:
-            return support_id == x[0]
-        return False
+            
+        # If the organization is stored as a tuple/list, check each element
+        if isinstance(org_value, (tuple, list)):
+            return any(support_id == str(item) for item in org_value)
+            
+        # If it's a string, direct comparison
+        if isinstance(org_value, str):
+            return support_id == org_value
+            
+        # For any other case, try string comparison
+        return str(support_id) == str(org_value)
 
-    # Build the boolean mask for support org match with more detailed logging
-    support_match = air_data["Support Organization"].apply(check_support_match)
-    
-    # Show matching records for debugging
-    st.write("Records matching support org:", support_match.sum())
-    if support_match.sum() > 0:
-        st.write("Matching records:")
-        st.write(air_data[support_match][["Name", "Support Organization"]].head())
+    # Apply the matching logic and show detailed results
+    matches = []
+    for idx, row in air_data.iterrows():
+        org = row.get("Support Organization")
+        is_match = check_support_match(org)
+        if is_match:
+            matches.append(idx)
+            st.write(f"Found match in record {idx}:")
+            st.write(f"- Name: {row.get('Name')}")
+            st.write(f"- Support Organization: {org}")
+
+    # Create the filtered records
+    filtered_records = air_data.loc[matches] if matches else pd.DataFrame()
 
     # Build the boolean mask for blank review date
     review_blank = (
