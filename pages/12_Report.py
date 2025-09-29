@@ -214,17 +214,17 @@ ax.set_axis_off()
 
 ax.text(7.5/2, 10.25, "Impact Readiness Level\u2122", fontsize=12, ha='center', va='bottom', fontweight='bold')
 
-ax.text(0.00, 9.9, "Venture:", fontsize=12, ha='left', va='bottom', fontweight='italic')
-ax.text(0.00, 9.65, "ASSESSOR:", fontsize=12, ha='left', va='bottom', fontweight='italic')
-ax.text(0.00, 9.4, "REVIEWER:", fontsize=12, ha='left', va='bottom', fontweight='italic')
+ax.text(0.00, 9.9, "Venture:", fontsize=12, ha='left', va='bottom', fontweight='normal')
+ax.text(0.00, 9.65, "ASSESSOR:", fontsize=12, ha='left', va='bottom', fontweight='normal')
+ax.text(0.00, 9.4, "REVIEWER:", fontsize=12, ha='left', va='bottom', fontweight='normal')
 
 ax.text(1.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"], 'single'), fontsize=12, ha='left', va='bottom', fontweight='bold')
 ax.text(1.0, 9.65, get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"], 'full'), fontsize=12, ha='left', va='bottom', fontweight='bold')
 ax.text(1.0, 9.4, get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'full'), fontsize=12, ha='left', va='bottom', fontweight='bold')
 
-ax.text(3.75, 9.9, "Project / Product:", fontsize=12, ha='left', va='bottom', fontweight='italic')
-ax.text(3.75, 9.65, "Date:", fontsize=12, ha='left', va='bottom', fontweight='italic')
-ax.text(3.75, 9.4, "Date:", fontsize=12, ha='left', va='bottom', fontweight='italic')
+ax.text(3.75, 9.9, "Project / Product:", fontsize=12, ha='left', va='bottom', fontweight='normal')
+ax.text(3.75, 9.65, "Date:", fontsize=12, ha='left', va='bottom', fontweight='normal')
+ax.text(3.75, 9.4, "Date:", fontsize=12, ha='left', va='bottom', fontweight='normal')
 
 # Load projects table for project name lookup
 table_name = st.secrets["general"]["airtable_table_projects"]
