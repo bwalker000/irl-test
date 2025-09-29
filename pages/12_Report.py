@@ -35,11 +35,21 @@ if air_data.empty:
 
 # if REVIEWER, then only show assessments associated with the reviewer
 if st.session_state.mode == "REVIEWER":
-    air_data = air_data.loc[ air_data["REVIEWER"] == st.session_state.reviewer_id[0] ]
+    # Get reviewer ID (might be in a tuple)
+    reviewer_id = st.session_state.reviewer_id[0] if isinstance(st.session_state.reviewer_id, (list, tuple)) else st.session_state.reviewer_id
+    # Filter records where reviewer is in the REVIEWER field
+    air_data = air_data[air_data["REVIEWER"].apply(
+        lambda x: reviewer_id in x if isinstance(x, (list, tuple)) else x == reviewer_id
+    )]
 
 # if ASSESSOR, then only show assessments associated with the assessor
 if st.session_state.mode == "ASSESSOR":
-    air_data = air_data.loc[ air_data["Assessor"] == st.session_state.assessor_id[0] ]    
+    # Get assessor ID (might be in a tuple)
+    assessor_id = st.session_state.assessor_id[0] if isinstance(st.session_state.assessor_id, (list, tuple)) else st.session_state.assessor_id
+    # Filter records where assessor is in the ASSESSOR field
+    air_data = air_data[air_data["ASSESSOR"].apply(
+        lambda x: assessor_id in x if isinstance(x, (list, tuple)) else x == assessor_id
+    )]
 
 #-----------------------------------------------------------------------------------------
 # Use a pulldown menu to select the assessment to be reported on
@@ -49,6 +59,10 @@ if st.session_state.mode == "REVIEWER":
     assessment_names = air_data['Name']
     if assessment_names.empty:
         st.warning("No available assessments to report for you as a REVIEWER.")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("Return to Home"):
+                st.switch_page("streamlit_app.py")
         st.stop()
     selected_assessment = st.selectbox('Select an assessment for reporting:', options=assessment_names)
 
@@ -56,11 +70,19 @@ elif st.session_state.mode == "ASSESSOR":
     assessment_names = air_data['Name']
     if assessment_names.empty:
         st.warning("No available assessments to report for you as an ASSESSOR.")
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("Return to Home"):
+                st.switch_page("streamlit_app.py")
         st.stop()
     selected_assessment = st.selectbox('Select an assessment for reporting:', options=assessment_names)
 
 else:
     st.warning("Unknown mode.")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("Return to Home"):
+            st.switch_page("streamlit_app.py")
     st.stop()
 
 # Don't run report immediately after selection!
