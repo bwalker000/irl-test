@@ -283,7 +283,7 @@ for dim in range(n_rows):
 
         try:
             # find the milestone associated with this particular question
-            milestone = f"Q{i} Milestone"
+            milestone = f"Q{dim} Milestone"
             milestone_id = air_assessment.iloc[i][milestone]
             
             # Debug milestone lookup
