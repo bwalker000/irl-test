@@ -121,31 +121,27 @@ with st.spinner("Generating your report, please wait..."):
     # Prepare the report
 
     # Load secrets
-api_key = st.secrets["general"]["airtable_api_key"]
-base_id = st.secrets["general"]["airtable_base_id"]
-table_name = st.secrets["general"]["airtable_table_assessment"]
+    api_key = st.secrets["general"]["airtable_api_key"]
+    base_id = st.secrets["general"]["airtable_base_id"]
+    table_name = st.secrets["general"]["airtable_table_assessment"]
 
-# load airtable assessment
-air_assessment, _ = load_airtable(table_name, base_id, api_key, False)
+    # load airtable assessment
+    air_assessment, _ = load_airtable(table_name, base_id, api_key, False)
 
+    # Load secrets for milestones
+    api_key = st.secrets["general"]["airtable_api_key"]
+    base_id = st.secrets["general"]["airtable_base_id"]
+    table_name = st.secrets["general"]["airtable_table_milestones"]
 
-
-# Load secrets
-api_key = st.secrets["general"]["airtable_api_key"]
-base_id = st.secrets["general"]["airtable_base_id"]
-table_name = st.secrets["general"]["airtable_table_milestones"]
-
-# load airtable assessment
-air_milestones, _ = load_airtable(table_name, base_id, api_key, False)
-
-
+    # load airtable milestones
+    air_milestones, _ = load_airtable(table_name, base_id, api_key, False)
 
     # Diagnostic information
     st.write("### Debug Information")
     st.write("Assessment Table Structure:")
     st.write(f"- Number of rows: {air_assessment.shape[0]}")
     st.write(f"- Columns: {air_assessment.columns.tolist()}")
-    
+
     st.write("\nMilestones Table Structure:")
     st.write(f"- Number of rows: {air_milestones.shape[0]}")
     st.write(f"- Columns: {air_milestones.columns.tolist()}")
@@ -164,7 +160,7 @@ air_milestones, _ = load_airtable(table_name, base_id, api_key, False)
     num_dims = air_assessment.shape[0]
     numQ = 10
 
-    # DIMENSION THE REPORT # Define letter sheet dimensions and margins (in inches)
+    # DIMENSION THE REPORT
 letter_width = 8.5
 letter_height = 11
 margin = 0.5
