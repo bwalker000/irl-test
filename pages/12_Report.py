@@ -35,12 +35,23 @@ if air_data.empty:
 
 # if REVIEWER, then only show assessments associated with the reviewer
 if st.session_state.mode == "REVIEWER":
+    # Debug output
+    st.write("Reviewer ID:", st.session_state.reviewer_id)
+    
     # Get reviewer ID (might be in a tuple)
     reviewer_id = st.session_state.reviewer_id[0] if isinstance(st.session_state.reviewer_id, (list, tuple)) else st.session_state.reviewer_id
+    st.write("Processed Reviewer ID:", reviewer_id)
+    
+    # Show what's in the REVIEWER column
+    st.write("REVIEWER column in data:")
+    st.write(air_data["REVIEWER"].head())
+    
     # Filter records where reviewer is in the REVIEWER field
     air_data = air_data[air_data["REVIEWER"].apply(
         lambda x: reviewer_id in x if isinstance(x, (list, tuple)) else x == reviewer_id
     )]
+    
+    st.write("Records after filtering:", len(air_data))
 
 # if ASSESSOR, then only show assessments associated with the assessor
 if st.session_state.mode == "ASSESSOR":
