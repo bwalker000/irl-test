@@ -13,21 +13,10 @@ api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_data"]
 
-# Debug mode toggle
-#debug = st.checkbox("Enable Airtable debug mode", value=False)
-debug = False
-
 # load airtable data
-air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
+air_data, _ = load_airtable(table_name, base_id, api_key, False)
 
-if debug:
-    st.subheader("Airtable API Debug Information")
-    st.code(f"Request URL: {debug_details['url']}", language="text")
-    st.write("Status code:", debug_details["status_code"])
-    st.write("Response headers:", debug_details["response_headers"])
-    st.write("Raw JSON response:")
-    st.json(debug_details["raw_response"])
-    st.write("Records returned:", debug_details["records_count"])
+# if REVIEWER, filter for assessments where we are listed as REVIEWER
 
 if air_data.empty:
     st.warning("No records found in the Airtable table.")
@@ -105,8 +94,17 @@ if not selected_assessment:
     st.info("Please select an assessment to enable report generation.")
     st.stop()
 
-if not st.button("Generate Report"):
-    st.stop()
+col1, col2 = st.columns([1, 1])
+with col1:
+    if st.button("Generate Report"):
+        pass  # Continue with report generation
+    else:
+        st.stop()
+        
+with col2:
+    if st.button("Return to Home"):
+        st.switch_page("streamlit_app.py")
+        st.stop()
 
 # Filter for chosen assessment
 filtered_data = air_data.loc[air_data["Name"] == selected_assessment]
@@ -127,12 +125,8 @@ api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_assessment"]
 
-# Debug mode toggle
-#debug = st.checkbox("Enable Airtable debug mode", value=False)
-debug = False
-
 # load airtable assessment
-air_assessment, debug_details = load_airtable(table_name, base_id, api_key, debug)
+air_assessment, _ = load_airtable(table_name, base_id, api_key, False)
 
 
 
@@ -141,23 +135,36 @@ api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_milestones"]
 
-# Debug mode toggle
-#debug = st.checkbox("Enable Airtable debug mode", value=False)
-debug = False
-
 # load airtable assessment
-air_milestones, debug_details = load_airtable(table_name, base_id, api_key, debug)
+air_milestones, _ = load_airtable(table_name, base_id, api_key, False)
 
 
 
-# determine the number of rows and columns in the report
-num_dims = air_assessment.shape[0]
-numQ = 10
+    # Diagnostic information
+    st.write("### Debug Information")
+    st.write("Assessment Table Structure:")
+    st.write(f"- Number of rows: {air_assessment.shape[0]}")
+    st.write(f"- Columns: {air_assessment.columns.tolist()}")
+    
+    st.write("\nMilestones Table Structure:")
+    st.write(f"- Number of rows: {air_milestones.shape[0]}")
+    st.write(f"- Columns: {air_milestones.columns.tolist()}")
+    
+    # Show first milestone reference and lookup
+    if not air_assessment.empty:
+        first_milestone = air_assessment.iloc[0]["Q0 Milestone"]
+        st.write("\nExample Milestone Lookup:")
+        st.write(f"- First milestone ID from assessment: {first_milestone}")
+        matching = air_milestones.loc[air_milestones["id"] == first_milestone]
+        st.write(f"- Found in milestones table: {not matching.empty}")
+        if not matching.empty:
+            st.write(f"- Color value: {matching.iloc[0]['Color']}")
 
+    # determine the number of rows and columns in the report
+    num_dims = air_assessment.shape[0]
+    numQ = 10
 
-# DIMENSION THE REPORT 
-
-# Define letter sheet dimensions and margins (in inches)
+    # DIMENSION THE REPORT # Define letter sheet dimensions and margins (in inches)
 letter_width = 8.5
 letter_height = 11
 margin = 0.5
@@ -239,10 +246,19 @@ for dim in range(n_rows):
 
         # Add code to accumulate each milestone
 
-        # find the milestone associated with this particular question
-        milestone = f"Q{i} Milestone"
-        milestone_id = air_assessment.iloc[i][milestone]
-        color = air_milestones.loc[ air_milestones["id"] == milestone_id ].iloc[0]["Color"]
+        try:
+            # find the milestone associated with this particular question
+            milestone = f"Q{i} Milestone"
+            milestone_id = air_assessment.iloc[i][milestone]
+            matching_milestones = air_milestones.loc[air_milestones["id"] == milestone_id]
+            
+            if matching_milestones.empty:
+                color = '#FFFFFF'  # Default to white if milestone not found
+            else:
+                color = matching_milestones.iloc[0]["Color"]
+        except Exception as e:
+            st.error(f"Error processing milestone {i}: {str(e)}")
+            color = '#FFFFFF'  # Default to white on error
 
         rect = patches.Rectangle((x0, y0), dx, dy, facecolor=color, edgecolor='black', lw=1)
         ax.add_patch(rect)
