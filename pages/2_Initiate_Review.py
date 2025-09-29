@@ -1,4 +1,6 @@
 from shared import *
+# Explicitly import shared configuration
+from shared import num_dims, numQ
 
 # Assumptions:
 #        A specific ASSESSOR is intrinsically tied to:
@@ -140,6 +142,9 @@ elif st.session_state.review_mode == 1:
     st.session_state.assessment_date = None  # No assessment date
     
     # Initialize assessment matrices using shared configuration
+    if ('dim' not in st.session_state):
+        st.session_state.dim = 0  # start with the first dimension
+
     if 'QA' not in st.session_state:
         st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
     if 'QR' not in st.session_state:
@@ -148,10 +153,6 @@ elif st.session_state.review_mode == 1:
         st.session_state.TA = [""] * num_dims
     if 'TR' not in st.session_state:
         st.session_state.TR = [""] * num_dims
-    
-    # Initialize QA matrix as a nested dictionary if not already present
-    if 'QA' not in st.session_state:
-        st.session_state.QA = {}
 
     # load the table of all ventures
     table_name = st.secrets["general"]["airtable_table_ventures"]

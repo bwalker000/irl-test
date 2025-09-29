@@ -1,4 +1,6 @@
 from shared import *
+# Explicitly import shared configuration
+from shared import num_dims, numQ
 
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
