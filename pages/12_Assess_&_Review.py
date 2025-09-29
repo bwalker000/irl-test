@@ -1,15 +1,7 @@
 from shared import *
 
 # Load secrets
-api_key = st.secrets["general                    # Initialize dimension in QA dict if it doesn't exist
-                    if dim not in st.session_state.QA:
-                        st.session_state.QA[dim] = {}
-                    
-                    # Set the value based on whether the field exists
-                    if field_name in air_data_record.columns:
-                        st.session_state.QA[dim][i] = bool(air_data_record.iloc[0][field_name])
-                    else:
-                        st.session_state.QA[dim][i] = Falsei_key"]
+api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_assessment"]
 
@@ -62,7 +54,11 @@ if ('dim' not in st.session_state):
         table_name = st.secrets["general"]["airtable_table_data"]
         air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
         if "assessment_name" in st.session_state:
-            air_data_record = air_data.loc[ air_data["Name"] == st.session_state.assessment_name ]
+            # Convert list columns to strings to avoid hashing issues
+            list_cols = air_data.select_dtypes(include=['object']).columns
+            for col in list_cols:
+                air_data[col] = air_data[col].apply(lambda x: str(x) if isinstance(x, list) else x)
+            air_data_record = air_data.loc[air_data["Name"] == st.session_state.assessment_name]
 
             # load the assessment question responses
             for dim in range(num_dims):
