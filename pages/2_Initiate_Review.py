@@ -139,17 +139,19 @@ elif st.session_state.review_mode == 1:
     st.session_state.assessment_name = None  # No associated assessment
     st.session_state.assessment_date = None  # No assessment date
     
-    # Initialize QA matrix if not already present
+    # Initialize assessment matrices using shared configuration
     if 'QA' not in st.session_state:
-        # Create an empty DataFrame with dimensions as index and range(numQ) as columns
-        # This ensures we have proper indexing for the QA matrix
-        num_dimensions = 8  # Adjust this based on your actual number of dimensions
-        num_questions = 10  # Adjust this based on your actual number of questions
-        st.session_state.QA = pd.DataFrame(
-            False,  # Initialize all values to False
-            index=range(num_dimensions),
-            columns=range(num_questions)
-        )
+        st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
+    if 'QR' not in st.session_state:
+        st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
+    if 'TA' not in st.session_state:
+        st.session_state.TA = [""] * num_dims
+    if 'TR' not in st.session_state:
+        st.session_state.TR = [""] * num_dims
+    
+    # Initialize QA matrix as a nested dictionary if not already present
+    if 'QA' not in st.session_state:
+        st.session_state.QA = {}
 
     # load the table of all ventures
     table_name = st.secrets["general"]["airtable_table_ventures"]

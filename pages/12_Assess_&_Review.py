@@ -1,7 +1,15 @@
 from shared import *
 
 # Load secrets
-api_key = st.secrets["general"]["airtable_api_key"]
+api_key = st.secrets["general                    # Initialize dimension in QA dict if it doesn't exist
+                    if dim not in st.session_state.QA:
+                        st.session_state.QA[dim] = {}
+                    
+                    # Set the value based on whether the field exists
+                    if field_name in air_data_record.columns:
+                        st.session_state.QA[dim][i] = bool(air_data_record.iloc[0][field_name])
+                    else:
+                        st.session_state.QA[dim][i] = Falsei_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_assessment"]
 
@@ -30,10 +38,6 @@ if df.empty:
 #-----------------------------------------------------------------------------------------
 # Initialize
 # 
-
-num_dims = df.shape[0]
-numQ = 10
-
 ### fix the following to recognize that things are different for ASSESSOR and REVIEWER
 if ('dim' not in st.session_state):
     st.session_state.dim = 0        # start with the first dimension
@@ -64,21 +68,11 @@ if ('dim' not in st.session_state):
             for dim in range(num_dims):
                 for i in range(numQ):
                     field_name = f"QA_{dim:02d}_{i}"
-                    # Ensure QA DataFrame exists with proper structure
-                    if not isinstance(st.session_state.QA, pd.DataFrame):
-                        num_dimensions = 8  # Adjust based on your actual number of dimensions
-                        num_questions = 10  # Adjust based on your actual number of questions
-                        st.session_state.QA = pd.DataFrame(
-                            False,  # Initialize all values to False
-                            index=range(num_dims),
-                            columns=range(numQ)
-                        )
-                    
                     # Set the value based on whether the field exists
                     if field_name in air_data_record.columns:
-                        st.session_state.QA.iloc[dim, i] = bool(air_data_record.iloc[0][field_name])
+                        st.session_state.QA[dim, i] = bool(air_data_record.iloc[0][field_name])
                     else:
-                        st.session_state.QA.iloc[dim, i] = False
+                        st.session_state.QA[dim, i] = False
 
             # load the assessment text responses
             for dim in range(num_dims):

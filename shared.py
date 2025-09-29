@@ -18,3 +18,6 @@ from airtable_utils import assessor_or_reviewer
 from airtable_utils import submit_record
 from datetime import datetime, date
 
+# Common configuration values used across pages
+num_dims = 8    # Number of dimensions in the assessment
+numQ = 10       # Number of questions per dimension
