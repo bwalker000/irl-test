@@ -186,18 +186,20 @@ with st.container(border=True):
                 )
             with col2:
                 st.session_state.QA[st.session_state.dim, i] = st.checkbox(
-                    "",
+                    f"Assessment Question {i+1}",
                     value=bool(st.session_state.QA[st.session_state.dim, i]),
                     key=f"QA_{st.session_state.dim}_{i}",
                     disabled=not (mode == "ASSESSOR"),
+                    label_visibility="collapsed"
                 )
 
             with col3:
                 if mode == "REVIEWER":
                     st.session_state.QR[st.session_state.dim, i] = st.checkbox(
-                        "",
+                        f"Review Question {i+1}",
                         value=bool(st.session_state.QR[st.session_state.dim, i]),
                         key=f"QR_{st.session_state.dim}_{i}",
+                        label_visibility="collapsed",
                         disabled=not (mode == "REVIEWER"),
                     )
 

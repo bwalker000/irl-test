@@ -199,13 +199,20 @@ def submit_record():
                           else list(st.session_state.project_id) if isinstance(st.session_state.project_id, (list, tuple))
                           else [])
     
-    responses["Support Organization"] = ([st.session_state.support_id[0]] if isinstance(st.session_state.support_id, (list, tuple))
+    responses["Support Organization"] = ([st.session_state.support_id[0]] if isinstance(st.session_state.support_id, (list, tuple)) and st.session_state.support_id
                                        else [st.session_state.support_id] if st.session_state.support_id
                                        else [])
     
-    responses["ASSESSOR"] = ([st.session_state.assessor_id[0]] if isinstance(st.session_state.assessor_id, (list, tuple))
-                           else [st.session_state.assessor_id] if st.session_state.assessor_id
-                           else [])
+    # For independent reviews, assessor_id might be empty
+    if st.session_state.mode == "REVIEWER" and (
+        st.session_state.get('assessor_first_name', 'N/A') == 'N/A' or 
+        not st.session_state.get('assessor_id')
+    ):
+        responses["ASSESSOR"] = []  # Independent review, no assessor
+    else:
+        responses["ASSESSOR"] = ([st.session_state.assessor_id[0]] if isinstance(st.session_state.assessor_id, (list, tuple)) and st.session_state.assessor_id
+                               else [st.session_state.assessor_id] if st.session_state.assessor_id
+                               else [])
 
     today = datetime.now().date()
     airtable_date = today.isoformat()
