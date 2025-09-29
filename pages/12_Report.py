@@ -113,6 +113,27 @@ if filtered_data.empty:
     st.stop()
 
 with st.spinner("Generating your report, please wait..."):
+    #-----------------------------------------------------------------------------------------
+    # Prepare the report
+
+    # Helper function to get name from ID
+    def get_name_from_id(table_df, record_id):
+        if isinstance(record_id, (list, tuple)):
+            record_id = record_id[0]
+        matches = table_df[table_df['id'] == record_id]
+        return matches.iloc[0]['Name'] if not matches.empty else record_id
+
+    # Load ventures table for name lookups
+    table_name = st.secrets["general"]["airtable_table_ventures"]
+    air_ventures, _ = load_airtable(table_name, base_id, api_key, False)
+    
+    # Load assessors and reviewers tables
+    table_name = st.secrets["general"]["airtable_table_assessors"]
+    air_assessors, _ = load_airtable(table_name, base_id, api_key, False)
+    table_name = st.secrets["general"]["airtable_table_reviewers"]
+    air_reviewers, _ = load_airtable(table_name, base_id, api_key, False)
+
+    # Load secrets
     
     #-----------------------------------------------------------------------------------------
     # Prepare the report
@@ -189,17 +210,26 @@ ax.text(0.00, 9.9, "Venture:", fontsize=12, ha='left', va='bottom', fontweight='
 ax.text(0.00, 9.65, "ASSESSOR:", fontsize=12, ha='left', va='bottom', fontweight='bold')
 ax.text(0.00, 9.4, "REVIEWER:", fontsize=12, ha='left', va='bottom', fontweight='bold')
 
-ax.text(2.0, 9.9, air_data.iloc[0]["Venture"], fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(2.0, 9.65, air_data.iloc[0]["ASSESSOR"], fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(2.0, 9.4, air_data.iloc[0]["REVIEWER"], fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(2.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(2.0, 9.65, get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(2.0, 9.4, get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 ax.text(3.75, 9.9, "Project / Product:", fontsize=12, ha='left', va='bottom', fontweight='bold')
 ax.text(3.75, 9.65, "Date:", fontsize=12, ha='left', va='bottom', fontweight='bold')
 ax.text(3.75, 9.4, "Date:", fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 ax.text(5.75, 9.9, air_data.iloc[0]["Project"], fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(5.75, 9.65, air_data.iloc[0]["Assess_date"], fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(5.75, 9.4, air_data.iloc[0]["Review_date"], fontsize=12, ha='left', va='bottom', fontweight='bold')
+
+# Convert dates to abbreviated month format
+def format_date(date_str):
+    try:
+        date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+        return date_obj.strftime('%d-%b-%Y')  # This will show like "29-SEP-2025"
+    except:
+        return date_str
+
+ax.text(5.75, 9.65, format_date(air_data.iloc[0]["Assess_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(5.75, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 
 # MATRIX
