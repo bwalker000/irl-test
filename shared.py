@@ -17,7 +17,9 @@ from airtable_utils import load_airtable_record
 from airtable_utils import assessor_or_reviewer
 from airtable_utils import submit_record
 from datetime import datetime, date
+from fields import IRL_031_data_fields
 
 # Common configuration values used across pages
-num_dims = 8    # Number of dimensions in the assessment
-numQ = 10       # Number of questions per dimension
+# Calculate num_dims dynamically from the fields structure
+num_dims = len([f for f in IRL_031_data_fields if f.startswith('TA_')])  # Count TA fields to get number of dimensions
+numQ = 10       # Number of questions per dimension (this can remain hardcoded)

@@ -267,15 +267,15 @@ with col1:
             st.rerun()
 with col2:
     if st.session_state.dim < num_dims - 1:
-        if st.button("Next"):
+        if st.button("Next", key="next_button"):
             st.session_state.dim += 1
             st.rerun()
 with col3:
     if st.session_state.dim == num_dims - 1:
-        if st.button("Submit", disabled = st.session_state.submitted):
+        if st.button("Submit", disabled=st.session_state.submitted, key="submit_button"):
             submit_record()
             st.session_state.submitted = True
 with col4:
-    if st.button("Home"):
+    if st.button("Home", key="home_button"):
         st.switch_page("streamlit_app.py")
 
