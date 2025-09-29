@@ -79,13 +79,21 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-    # Extract your support_id string
+    # Extract your support_id string and show it for debugging
     support_id = st.session_state.support_id[0]
+    st.write("Support ID:", support_id)
+
+    # Show the unique support organizations in the data
+    st.write("Available Support Organizations in data:", 
+             air_data["Support Organization"].dropna().unique())
 
     # Build the boolean mask for support org match
     support_match = air_data["Support Organization"].apply(
         lambda x: support_id in x if isinstance(x, list) else x == support_id
     )
+    
+    # Show how many records match the support org
+    st.write("Records matching support org:", support_match.sum())
 
     # Build the boolean mask for blank review date
     review_blank = (
@@ -93,23 +101,42 @@ elif st.session_state.review_mode == 0:
         (air_data["Review_date"] == "") |
         (air_data["Review_date"] == pd.NaT)
     )
+    
+    # Show how many records have blank review dates
+    st.write("Records with blank review date:", review_blank.sum())
 
     # Combine the two conditions
     filtered_records = air_data[support_match & review_blank]
+    
+    # Show final filtered count
+    st.write("Final filtered record count:", len(filtered_records))
 
     # Proceed with selection logic
     assessment_names = filtered_records['Name']
     if not assessment_names.empty:
-        st.session_state.assessment_name = st.selectbox('Select an assessment for review:', options=assessment_names)
+        # Initialize assessment_name if it's not in session state
+        if 'assessment_name' not in st.session_state:
+            st.session_state.assessment_name = assessment_names.iloc[0]
+        
+        selected_name = st.selectbox('Select an assessment for review:', 
+                                   options=assessment_names,
+                                   key='assessment_select')
+        
+        # Update session state with the selection
+        st.session_state.assessment_name = selected_name
+
+        # This identifies the specific assessment to be reviewed
+        air_data_record = air_data.loc[air_data["Name"] == selected_name]
+        
+        st.session_state.assessor_id = air_data_record.iloc[0]["ASSESSOR"]
+        st.session_state.venture_id = air_data_record.iloc[0]["Venture"]
+        st.session_state.project_id = air_data_record.iloc[0]["Project"]
     else:
         st.warning("No available assessments to review for your Support Organization.")
-
-    # This identifies the specific assessment to be reviewed
-    air_data_record = air_data.loc[ air_data["Name"] == st.session_state.assessment_name ]
-
-    st.session_state.assessor_id = air_data_record.iloc[0]["ASSESSOR"]
-    st.session_state.venture_id = air_data_record.iloc[0]["Venture"]
-    st.session_state.project_id = air_data_record.iloc[0]["Project"]
+        # Reset assessment related session state
+        for key in ['assessment_name', 'assessor_id', 'venture_id', 'project_id']:
+            if key in st.session_state:
+                del st.session_state[key]
 
     table_name = st.secrets["general"]["airtable_table_assessors"]
     air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
