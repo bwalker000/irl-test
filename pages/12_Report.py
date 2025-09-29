@@ -113,9 +113,6 @@ if filtered_data.empty:
     st.stop()
 
 with st.spinner("Generating your report, please wait..."):
-    # Initialize arrays for the selected assessment
-    st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
-    st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
     
     #-----------------------------------------------------------------------------------------
     # Prepare the report
@@ -156,9 +153,9 @@ with st.spinner("Generating your report, please wait..."):
         if not matching.empty:
             st.write(f"- Color value: {matching.iloc[0]['Color']}")
 
-    # determine the number of rows and columns in the report
-    num_dims = air_assessment.shape[0]
-    numQ = 10
+    # Initialize arrays with correct dimensions from shared configuration
+    st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
+    st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
 
     # DIMENSION THE REPORT
 letter_width = 8.5
@@ -219,7 +216,7 @@ for dim in range(n_rows):
     cy = y0 + dy / 2
     ax.text(0, cy, dim, fontsize=12, ha='left', va='center', fontweight='bold')
 
-    for i in range(n_cols):
+    for i in range(numQ):  # Use numQ instead of n_cols to ensure we only go 0-9
         x0 = 0.3 + i*dx   
 
         # look into the assessment table to determine what milestone is associated
