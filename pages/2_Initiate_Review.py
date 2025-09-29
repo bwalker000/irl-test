@@ -102,9 +102,11 @@ elif st.session_state.review_mode == 0:
         # This identifies the specific assessment to be reviewed
         air_data_record = air_data.loc[air_data["Name"] == selected_name]
         
+        st.session_state.assessment_record_id = air_data_record.iloc[0]["id"]  # Store the record ID for updating
         st.session_state.assessor_id = air_data_record.iloc[0]["ASSESSOR"]
         st.session_state.venture_id = air_data_record.iloc[0]["Venture"]
         st.session_state.project_id = air_data_record.iloc[0]["Project"]
+        st.session_state.assess_date = air_data_record.iloc[0]["Assess_date"]  # Store original assessment date
     else:
         st.warning("No available assessments to review for your Support Organization.")
         # Reset assessment related session state

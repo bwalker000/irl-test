@@ -225,8 +225,15 @@ def submit_record():
         responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date
         responses["Assess_date"] = airtable_date
     elif st.session_state.mode == "REVIEWER":
-        responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date   
+        responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date
         responses["Review_date"] = airtable_date
+        # Add reviewer ID to the record
+        responses["REVIEWER"] = ([st.session_state.reviewer_id[0]] if isinstance(st.session_state.reviewer_id, (list, tuple))
+                               else [st.session_state.reviewer_id] if st.session_state.reviewer_id
+                               else [])
+        # Preserve the original assessment date if reviewing an existing assessment
+        if st.session_state.get('assessment_name'):
+            responses["Assess_date"] = st.session_state.get('assess_date')
 
 
     api_key = st.secrets["general"]["airtable_api_key"]
@@ -260,31 +267,39 @@ def submit_record():
 
 
 
-    # write the new table to airtable
-    table.create(cleaned_responses)
+    # If this is a review of an existing assessment, update that record
+    if st.session_state.mode == "REVIEWER" and st.session_state.get('assessment_record_id'):
+        table.update(st.session_state.assessment_record_id, cleaned_responses)
+    else:
+        # Otherwise create a new record
+        table.create(cleaned_responses)
 
 
-    # Store current user state that we want to preserve
-    preserved_state = {
-        'mode': st.session_state.mode,  # ASSESSOR or REVIEWER
-        'assessor_id': st.session_state.get('assessor_id'),  # Keep user's assessor ID if they have one
-        'reviewer_id': st.session_state.get('reviewer_id'),   # Keep user's reviewer ID if they have one
-    }
+    # Mark as submitted to prevent resubmission
+    st.session_state.submitted = True
 
-    # Clear all session state
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
-    
-    # Restore preserved state
-    for key, value in preserved_state.items():
-        st.session_state[key] = value
-
-    if preserved_state['mode'] == "ASSESSOR":
+    if st.session_state.mode == "ASSESSOR":
         st.success("Assessment submitted successfully!")
-    elif preserved_state['mode'] == "REVIEWER":
+    elif st.session_state.mode == "REVIEWER":
         st.success("Review submitted successfully!")
 
-    # Return to home
-    st.switch_page("streamlit_app.py")
+    # Show home button
+    if st.button("Return to Home"):
+        # Store current user state that we want to preserve
+        preserved_state = {
+            'mode': st.session_state.mode,
+            'assessor_id': st.session_state.get('assessor_id'),
+            'reviewer_id': st.session_state.get('reviewer_id'),
+        }
+
+        # Clear all session state
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        
+        # Restore preserved state
+        for key, value in preserved_state.items():
+            st.session_state[key] = value
+            
+        st.switch_page("streamlit_app.py")
 
 
