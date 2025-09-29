@@ -141,7 +141,15 @@ elif st.session_state.review_mode == 1:
     
     # Initialize QA matrix if not already present
     if 'QA' not in st.session_state:
-        st.session_state.QA = pd.DataFrame()
+        # Create an empty DataFrame with dimensions as index and range(numQ) as columns
+        # This ensures we have proper indexing for the QA matrix
+        num_dimensions = 8  # Adjust this based on your actual number of dimensions
+        num_questions = 10  # Adjust this based on your actual number of questions
+        st.session_state.QA = pd.DataFrame(
+            False,  # Initialize all values to False
+            index=range(num_dimensions),
+            columns=range(num_questions)
+        )
 
     # load the table of all ventures
     table_name = st.secrets["general"]["airtable_table_ventures"]

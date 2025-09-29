@@ -64,20 +64,21 @@ if ('dim' not in st.session_state):
             for dim in range(num_dims):
                 for i in range(numQ):
                     field_name = f"QA_{dim:02d}_{i}"
+                    # Ensure QA DataFrame exists with proper structure
+                    if not isinstance(st.session_state.QA, pd.DataFrame):
+                        num_dimensions = 8  # Adjust based on your actual number of dimensions
+                        num_questions = 10  # Adjust based on your actual number of questions
+                        st.session_state.QA = pd.DataFrame(
+                            False,  # Initialize all values to False
+                            index=range(num_dims),
+                            columns=range(numQ)
+                        )
+                    
+                    # Set the value based on whether the field exists
                     if field_name in air_data_record.columns:
-                        if isinstance(st.session_state.QA, pd.DataFrame):
-                            st.session_state.QA.at[dim, i] = bool(air_data_record.iloc[0][field_name])
-                        else:
-                            # Initialize DataFrame if not already done
-                            st.session_state.QA = pd.DataFrame()
-                            st.session_state.QA.at[dim, i] = bool(air_data_record.iloc[0][field_name])
+                        st.session_state.QA.iloc[dim, i] = bool(air_data_record.iloc[0][field_name])
                     else:
-                        if isinstance(st.session_state.QA, pd.DataFrame):
-                            st.session_state.QA.at[dim, i] = False
-                        else:
-                            # Initialize DataFrame if not already done
-                            st.session_state.QA = pd.DataFrame()
-                            st.session_state.QA.at[dim, i] = False
+                        st.session_state.QA.iloc[dim, i] = False
 
             # load the assessment text responses
             for dim in range(num_dims):
