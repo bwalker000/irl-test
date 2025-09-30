@@ -162,26 +162,6 @@ with st.spinner("Generating your report, please wait..."):
     # load airtable milestones
     air_milestones, _ = load_airtable(table_name, base_id, api_key, False)
 
-    # Diagnostic information
-    st.write("### Debug Information")
-    st.write("Assessment Table Structure:")
-    st.write(f"- Number of rows: {air_assessment.shape[0]}")
-    st.write(f"- Columns: {air_assessment.columns.tolist()}")
-
-    st.write("\nMilestones Table Structure:")
-    st.write(f"- Number of rows: {air_milestones.shape[0]}")
-    st.write(f"- Columns: {air_milestones.columns.tolist()}")
-    
-    # Show first milestone reference and lookup
-    if not air_assessment.empty:
-        first_milestone = air_assessment.iloc[0]["Q0 Milestone"]
-        st.write("\nExample Milestone Lookup:")
-        st.write(f"- First milestone ID from assessment: {first_milestone}")
-        matching = air_milestones.loc[air_milestones["id"] == first_milestone]
-        st.write(f"- Found in milestones table: {not matching.empty}")
-        if not matching.empty:
-            st.write(f"- Color value: {matching.iloc[0]['Color']}")
-
     # Initialize arrays with correct dimensions from shared configuration
     st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
     st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
@@ -249,8 +229,8 @@ ax.text(5.75, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha
 n_rows = numQ
 n_cols = num_dims
 
-dx =  7 / n_cols
-dy = dx
+dy =  8 / n_cols
+dx = dy
 
 # Iterate over rows (questions 0 to numQ-1)
 for i in range(n_rows):
@@ -280,42 +260,28 @@ for i in range(n_rows):
 
         # DRAW THE SQUARE
 
-        # Add code to accumulate each milestone
-
         try:
-            # find the milestone associated with this particular question
-            milestone = f"Q{i} Milestone"
-            milestone_id = air_assessment.iloc[i][milestone]
-            
-            # Debug milestone lookup
-            st.write(f"\nProcessing milestone for Q{i}:")
-            st.write(f"- Milestone field: {milestone}")
-            st.write(f"- Raw milestone_id: {milestone_id}")
+            # Construct field name for milestone lookup that combines question number and dimension
+            milestone_field = f"Q{i:02d}_{dim}_Milestone"
+            milestone_id = air_assessment.iloc[i][milestone_field]
             
             # Handle case where milestone_id is a tuple/list
             if isinstance(milestone_id, (list, tuple)):
                 milestone_id = milestone_id[0]
-                st.write(f"- Extracted milestone_id from tuple: {milestone_id}")
             
             # Look up the milestone
             matching_milestones = air_milestones.loc[air_milestones["id"] == milestone_id]
-            st.write(f"- Found matching milestones: {len(matching_milestones)}")
             
             if matching_milestones.empty:
-                st.write("- No matching milestone found, using white")
-                color = '#FFFFFF'
+                color = '#FFFFFF'  # Default to white if no milestone found
             else:
                 raw_color = matching_milestones.iloc[0]["Color"]
-                st.write(f"- Raw color value: {raw_color}")
                 if pd.isna(raw_color) or not raw_color:
-                    st.write("- Color is missing or empty, using white")
-                    color = '#FFFFFF'
+                    color = '#FFFFFF'  # Default to white if no color specified
                 else:
                     color = raw_color if raw_color.startswith('#') else f"#{raw_color}"
-                    st.write(f"- Final color value: {color}")
         except Exception as e:
-            st.error(f"Error processing milestone {i}: {str(e)}")
-            color = '#FFFFFF'
+            color = '#FFFFFF'  # Default to white on any error
 
         rect = patches.Rectangle((x0, y0), dx, dy, facecolor=color, edgecolor='black', lw=1)
         ax.add_patch(rect)
