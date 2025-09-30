@@ -26,23 +26,12 @@ if air_data.empty:
 
 # if REVIEWER, then only show assessments associated with the reviewer
 if st.session_state.mode == "REVIEWER":
-    # Debug output
-    st.write("Reviewer ID:", st.session_state.reviewer_id)
-    
     # Get reviewer ID (might be in a tuple)
     reviewer_id = st.session_state.reviewer_id[0] if isinstance(st.session_state.reviewer_id, (list, tuple)) else st.session_state.reviewer_id
-    st.write("Processed Reviewer ID:", reviewer_id)
-    
-    # Show what's in the REVIEWER column
-    st.write("REVIEWER column in data:")
-    st.write(air_data["REVIEWER"].head())
-    
     # Filter records where reviewer is in the REVIEWER field
     air_data = air_data[air_data["REVIEWER"].apply(
         lambda x: reviewer_id in x if isinstance(x, (list, tuple)) else x == reviewer_id
     )]
-    
-    st.write("Records after filtering:", len(air_data))
 
 # if ASSESSOR, then only show assessments associated with the assessor
 if st.session_state.mode == "ASSESSOR":
@@ -229,7 +218,7 @@ ax.text(5.75, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha
 n_rows = numQ
 n_cols = num_dims
 
-dy =  8 / n_cols
+dy =  7.5 / n_cols
 dx = dy
 
 # Iterate over rows (questions 0 to numQ-1)
@@ -259,10 +248,10 @@ for i in range(n_rows):
             st.session_state.QR[dim, i] = False
 
         # DRAW THE SQUARE
-
+        
         try:
-            # Construct field name for milestone lookup that combines question number and dimension
-            milestone_field = f"Q{i:02d}_{dim}_Milestone"
+            # Find the milestone associated with this question number
+            milestone_field = f"Q{i} Milestone"
             milestone_id = air_assessment.iloc[i][milestone_field]
             
             # Handle case where milestone_id is a tuple/list
