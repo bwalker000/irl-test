@@ -272,7 +272,7 @@ for i in range(n_rows):
         except Exception as e:
             color = '#FFFFFF'
 
-        rect = patches.Rectangle((x0, y0), dx, dy, facecolor=color, edgecolor='black', lw=1)
+        rect = patches.Rectangle((x0, y0), dx, dy, facecolor=color, edgecolor='none', lw=1)
         ax.add_patch(rect)
 
         # Center of the square
