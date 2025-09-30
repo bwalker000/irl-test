@@ -258,7 +258,7 @@ for dim in range(n_rows):
     cy = y0 + dy / 2
     ax.text(0, cy, dim, fontsize=12, ha='left', va='center', fontweight='bold')
 
-    for i in range(numQ):  # Use numQ instead of n_cols to ensure we only go 0-9
+    for i in range(n_cols): 
         x0 = 0.3 + i*dx   
 
         # look into the assessment table to determine what milestone is associated
