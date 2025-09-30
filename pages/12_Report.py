@@ -223,7 +223,7 @@ dx = dy
 
 # Iterate over rows (questions 0 to numQ-1)
 for i in range(n_rows):
-    y0 = (9.1-n_rows*dy) + i*dy    
+    y0 = (9.2-n_rows*dy) + i*dy    
     cy = y0 + dy / 2
     ax.text(0, cy, i, fontsize=12, ha='left', va='center', fontweight='bold')
 
