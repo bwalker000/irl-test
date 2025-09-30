@@ -252,26 +252,27 @@ n_cols = num_dims
 dx =  7 / n_cols
 dy = dx
 
-for dim in range(n_rows):
-
-    y0 = (9-n_rows*dy) + dim*dy    
+# Iterate over rows (questions 0 to numQ-1)
+for i in range(n_rows):
+    y0 = (9-n_rows*dy) + i*dy    
     cy = y0 + dy / 2
-    ax.text(0, cy, dim, fontsize=12, ha='left', va='center', fontweight='bold')
+    ax.text(0, cy, i, fontsize=12, ha='left', va='center', fontweight='bold')
 
-    for i in range(n_cols): 
-        x0 = 0.3 + i*dx   
+    # Iterate over columns (dimensions 0 to num_dims-1)
+    for dim in range(n_cols): 
+        x0 = 0.3 + dim*dx   
 
         # look into the assessment table to determine what milestone is associated
 
         # load the ASSESSOR response
-        field_name = f"QA_{dim:02d}_{i}"
+        field_name = f"QA_{i:02d}_{dim}"
         if field_name in air_data.columns:
             st.session_state.QA[dim, i] = bool(air_data.iloc[0][field_name])
         else:
             st.session_state.QA[dim, i] = False
 
         # load the REVIEWER response
-        field_name = f"QR_{dim:02d}_{i}"
+        field_name = f"QR_{i:02d}_{dim}"
         if field_name in air_data.columns:
             st.session_state.QR[dim, i] = bool(air_data.iloc[0][field_name])
         else:
@@ -283,7 +284,7 @@ for dim in range(n_rows):
 
         try:
             # find the milestone associated with this particular question
-            milestone = f"Q{dim} Milestone"
+            milestone = f"Q{i} Milestone"
             milestone_id = air_assessment.iloc[i][milestone]
             
             # Debug milestone lookup
