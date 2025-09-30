@@ -218,7 +218,7 @@ ax.text(5.75, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha
 n_rows = numQ
 n_cols = num_dims
 
-dy =  7.5 / n_cols
+dy =  7.25 / n_cols
 dx = dy
 
 # Iterate over rows (questions 0 to numQ-1)
@@ -250,15 +250,15 @@ for i in range(n_rows):
         # DRAW THE SQUARE
         
         try:
-            # Find the milestone associated with this question number
-            milestone_field = f"Q{i} Milestone"
-            milestone_id = air_assessment.iloc[i][milestone_field]
+            # Find the milestone associated with this specific cell (question and dimension)
+            milestone_field = f"Q{i:02d}_{dim}_Milestone"
+            milestone_id = air_data.iloc[0][milestone_field]
             
             # Handle case where milestone_id is a tuple/list
             if isinstance(milestone_id, (list, tuple)):
                 milestone_id = milestone_id[0]
             
-            # Look up the milestone
+            # Look up the milestone color from the milestones table
             matching_milestones = air_milestones.loc[air_milestones["id"] == milestone_id]
             
             if matching_milestones.empty:
