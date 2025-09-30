@@ -250,11 +250,13 @@ for i in range(n_rows):
         # DRAW THE SQUARE
         
         try:
-            # Construct the milestone field name for this cell
-            milestone_field = f"Q{i:02d}_{dim}_Milestone"
-            
-            # Get the milestone ID from the assessment table
-            milestone_id = air_assessment[milestone_field].iloc[i]
+            # For matrix position (i,dim):
+            # - i is the question number (0-9)
+            # - dim is the dimension (0-15)
+            # - Use row 'dim' in assessment table (because rows are dimensions)
+            # - Use column 'Qi Milestone' (because columns are questions)
+            milestone_field = f"Q{i} Milestone"  # Column for this question number
+            milestone_id = air_assessment.iloc[dim][milestone_field]  # Get from dimension's row
             
             if isinstance(milestone_id, (list, tuple)):
                 milestone_id = milestone_id[0]
