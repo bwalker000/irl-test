@@ -218,7 +218,7 @@ ax.text(5.75, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha
 n_rows = numQ
 n_cols = num_dims
 
-dy =  7.25 / n_cols
+dy =  7.15 / n_cols
 dx = dy
 
 # Iterate over rows (questions 0 to numQ-1)
@@ -250,27 +250,25 @@ for i in range(n_rows):
         # DRAW THE SQUARE
         
         try:
-            # Find the milestone associated with this specific cell (question and dimension)
+            # Construct the milestone field name for this cell
             milestone_field = f"Q{i:02d}_{dim}_Milestone"
-            milestone_id = air_data.iloc[0][milestone_field]
             
-            # Handle case where milestone_id is a tuple/list
+            # Get the milestone ID from the assessment table
+            milestone_id = air_assessment[milestone_field].iloc[i]
+            
             if isinstance(milestone_id, (list, tuple)):
                 milestone_id = milestone_id[0]
             
-            # Look up the milestone color from the milestones table
+            # Look up the milestone color
             matching_milestones = air_milestones.loc[air_milestones["id"] == milestone_id]
             
             if matching_milestones.empty:
-                color = '#FFFFFF'  # Default to white if no milestone found
+                color = '#FFFFFF'
             else:
                 raw_color = matching_milestones.iloc[0]["Color"]
-                if pd.isna(raw_color) or not raw_color:
-                    color = '#FFFFFF'  # Default to white if no color specified
-                else:
-                    color = raw_color if raw_color.startswith('#') else f"#{raw_color}"
+                color = '#FFFFFF' if pd.isna(raw_color) or not raw_color else (raw_color if raw_color.startswith('#') else f"#{raw_color}")
         except Exception as e:
-            color = '#FFFFFF'  # Default to white on any error
+            color = '#FFFFFF'
 
         rect = patches.Rectangle((x0, y0), dx, dy, facecolor=color, edgecolor='black', lw=1)
         ax.add_patch(rect)
