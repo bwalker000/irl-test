@@ -3,6 +3,13 @@ import io
 
 st.title("Create a Report")
 
+# Provide immediate option to return home
+col1, col2, col3 = st.columns([1, 4, 1])
+with col3:
+    if st.button("Return to Home", key="top_home_button"):
+        st.switch_page("streamlit_app.py")
+        st.stop()
+
 # Clear the cache when entering this page
 st.cache_data.clear()
 
@@ -17,7 +24,10 @@ table_name = st.secrets["general"]["airtable_table_data"]
 # load airtable data
 air_data, _ = load_airtable(table_name, base_id, api_key, False)
 
-# if REVIEWER, filter for assessments where we are listed as REVIEWER
+# Initialize session state if needed
+if "mode" not in st.session_state:
+    st.warning("Please start from the home page to set your user role.")
+    st.stop()
 
 if air_data.empty:
     st.warning("No records found in the Airtable table.")
@@ -189,8 +199,28 @@ ax.text(0.00, 9.65, "ASSESSOR:", fontsize=12, ha='left', va='bottom', fontweight
 ax.text(0.00, 9.4, "REVIEWER:", fontsize=12, ha='left', va='bottom', fontweight='normal')
 
 ax.text(1.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"], 'single'), fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(1.0, 9.65, get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"], 'full'), fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(1.0, 9.4, get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'full'), fontsize=12, ha='left', va='bottom', fontweight='bold')
+
+# Add ASSESSOR name and symbol
+assessor_name = get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"], 'full')
+ax.text(1.0, 9.65, assessor_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
+# Add circle symbol after name
+name_width = len(assessor_name) * 0.07  # Approximate width of text
+circle = patches.Circle((1.0 + name_width + 0.1, 9.63), radius=0.06, facecolor='black', edgecolor='black', lw=1)
+ax.add_patch(circle)
+
+# Add REVIEWER name and symbol
+reviewer_name = get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'full')
+ax.text(1.0, 9.4, reviewer_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
+# Add diamond symbol after name
+name_width = len(reviewer_name) * 0.07  # Approximate width of text
+diamond_half = 0.06 * 1.2  # Same size as in matrix
+diamond = patches.Polygon([
+    (1.0 + name_width + 0.1, 9.4 + diamond_half),          # top
+    (1.0 + name_width + 0.1 + diamond_half, 9.4),          # right
+    (1.0 + name_width + 0.1, 9.4 - diamond_half),          # bottom
+    (1.0 + name_width + 0.1 - diamond_half, 9.4),          # left
+], closed=True, facecolor='black', edgecolor='black', lw=1)
+ax.add_patch(diamond)
 
 ax.text(3.75, 9.9, "Project / Product:", fontsize=12, ha='left', va='bottom', fontweight='normal')
 ax.text(3.75, 9.65, "Date:", fontsize=12, ha='left', va='bottom', fontweight='normal')
@@ -345,12 +375,13 @@ with col1:
         label="Save as PDF",
         data=pdf_buffer,
         file_name=f"IRL_Report_{selected_assessment}.pdf",
-        mime="application/pdf"
+        mime="application/pdf",
+        key="pdf_download"
     ):
         plt.close()
 
 with col3:
-    if st.button("Return to Home"):
+    if st.button("Return to Home", key="bottom_home_button"):
         st.switch_page("streamlit_app.py")
 
 # Add some spacing before the next element
