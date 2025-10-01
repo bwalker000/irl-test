@@ -86,12 +86,30 @@ else:
 if not selected_assessment:
     st.info("Please select an assessment to enable report generation.")
 
-# Always show both buttons
-col1, col2 = st.columns([1, 1])
+# Show all UI controls in one section
+col1, col2, col3 = st.columns([1, 1, 1])
+
 with col1:
     generate_report = st.button("Generate Report", disabled=(not selected_assessment))
 
 with col2:
+    if selected_assessment and generate_report:
+        # Create PDF in memory
+        pdf_buffer = io.BytesIO()
+        plt.savefig(pdf_buffer, format='pdf', bbox_inches='tight', dpi=300)
+        pdf_buffer.seek(0)
+        
+        # Create download button
+        if st.download_button(
+            label="Save as PDF",
+            data=pdf_buffer,
+            file_name=f"IRL_Report_{selected_assessment}.pdf",
+            mime="application/pdf",
+            key="pdf_download"
+        ):
+            plt.close()
+
+with col3:
     if st.button("Return to Home", key="main_home_button"):
         st.switch_page("streamlit_app.py")
 
@@ -222,7 +240,7 @@ ax.text(3.75, 9.4, "Date:", fontsize=12, ha='left', va='bottom', fontweight='nor
 table_name = st.secrets["general"]["airtable_table_projects"]
 air_projects, _ = load_airtable(table_name, base_id, api_key, False)
 project_name = get_name_from_id(air_projects, air_data.iloc[0]["Project"], 'single')
-ax.text(5.5, 9.9, project_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(5.25, 9.9, project_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 # Convert dates to abbreviated month format
 def format_date(date_str):
@@ -232,8 +250,8 @@ def format_date(date_str):
     except:
         return date_str
 
-ax.text(5.5, 9.65, format_date(air_data.iloc[0]["Assess_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(5.5, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(5.25, 9.65, format_date(air_data.iloc[0]["Assess_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(5.25, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 
 # MATRIX
@@ -353,29 +371,5 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
 st.pyplot(fig)
 
-# Create columns for the action buttons
-col1, col2, col3 = st.columns([1, 1, 1])
-
-with col1:
-    # Create PDF in memory
-    pdf_buffer = io.BytesIO()
-    plt.savefig(pdf_buffer, format='pdf', bbox_inches='tight')
-    pdf_buffer.seek(0)
-    
-    # Create download button
-    if st.download_button(
-        label="Save as PDF",
-        data=pdf_buffer,
-        file_name=f"IRL_Report_{selected_assessment}.pdf",
-        mime="application/pdf",
-        key="pdf_download"
-    ):
-        plt.close()
-
-with col3:
-    if st.button("Return to Home", key="post_report_home_button"):
-        st.switch_page("streamlit_app.py")
-
-# Add some spacing before the next element
-st.write("")
+# End of report
     
