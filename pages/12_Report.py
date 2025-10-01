@@ -307,22 +307,23 @@ for i in range(n_rows):
 # After all squares, circles, and diamonds are drawn, add labels in a separate loop
 if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and columns
     # Calculate the y position for labels (based on bottom row position)
-    bottom_row_y = (9.2-n_rows*dy) + (n_rows-1)*dy  # y0 for the last row
-    label_y = bottom_row_y - 0.3  # Position below the bottom row
+    bottom_y = (9.2-n_rows*dy)  # y position of top row
+    bottom_y = bottom_y + (numQ-1)*dy  # Move to last row
+    label_y = bottom_y - 0.3  # Position below the last row
     
     # Add labels for all columns
     for label_dim in range(n_cols):
-        # Calculate x position for this dimension
+        # Calculate x position for this dimension (center of square)
         x0 = 0.3 + label_dim*dx
-        x_text = x0 + dx  # Right edge of the rectangle
+        x_text = x0 + dx/2  # Center of the rectangle (same as cx calculation above)
         
         # Get abbreviation from assessment table
         dimension_label = air_assessment.iloc[label_dim]["Abbreviation"]
         
-        # Add rotated text, aligned to end at rectangle's position
+        # Add rotated text, aligned to end at center of rectangle
         ax.text(x_text, label_y, dimension_label, 
                 rotation=45,  # 45-degree angle
-                ha='right',   # Right-align with rectangle
+                ha='right',   # Right-align text
                 va='top',     # Align to top of text box
                 fontsize=8)   # Smaller font for long labels
 
