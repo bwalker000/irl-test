@@ -304,6 +304,23 @@ for i in range(n_rows):
             ], closed=True, facecolor='white', edgecolor='black', lw=1)
         ax.add_patch(diamond)
 
+# After drawing all squares, circles, and diamonds, add the dimension labels
+if i == n_rows - 1:  # Only add labels after processing the last row
+    # Get x position for this dimension's label
+    x0 = 0.3 + dim*dx
+    x_text = x0 + dx  # Right edge of the rectangle
+    y_text = y0 - 0.3  # Position below the bottom row
+    
+    # Get dimension label from assessment table
+    dimension_label = air_assessment.iloc[dim]["Dimension"]
+    
+    # Add rotated text, aligned to end at rectangle's position
+    ax.text(x_text, y_text, dimension_label, 
+            rotation=45,  # 45-degree angle
+            ha='right',   # Right-align with rectangle
+            va='top',     # Align to top of text box
+            fontsize=8)   # Smaller font for long labels
+
 
 st.pyplot(fig)
 
