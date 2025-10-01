@@ -315,7 +315,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     for label_dim in range(n_cols):
         # Calculate x position for this dimension (center of square)
         x0 = 0.3 + label_dim*dx
-        x_text = x0 + dx/2  # Center of the rectangle (same as cx calculation above)
+        x_text = x0 + 0.75*dx  # Center of the rectangle (same as cx calculation above)
         
         # Get abbreviation from assessment table
         dimension_label = air_assessment.iloc[label_dim]["Abbreviation"]
@@ -325,7 +325,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 rotation=60,  # 45-degree angle
                 ha='right',   # Right-align text
                 va='top',     # Align to top of text box
-                fontsize=9)   # Smaller font for long labels
+                fontsize=10)   # Smaller font for long labels
 
 
 st.pyplot(fig)
