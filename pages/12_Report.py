@@ -202,14 +202,14 @@ ax.text(1.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"], 's
 
 # Add ASSESSOR name and symbol
 assessor_name = get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"], 'full')
-ax.text(1.0, 9.65, assessor_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(1.1, 9.65, assessor_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
 # Add circle symbol before ASSESSOR
-circle = patches.Circle((0.0, 9.65), radius=0.06, facecolor='black', edgecolor='black', lw=1)
+circle = patches.Circle((0.05, 9.62), radius=0.06, facecolor='black', edgecolor='black', lw=1)
 ax.add_patch(circle)
 
 # Add REVIEWER name and symbol
 reviewer_name = get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'full')
-ax.text(1.0, 9.4, reviewer_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(1.1, 9.4, reviewer_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
 # Add diamond symbol after name
 name_width = len(reviewer_name) * 0.07  # Approximate width of text
 diamond_half = 0.06 * 1.2  # Same size as in matrix
