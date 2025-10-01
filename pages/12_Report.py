@@ -308,7 +308,7 @@ for i in range(n_rows):
 if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and columns
     # Calculate the y position for labels (based on bottom row position)
     bottom_y = (9.2-n_rows*dy)  # y position of top row
-    bottom_y = bottom_y + (numQ-1)*dy  # Move to last row
+#    bottom_y = bottom_y + (numQ-1)*dy  # Move to last row
     label_y = bottom_y - 0.3  # Position below the last row
     
     # Add labels for all columns
