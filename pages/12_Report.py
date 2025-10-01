@@ -309,7 +309,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     # Calculate the y position for labels (based on bottom row position)
     bottom_y = (9.2-n_rows*dy)  # y position of top row
 #    bottom_y = bottom_y + (numQ-1)*dy  # Move to last row
-    label_y = bottom_y - 0.3  # Position below the last row
+    label_y = bottom_y - 0.1  # Position below the last row
     
     # Add labels for all columns
     for label_dim in range(n_cols):
@@ -322,10 +322,10 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         
         # Add rotated text, aligned to end at center of rectangle
         ax.text(x_text, label_y, dimension_label, 
-                rotation=45,  # 45-degree angle
+                rotation=60,  # 45-degree angle
                 ha='right',   # Right-align text
                 va='top',     # Align to top of text box
-                fontsize=8)   # Smaller font for long labels
+                fontsize=9)   # Smaller font for long labels
 
 
 st.pyplot(fig)
