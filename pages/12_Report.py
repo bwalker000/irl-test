@@ -304,22 +304,27 @@ for i in range(n_rows):
             ], closed=True, facecolor='white', edgecolor='black', lw=1)
         ax.add_patch(diamond)
 
-# After drawing all squares, circles, and diamonds, add the dimension labels
-if i == n_rows - 1:  # Only add labels after processing the last row
-    # Get x position for this dimension's label
-    x0 = 0.3 + dim*dx
-    x_text = x0 + dx  # Right edge of the rectangle
-    y_text = y0 - 0.3  # Position below the bottom row
+# After all squares, circles, and diamonds are drawn, add labels in a separate loop
+if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and columns
+    # Calculate the y position for labels (based on bottom row position)
+    bottom_row_y = (9.2-n_rows*dy) + (n_rows-1)*dy  # y0 for the last row
+    label_y = bottom_row_y - 0.3  # Position below the bottom row
     
-    # Get dimension label from assessment table
-    dimension_label = air_assessment.iloc[dim]["Dimension"]
-    
-    # Add rotated text, aligned to end at rectangle's position
-    ax.text(x_text, y_text, dimension_label, 
-            rotation=45,  # 45-degree angle
-            ha='right',   # Right-align with rectangle
-            va='top',     # Align to top of text box
-            fontsize=8)   # Smaller font for long labels
+    # Add labels for all columns
+    for label_dim in range(n_cols):
+        # Calculate x position for this dimension
+        x0 = 0.3 + label_dim*dx
+        x_text = x0 + dx  # Right edge of the rectangle
+        
+        # Get abbreviation from assessment table
+        dimension_label = air_assessment.iloc[label_dim]["Abbreviation"]
+        
+        # Add rotated text, aligned to end at rectangle's position
+        ax.text(x_text, label_y, dimension_label, 
+                rotation=45,  # 45-degree angle
+                ha='right',   # Right-align with rectangle
+                va='top',     # Align to top of text box
+                fontsize=8)   # Smaller font for long labels
 
 
 st.pyplot(fig)
