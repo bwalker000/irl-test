@@ -1,4 +1,5 @@
 from shared import *
+import io
 
 st.title("Create a Report")
 
@@ -315,7 +316,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     for label_dim in range(n_cols):
         # Calculate x position for this dimension (center of square)
         x0 = 0.3 + label_dim*dx
-        x_text = x0 + 0.75*dx  # Center of the rectangle (same as cx calculation above)
+        x_text = x0 + 0.625*dx  # Center of the rectangle (same as cx calculation above)
         
         # Get abbreviation from assessment table
         dimension_label = air_assessment.iloc[label_dim]["Abbreviation"]
@@ -325,33 +326,33 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 rotation=60,  # 45-degree angle
                 ha='right',   # Right-align text
                 va='top',     # Align to top of text box
-                fontsize=10)   # Smaller font for long labels
+                fontsize=11)   # Smaller font for long labels
 
 
 st.pyplot(fig)
 
-#plt.show()
+# Create columns for the action buttons
+col1, col2, col3 = st.columns([1, 1, 1])
 
-# Save as PDF
-# plt.savefig('letter_figure.pdf', bbox_inches='tight')
-# plt.close()
+with col1:
+    # Create PDF in memory
+    pdf_buffer = io.BytesIO()
+    plt.savefig(pdf_buffer, format='pdf', bbox_inches='tight')
+    pdf_buffer.seek(0)
+    
+    # Create download button
+    if st.download_button(
+        label="Save as PDF",
+        data=pdf_buffer,
+        file_name=f"IRL_Report_{selected_assessment}.pdf",
+        mime="application/pdf"
+    ):
+        plt.close()
 
+with col3:
+    if st.button("Return to Home"):
+        st.switch_page("streamlit_app.py")
 
-
-# consider saving the report to airtable
-
-
-# display the pdf
-
-
-
-# allow the user to print or save the report
-
-# UI to allow creation of another report, return to home, other TBD
-
-
-
-
-if st.button("Home"):
-    st.switch_page("streamlit_app.py")
+# Add some spacing before the next element
+st.write("")
     
