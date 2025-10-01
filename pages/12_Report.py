@@ -3,13 +3,6 @@ import io
 
 st.title("Create a Report")
 
-# Provide immediate option to return home
-col1, col2, col3 = st.columns([1, 4, 1])
-with col3:
-    if st.button("Return to Home", key="top_home_button"):
-        st.switch_page("streamlit_app.py")
-        st.stop()
-
 # Clear the cache when entering this page
 st.cache_data.clear()
 
@@ -92,19 +85,18 @@ else:
 
 if not selected_assessment:
     st.info("Please select an assessment to enable report generation.")
-    st.stop()
 
+# Always show both buttons
 col1, col2 = st.columns([1, 1])
 with col1:
-    if st.button("Generate Report"):
-        pass  # Continue with report generation
-    else:
-        st.stop()
-        
+    generate_report = st.button("Generate Report", disabled=(not selected_assessment))
+
 with col2:
-    if st.button("Return to Home"):
+    if st.button("Return to Home", key="main_home_button"):
         st.switch_page("streamlit_app.py")
-        st.stop()
+
+if not selected_assessment or not generate_report:
+    st.stop()
 
 # Filter for chosen assessment
 filtered_data = air_data.loc[air_data["Name"] == selected_assessment]
@@ -230,7 +222,7 @@ ax.text(3.75, 9.4, "Date:", fontsize=12, ha='left', va='bottom', fontweight='nor
 table_name = st.secrets["general"]["airtable_table_projects"]
 air_projects, _ = load_airtable(table_name, base_id, api_key, False)
 project_name = get_name_from_id(air_projects, air_data.iloc[0]["Project"], 'single')
-ax.text(5.75, 9.9, project_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(5.5, 9.9, project_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 # Convert dates to abbreviated month format
 def format_date(date_str):
@@ -240,8 +232,8 @@ def format_date(date_str):
     except:
         return date_str
 
-ax.text(5.75, 9.65, format_date(air_data.iloc[0]["Assess_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(5.75, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(5.5, 9.65, format_date(air_data.iloc[0]["Assess_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(5.5, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 
 # MATRIX
@@ -381,7 +373,7 @@ with col1:
         plt.close()
 
 with col3:
-    if st.button("Return to Home", key="bottom_home_button"):
+    if st.button("Return to Home", key="post_report_home_button"):
         st.switch_page("streamlit_app.py")
 
 # Add some spacing before the next element
