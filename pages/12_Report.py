@@ -93,21 +93,8 @@ with col1:
     generate_report = st.button("Generate Report", disabled=(not selected_assessment))
 
 with col2:
-    if selected_assessment and generate_report:
-        # Create PDF in memory
-        pdf_buffer = io.BytesIO()
-        plt.savefig(pdf_buffer, format='pdf', bbox_inches='tight', dpi=300)
-        pdf_buffer.seek(0)
-        
-        # Create download button
-        if st.download_button(
-            label="Save as PDF",
-            data=pdf_buffer,
-            file_name=f"IRL_Report_{selected_assessment}.pdf",
-            mime="application/pdf",
-            key="pdf_download"
-        ):
-            plt.close()
+    # We'll populate this with the PDF button after generating the report
+    pdf_placeholder = st.empty()
 
 with col3:
     if st.button("Return to Home", key="main_home_button"):
@@ -370,6 +357,20 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
 
 st.pyplot(fig)
+
+# Now that the figure is generated, create the PDF download button
+pdf_buffer = io.BytesIO()
+plt.savefig(pdf_buffer, format='pdf', bbox_inches='tight', dpi=300)
+pdf_buffer.seek(0)
+
+# Display the download button in the placeholder we created earlier
+pdf_placeholder.download_button(
+    label="Save as PDF",
+    data=pdf_buffer,
+    file_name=f"IRL_Report_{selected_assessment}.pdf",
+    mime="application/pdf",
+    key="pdf_download"
+)
 
 # End of report
     
