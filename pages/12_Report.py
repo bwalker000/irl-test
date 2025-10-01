@@ -204,7 +204,7 @@ ax.text(1.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"], 's
 assessor_name = get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"], 'full')
 ax.text(1.15, 9.65, assessor_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
 # Add circle symbol before ASSESSOR
-circle = patches.Circle((0.06, 9.68), radius=0.03, facecolor='black', edgecolor='black', lw=1)
+circle = patches.Circle((0.06, 9.71), radius=0.06, facecolor='black', edgecolor='black', lw=1)
 ax.add_patch(circle)
 
 # Add REVIEWER name and symbol
@@ -214,12 +214,13 @@ ax.text(1.15, 9.4, reviewer_name, fontsize=12, ha='left', va='bottom', fontweigh
 name_width = len(reviewer_name) * 0.07  # Approximate width of text
 diamond_half = 0.06 * 1.2  # Same size as in matrix
 diamond = patches.Polygon([
-    (1.0 + name_width + 0.1, 9.4 + diamond_half),          # top
-    (1.0 + name_width + 0.1 + diamond_half, 9.4),          # right
-    (1.0 + name_width + 0.1, 9.4 - diamond_half),          # bottom
-    (1.0 + name_width + 0.1 - diamond_half, 9.4),          # left
+    (0.06, 9.46 + diamond_half),          # top
+    (0.06 + diamond_half, 9.46),          # right
+    (0.06, 9.46 - diamond_half),          # bottom
+    (0.06 - diamond_half, 9.46),          # left
 ], closed=True, facecolor='black', edgecolor='black', lw=1)
 ax.add_patch(diamond)
+
 
 ax.text(3.75, 9.9, "Project / Product:", fontsize=12, ha='left', va='bottom', fontweight='normal')
 ax.text(3.75, 9.65, "Date:", fontsize=12, ha='left', va='bottom', fontweight='normal')
