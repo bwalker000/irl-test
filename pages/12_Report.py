@@ -366,27 +366,27 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 fontsize=11)   # Smaller font for long labels
 
     # Now add delta box below the labels
-    box_x = 0.3
-    box_y = label_y - 1  # Position below the labels
-    box_width = 1.6
-    box_height = 0.3
+    delta_box_x = 0.3
+    delta_box_y = label_y - 1  # Position below the labels
+    delta_box_width = 1.5
+    delta_box_height = 0.3
     
     # Draw main box
-    rect = patches.Rectangle((box_x, box_y), box_width, box_height, 
+    rect = patches.Rectangle((delta_box_x, delta_box_y), delta_box_width, delta_box_height, 
                            facecolor='none', edgecolor='black', lw=1)
     ax.add_patch(rect)
     
     # Draw shaded value box
-    value_box_width = 0.8
-    value_box = patches.Rectangle((box_x + box_width - value_box_width, box_y), 
-                                value_box_width, box_height,
+    delta_value_box_width = 0.6
+    delta_value_box = patches.Rectangle((delta_box_x + delta_box_width - delta_value_box_width, delta_box_y), 
+                                delta_value_box_width, delta_box_height,
                                 facecolor='#F0F0F0', edgecolor='black', lw=1)
-    ax.add_patch(value_box)
+    ax.add_patch(delta_value_box)
     
     # Add text
-    ax.text(box_x + 0.1, box_y + box_height/2, "Delta:", 
+    ax.text(delta_box_x + 0.1, delta_box_y + delta_box_height/2, "Delta:", 
             fontsize=12, ha='left', va='center')
-    ax.text(box_x + box_width - value_box_width/2, box_y + box_height/2, f"{delta}", 
+    ax.text(delta_box_x + delta_box_width - delta_value_box_width/2, delta_box_y + delta_box_height/2, f"{delta}", 
             fontsize=12, ha='center', va='center')
 
 
