@@ -367,8 +367,8 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
     # Now add delta box below the labels
     box_x = 0.3
-    box_y = label_y - 0.5  # Position below the labels
-    box_width = 2
+    box_y = label_y - 1  # Position below the labels
+    box_width = 1.6
     box_height = 0.3
     
     # Draw main box
