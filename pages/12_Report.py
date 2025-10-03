@@ -241,6 +241,16 @@ ax.text(5.25, 9.65, format_date(air_data.iloc[0]["Assess_date"]), fontsize=12, h
 ax.text(5.25, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 
+# Calculate delta (sum of absolute differences between ASSESSOR and REVIEWER responses)
+delta = 0
+for i in range(numQ):
+    for dim in range(num_dims):
+        qa_field = f"QA_{i:02d}_{dim}"
+        qr_field = f"QR_{i:02d}_{dim}"
+        qa_value = bool(air_data.iloc[0][qa_field]) if qa_field in air_data.columns else False
+        qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
+        delta += abs(int(qa_value) - int(qr_value))
+
 # MATRIX
 
 n_rows = numQ
@@ -331,6 +341,35 @@ for i in range(n_rows):
                 (cx - diamond_half, cy+diamond_half),   # left
             ], closed=True, facecolor='white', edgecolor='black', lw=1)
         ax.add_patch(diamond)
+
+# Add delta box after all elements are drawn
+if i == n_rows - 1 and dim == n_cols - 1:
+    # Position box below the matrix
+    box_x = 0.3
+    box_y = (9.2-n_rows*dy) - 0.5  # Below the matrix
+    box_width = 2
+    box_height = 0.3
+    
+    # Draw main box
+    rect = patches.Rectangle((box_x, box_y), box_width, box_height, 
+                           facecolor='none', edgecolor='black', lw=1)
+    ax.add_patch(rect)
+    
+    # Draw shaded value box
+    value_box_width = 0.8
+    value_box = patches.Rectangle((box_x + box_width - value_box_width, box_y), 
+                                value_box_width, box_height,
+                                facecolor='#F0F0F0', edgecolor='black', lw=1)
+    ax.add_patch(value_box)
+    
+    # Add text
+    ax.text(box_x + 0.1, box_y + box_height/2, "Delta:", 
+            fontsize=12, ha='left', va='center')
+    ax.text(box_x + box_width - value_box_width/2, box_y + box_height/2, f"{delta}", 
+            fontsize=12, ha='center', va='center')
+
+
+st.pyplot(fig)
 
 # After all squares, circles, and diamonds are drawn, add labels in a separate loop
 if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and columns
