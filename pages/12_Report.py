@@ -367,8 +367,8 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
     # Now add delta box below the labels
     delta_box_x = 0.3
-    delta_box_y = label_y - 1  # Position below the labels
-    delta_box_width = 1.5
+    delta_box_y = label_y - 1.2  # Position below the labels
+    delta_box_width = 1.2
     delta_box_height = 0.3
     
     # Draw main box
@@ -377,7 +377,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     ax.add_patch(rect)
     
     # Draw shaded value box
-    delta_value_box_width = 0.6
+    delta_value_box_width = 0.4
     delta_value_box = patches.Rectangle((delta_box_x + delta_box_width - delta_value_box_width, delta_box_y), 
                                 delta_value_box_width, delta_box_height,
                                 facecolor='#F0F0F0', edgecolor='black', lw=1)
