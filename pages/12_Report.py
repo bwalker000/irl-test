@@ -342,35 +342,6 @@ for i in range(n_rows):
             ], closed=True, facecolor='white', edgecolor='black', lw=1)
         ax.add_patch(diamond)
 
-# Add delta box after all elements are drawn
-if i == n_rows - 1 and dim == n_cols - 1:
-    # Position box below the matrix
-    box_x = 0.3
-    box_y = (9.2-n_rows*dy) - 0.5  # Below the matrix
-    box_width = 2
-    box_height = 0.3
-    
-    # Draw main box
-    rect = patches.Rectangle((box_x, box_y), box_width, box_height, 
-                           facecolor='none', edgecolor='black', lw=1)
-    ax.add_patch(rect)
-    
-    # Draw shaded value box
-    value_box_width = 0.8
-    value_box = patches.Rectangle((box_x + box_width - value_box_width, box_y), 
-                                value_box_width, box_height,
-                                facecolor='#F0F0F0', edgecolor='black', lw=1)
-    ax.add_patch(value_box)
-    
-    # Add text
-    ax.text(box_x + 0.1, box_y + box_height/2, "Delta:", 
-            fontsize=12, ha='left', va='center')
-    ax.text(box_x + box_width - value_box_width/2, box_y + box_height/2, f"{delta}", 
-            fontsize=12, ha='center', va='center')
-
-
-st.pyplot(fig)
-
 # After all squares, circles, and diamonds are drawn, add labels in a separate loop
 if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and columns
     # Calculate the y position for labels (based on bottom row position)
@@ -393,6 +364,30 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 ha='right',   # Right-align text
                 va='top',     # Align to top of text box
                 fontsize=11)   # Smaller font for long labels
+
+    # Now add delta box below the labels
+    box_x = 0.3
+    box_y = label_y - 0.5  # Position below the labels
+    box_width = 2
+    box_height = 0.3
+    
+    # Draw main box
+    rect = patches.Rectangle((box_x, box_y), box_width, box_height, 
+                           facecolor='none', edgecolor='black', lw=1)
+    ax.add_patch(rect)
+    
+    # Draw shaded value box
+    value_box_width = 0.8
+    value_box = patches.Rectangle((box_x + box_width - value_box_width, box_y), 
+                                value_box_width, box_height,
+                                facecolor='#F0F0F0', edgecolor='black', lw=1)
+    ax.add_patch(value_box)
+    
+    # Add text
+    ax.text(box_x + 0.1, box_y + box_height/2, "Delta:", 
+            fontsize=12, ha='left', va='center')
+    ax.text(box_x + box_width - value_box_width/2, box_y + box_height/2, f"{delta}", 
+            fontsize=12, ha='center', va='center')
 
 
 st.pyplot(fig)
