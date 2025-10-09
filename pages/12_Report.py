@@ -371,7 +371,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
 # --------------------------------------------------------------------------------------
     # Now add delta box below the labels
-    delta_box_x = 0.3
+    delta_box_x = 0.4
     delta_box_y = label_y - 1.3  # Position below the labels
     delta_box_width = 1.2
     delta_box_height = 0.25
