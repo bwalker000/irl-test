@@ -397,7 +397,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 #------------------------------------------------------------------------------------------
 # Draw the "Key" Table
 
-    key_text_width = 1.7
+    key_text_width = 1.8
     key_num_width = 0.3
     dx = key_text_width + key_num_width
     key_x0 = 0.3
@@ -414,7 +414,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     # draw the boxes for dimensions 6 to 15
     for dim in range(6, 16):
         x = key_x0 + 2*dx
-        y = key_y0 - (dim-6)*dy
+        y = key_y0 - (dim-5)*dy
         rect = patches.Rectangle((x, y), key_text_width, dy, facecolor='none', edgecolor='black', lw=1)
         ax.add_patch(rect)
         # Get the dimension name from assessment table and add it to the rectangle
