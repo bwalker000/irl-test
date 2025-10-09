@@ -413,11 +413,11 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         y = key_y0 - (dim-7)*dy
         rect = patches.Rectangle((x, y), key_text_width, dy, facecolor='none', edgecolor='black', lw=1)
         ax.add_patch(rect)
-        #ax.text(x + key_num_width/2, y + dy/2, f"{dim}", fontsize=12, ha='center', va='center')
-        # Get the full dimension name from assessment table
-        #dimension_name = air_assessment.iloc[dim]["Dimension"]
-        #ax.text(x + key_num_width + 0.05, y + dy/2, dimension_name, fontsize=12, ha='left', va='center')
-
+        # Get the dimension name from assessment table and add it to the rectangle
+        dimension_name = air_assessment.iloc[dim]["Name"]
+        ax.text(x + 0.1, y + dy/2, dimension_name, fontsize=12, ha='left', va='center')
+        rect = patches.Rectangle((x + key_text_width, y), key_num_width, dy, facecolor='#F0F0F0', edgecolor='black', lw=1)
+        ax.add_patch(rect)
 
 
 #------------------------------------------------------------------------------------------
