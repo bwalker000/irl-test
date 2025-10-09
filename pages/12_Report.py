@@ -163,10 +163,14 @@ with st.spinner("Generating your report, please wait..."):
     st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
     st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
 
-    # DIMENSION THE REPORT
+
+#-----------------------------------------------------------------------------------------
+# DIMENSION THE REPORT
 letter_width = 8.5
 letter_height = 11
 margin = 0.5
+
+font_size = 11
 
 # Set figure size to letter dimensions
 fig = plt.figure(figsize=(letter_width, letter_height))
@@ -189,24 +193,24 @@ ax.set_axis_off()
 
 # HEADER 
 
-ax.text(7.5/2, 10.25, "Impact Readiness Level\u2122", fontsize=12, ha='center', va='bottom', fontweight='bold')
+ax.text(7.5/2, 10.25, "Impact Readiness Level\u2122", fontsize=font_size, ha='center', va='bottom', fontweight='bold')
 
-ax.text(0.00, 9.9, "Venture:", fontsize=12, ha='left', va='bottom', fontweight='normal')
-ax.text(0.18, 9.65, "ASSESSOR:", fontsize=12, ha='left', va='bottom', fontweight='normal')
-ax.text(0.18, 9.4, "REVIEWER:", fontsize=12, ha='left', va='bottom', fontweight='normal')
+ax.text(0.00, 9.9, "Venture:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
+ax.text(0.18, 9.65, "ASSESSOR:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
+ax.text(0.18, 9.4, "REVIEWER:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
 
 ax.text(1.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"], 'single'), fontsize=12, ha='left', va='bottom', fontweight='bold')
 
 # Add ASSESSOR name and symbol
 assessor_name = get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"], 'full')
-ax.text(1.16, 9.65, assessor_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(1.16, 9.65, assessor_name, fontsize=font_size, ha='left', va='bottom', fontweight='bold')
 # Add circle symbol before ASSESSOR
 circle = patches.Circle((0.08, 9.75), radius=0.06, facecolor='black', edgecolor='black', lw=1)
 ax.add_patch(circle)
 
 # Add REVIEWER name and symbol
 reviewer_name = get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'full')
-ax.text(1.16, 9.4, reviewer_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(1.16, 9.4, reviewer_name, fontsize=font_size, ha='left', va='bottom', fontweight='bold')
 # Add diamond symbol after name
 name_width = len(reviewer_name) * 0.07  # Approximate width of text
 diamond_half = 0.06 * 1.2  # Same size as in matrix
@@ -219,15 +223,15 @@ diamond = patches.Polygon([
 ax.add_patch(diamond)
 
 
-ax.text(3.75, 9.9, "Project / Product:", fontsize=12, ha='left', va='bottom', fontweight='normal')
-ax.text(3.75, 9.65, "Date:", fontsize=12, ha='left', va='bottom', fontweight='normal')
-ax.text(3.75, 9.4, "Date:", fontsize=12, ha='left', va='bottom', fontweight='normal')
+ax.text(3.75, 9.9, "Project / Product:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
+ax.text(3.75, 9.65, "Date:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
+ax.text(3.75, 9.4, "Date:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
 
 # Load projects table for project name lookup
 table_name = st.secrets["general"]["airtable_table_projects"]
 air_projects, _ = load_airtable(table_name, base_id, api_key, False)
 project_name = get_name_from_id(air_projects, air_data.iloc[0]["Project"], 'single')
-ax.text(5.25, 9.9, project_name, fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(5.25, 9.9, project_name, fontsize=font_size, ha='left', va='bottom', fontweight='bold')
 
 # Convert dates to abbreviated month format
 def format_date(date_str):
@@ -237,8 +241,8 @@ def format_date(date_str):
     except:
         return date_str
 
-ax.text(5.25, 9.65, format_date(air_data.iloc[0]["Assess_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
-ax.text(5.25, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=12, ha='left', va='bottom', fontweight='bold')
+ax.text(5.25, 9.65, format_date(air_data.iloc[0]["Assess_date"]), fontsize=font_size, ha='left', va='bottom', fontweight='bold')
+ax.text(5.25, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=font_size, ha='left', va='bottom', fontweight='bold')
 
 
 # Calculate delta (sum of absolute differences between ASSESSOR and REVIEWER responses)
@@ -263,7 +267,7 @@ dx = dy
 for i in range(n_rows):
     y0 = (9.2-n_rows*dy) + i*dy    
     cy = y0 + dy / 2
-    ax.text(0, cy, i, fontsize=12, ha='left', va='center', fontweight='bold')
+    ax.text(0, cy, i, fontsize=font_size, ha='left', va='center', fontweight='bold')
 
     # Iterate over columns (dimensions 0 to num_dims-1)
     for dim in range(n_cols): 
@@ -370,7 +374,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     delta_box_x = 0.3
     delta_box_y = label_y - 1.3  # Position below the labels
     delta_box_width = 1.2
-    delta_box_height = 0.3
+    delta_box_height = 0.25
     
     # Draw main box
     rect = patches.Rectangle((delta_box_x, delta_box_y), delta_box_width, delta_box_height, 
@@ -386,9 +390,9 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     
     # Add text
     ax.text(delta_box_x + 0.1, delta_box_y + delta_box_height/2, "Delta:", 
-            fontsize=12, ha='left', va='center')
+            fontsize=font_size, ha='left', va='center')
     ax.text(delta_box_x + delta_box_width - delta_value_box_width/2, delta_box_y + delta_box_height/2, f"{delta}", 
-            fontsize=12, ha='center', va='center')
+            fontsize=font_size, ha='center', va='center')
 
 #------------------------------------------------------------------------------------------
 # Draw the "Key" Table
@@ -398,14 +402,14 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     dx = key_text_width + key_num_width
     key_x0 = 0.3
     key_y0 = delta_box_y
-    dy = 0.3
+    dy = 0.25
 
     # draw the "VENTURE Focus" box
     x = key_x0 + 2*dx
     y = key_y0
     rect = patches.Rectangle((x, y), dx, dy, facecolor='none', edgecolor='black', lw=1)
     ax.add_patch(rect)
-    ax.text(x + dx/2, y + dy/2, "VENTURE focus", fontsize=12, ha='center', va='center')
+    ax.text(x + dx/2, y + dy/2, "VENTURE focus", fontsize=font_size, ha='center', va='center')
 
     # draw the boxes for dimensions 8 to 15
     for dim in range(8, 16):
@@ -415,7 +419,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         ax.add_patch(rect)
         # Get the dimension name from assessment table and add it to the rectangle
         dimension_name = air_assessment.iloc[dim]["Dimension"]
-        ax.text(x + 0.1, y + dy/2, dimension_name, fontsize=12, ha='left', va='center')
+        ax.text(x + 0.1, y + dy/2, dimension_name, fontsize=font_size, ha='left', va='center')
         rect = patches.Rectangle((x + key_text_width, y), key_num_width, dy, facecolor='#F0F0F0', edgecolor='black', lw=1)
         ax.add_patch(rect)
 
