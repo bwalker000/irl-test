@@ -411,10 +411,10 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     ax.add_patch(rect)
     ax.text(x + dx/2, y + dy/2, "VENTURE focus", fontsize=font_size, ha='center', va='center')
 
-    # draw the boxes for dimensions 86 to 15
+    # draw the boxes for dimensions 6 to 15
     for dim in range(6, 16):
         x = key_x0 + 2*dx
-        y = key_y0 - (dim-7)*dy
+        y = key_y0 - (dim-9)*dy
         rect = patches.Rectangle((x, y), key_text_width, dy, facecolor='none', edgecolor='black', lw=1)
         ax.add_patch(rect)
         # Get the dimension name from assessment table and add it to the rectangle
@@ -438,7 +438,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
     # draw the "PRODUCT Focus" box
     x = key_x0 + dx
-    y = key_y0 - -3*dy
+    y = key_y0 - 3*dy
     rect = patches.Rectangle((x, y), dx, dy, facecolor='none', edgecolor='black', lw=1)
     ax.add_patch(rect)
     ax.text(x + dx/2, y + dy/2, "PRODUCT focus", fontsize=font_size, ha='center', va='center')
