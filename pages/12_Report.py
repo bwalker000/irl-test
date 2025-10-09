@@ -400,7 +400,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     key_text_width = 2
     key_num_width = 0.3
     dx = key_text_width + key_num_width
-    key_x0 = 0.3
+    key_x0 = 0.4
     key_y0 = delta_box_y
     dy = 0.25
 
