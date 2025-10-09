@@ -265,7 +265,7 @@ dx = dy
 
 # Iterate over rows (questions 0 to numQ-1)
 for i in range(n_rows):
-    y0 = (9.2-n_rows*dy) + i*dy    
+    y0 = (9.3-n_rows*dy) + i*dy    
     cy = y0 + dy / 2
     ax.text(0, cy, i, fontsize=font_size, ha='left', va='center', fontweight='bold')
 
@@ -372,7 +372,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 # --------------------------------------------------------------------------------------
     # Now add delta box below the labels
     delta_box_x = 0.4
-    delta_box_y = label_y - 1.3  # Position below the labels
+    delta_box_y = label_y - 1.2  # Position below the labels
     delta_box_width = 1.2
     delta_box_height = 0.25
     
