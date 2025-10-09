@@ -365,9 +365,10 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 va='top',     # Align to top of text box
                 fontsize=11)   # Smaller font for long labels
 
+# --------------------------------------------------------------------------------------
     # Now add delta box below the labels
     delta_box_x = 0.3
-    delta_box_y = label_y - 1.2  # Position below the labels
+    delta_box_y = label_y - 1.3  # Position below the labels
     delta_box_width = 1.2
     delta_box_height = 0.3
     
@@ -389,7 +390,26 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     ax.text(delta_box_x + delta_box_width - delta_value_box_width/2, delta_box_y + delta_box_height/2, f"{delta}", 
             fontsize=12, ha='center', va='center')
 
+#------------------------------------------------------------------------------------------
+# Draw the "Key" Table
 
+key_text_width = 2.5
+key_num_width = 0.3
+dx = key_text_width + key_num_width
+key_x0 = 0.3
+key_y0 = delta_box_y
+dy = 0.3
+
+# draw the "VENTURE Focus" box
+rect = patches.Rectangle((key_x0 + 2*dx, key_y0), delta_box_width, dy, 
+                           facecolor='none', edgecolor='black', lw=1)
+ax.add_patch(rect)
+ax.text(key_x0 + 2*dx, key_y0 + dy/2, "VENTURE focus", 
+            fontsize=12, ha='center', va='center')
+
+
+
+#------------------------------------------------------------------------------------------
 st.pyplot(fig)
 
 # Now that the figure is generated, create the PDF download button
