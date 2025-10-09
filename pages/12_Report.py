@@ -393,19 +393,30 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 #------------------------------------------------------------------------------------------
 # Draw the "Key" Table
 
-key_text_width = 2.5
-key_num_width = 0.3
-dx = key_text_width + key_num_width
-key_x0 = 0.3
-key_y0 = delta_box_y
-dy = 0.3
+    key_text_width = 2.5
+    key_num_width = 0.3
+    dx = key_text_width + key_num_width
+    key_x0 = 0.3
+    key_y0 = delta_box_y
+    dy = 0.3
 
-# draw the "VENTURE Focus" box
-rect = patches.Rectangle((key_x0 + 2*dx, key_y0), delta_box_width, dy, 
-                           facecolor='none', edgecolor='black', lw=1)
-ax.add_patch(rect)
-ax.text(key_x0 + 2*dx, key_y0 + dy/2, "VENTURE focus", 
-            fontsize=12, ha='center', va='center')
+    # draw the "VENTURE Focus" box
+    x = key_x0 + 2*dx
+    y = key_y0
+    rect = patches.Rectangle((x, y), dx, dy, facecolor='none', edgecolor='black', lw=1)
+    ax.add_patch(rect)
+    ax.text(x + dx/2, y + dy/2, "VENTURE focus", fontsize=12, ha='center', va='center')
+
+    # draw the boxes for dimensions 8 to 15
+    for dim in range(8, 16):
+        x = key_x0 + 2*dx
+        y = key_y0 + (dim-7)*dy
+        rect = patches.Rectangle((x, y), key_text_width, dy, facecolor='none', edgecolor='black', lw=1)
+        ax.add_patch(rect)
+        #ax.text(x + key_num_width/2, y + dy/2, f"{dim}", fontsize=12, ha='center', va='center')
+        # Get the full dimension name from assessment table
+        #dimension_name = air_assessment.iloc[dim]["Dimension"]
+        #ax.text(x + key_num_width + 0.05, y + dy/2, dimension_name, fontsize=12, ha='left', va='center')
 
 
 
