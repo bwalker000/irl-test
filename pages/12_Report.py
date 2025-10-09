@@ -478,9 +478,9 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     ax.add_patch(rect)
     ax.text(x + dx/2, y + dy/2, "TECHNOLOGY focus", fontsize=font_size, ha='center', va='center')
 
-    # draw the boxes for dimensions 2 to 5
+    # draw the boxes for dimension 0
     for dim in range(0, 1):
-        x = key_x0 + dx
+        x = key_x0
         y = key_y0 - (dim+2)*dy
         rect = patches.Rectangle((x, y), key_text_width, dy, facecolor='none', edgecolor='black', lw=1)
         ax.add_patch(rect)
@@ -503,6 +503,38 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
             ax.text(x + key_text_width + key_num_width/2, y + dy/2, 
                    str(max_positive_q), fontsize=font_size, ha='center', va='center')
 
+    # ************************************************************************************
+    # draw the "NEED Focus" box
+    x = key_x0
+    y = key_y0 - 6*dy
+    rect = patches.Rectangle((x, y), dx, dy, facecolor='none', edgecolor='black', lw=1)
+    ax.add_patch(rect)
+    ax.text(x + dx/2, y + dy/2, "NEED focus", fontsize=font_size, ha='center', va='center')
+
+    # draw the boxes for dimension 1
+    for dim in range(1, 2):
+        x = key_x0
+        y = key_y0 - (dim+2)*dy
+        rect = patches.Rectangle((x, y), key_text_width, dy, facecolor='none', edgecolor='black', lw=1)
+        ax.add_patch(rect)
+        # Get the dimension name from assessment table and add it to the rectangle
+        dimension_name = air_assessment.iloc[dim]["Dimension"]
+        ax.text(x + 0.1, y + dy/2, dimension_name, fontsize=font_size, ha='left', va='center')
+        rect = patches.Rectangle((x + key_text_width, y), key_num_width, dy, facecolor='#F0F0F0', edgecolor='black', lw=1)
+        ax.add_patch(rect)
+
+        # Find the highest question number with a positive reviewer response for this dimension
+        max_positive_q = -1  # Initialize to -1 to handle case where no positives found
+        for q in range(numQ):
+            qr_field = f"QR_{q:02d}_{dim}"
+            qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
+            if qr_value:
+                max_positive_q = q
+
+        # Only add text if we found at least one positive response
+        if max_positive_q >= 0:
+            ax.text(x + key_text_width + key_num_width/2, y + dy/2, 
+                   str(max_positive_q), fontsize=font_size, ha='center', va='center')
 
 #------------------------------------------------------------------------------------------
 st.pyplot(fig)
