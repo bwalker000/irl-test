@@ -349,7 +349,7 @@ for i in range(n_rows):
 # After all squares, circles, and diamonds are drawn, add labels in a separate loop
 if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and columns
     # Calculate the y position for labels (based on bottom row position)
-    bottom_y = (9.2-n_rows*dy)  # y position of top row
+    bottom_y = (9.3-n_rows*dy)  # y position of top row
 #    bottom_y = bottom_y + (numQ-1)*dy  # Move to last row
     label_y = bottom_y - 0.1  # Position below the last row
     
