@@ -414,7 +414,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     # draw the boxes for dimensions 6 to 15
     for dim in range(6, 16):
         x = key_x0 + 2*dx
-        y = key_y0 - (dim-13)*dy
+        y = key_y0 - (dim-6)*dy
         rect = patches.Rectangle((x, y), key_text_width, dy, facecolor='none', edgecolor='black', lw=1)
         ax.add_patch(rect)
         # Get the dimension name from assessment table and add it to the rectangle
@@ -446,7 +446,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     # draw the boxes for dimensions 2 to 5
     for dim in range(2, 6):
         x = key_x0 + dx
-        y = key_y0 - (dim-10)*dy
+        y = key_y0 - (dim+2)*dy
         rect = patches.Rectangle((x, y), key_text_width, dy, facecolor='none', edgecolor='black', lw=1)
         ax.add_patch(rect)
         # Get the dimension name from assessment table and add it to the rectangle
