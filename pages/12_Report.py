@@ -397,7 +397,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 #------------------------------------------------------------------------------------------
 # Draw the "Key" Table
 
-    key_text_width = 1.8
+    key_text_width = 2
     key_num_width = 0.3
     dx = key_text_width + key_num_width
     key_x0 = 0.3
@@ -410,7 +410,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     y = key_y0
     rect = patches.Rectangle((x, y), dx, dy, facecolor='none', edgecolor='black', lw=1)
     ax.add_patch(rect)
-    ax.text(x + dx/2, y + dy/2, "VENTURE focus", fontsize=font_size, ha='center', va='center')
+    ax.text(x + dx/2, y + dy/2, "VENTURE focus", fontsize=font_size, ha='center', va='center', fontweight='bold')
 
     # draw the boxes for dimensions 6 to 15
     for dim in range(6, 16):
@@ -443,7 +443,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     y = key_y0 - 3*dy
     rect = patches.Rectangle((x, y), dx, dy, facecolor='none', edgecolor='black', lw=1)
     ax.add_patch(rect)
-    ax.text(x + dx/2, y + dy/2, "PRODUCT focus", fontsize=font_size, ha='center', va='center')
+    ax.text(x + dx/2, y + dy/2, "PRODUCT focus", fontsize=font_size, ha='center', va='center', fontweight='bold')
 
     # draw the boxes for dimensions 2 to 5
     for dim in range(2, 6):
@@ -476,7 +476,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     y = key_y0 - 3*dy
     rect = patches.Rectangle((x, y), dx, dy, facecolor='none', edgecolor='black', lw=1)
     ax.add_patch(rect)
-    ax.text(x + dx/2, y + dy/2, "TECHNOLOGY focus", fontsize=font_size, ha='center', va='center')
+    ax.text(x + dx/2, y + dy/2, "TECHNOLOGY focus", fontsize=font_size, ha='center', va='center', fontweight='bold')
 
     # draw the boxes for dimension 0
     for dim in range(0, 1):
@@ -509,7 +509,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     y = key_y0 - 6*dy
     rect = patches.Rectangle((x, y), dx, dy, facecolor='none', edgecolor='black', lw=1)
     ax.add_patch(rect)
-    ax.text(x + dx/2, y + dy/2, "NEED focus", fontsize=font_size, ha='center', va='center')
+    ax.text(x + dx/2, y + dy/2, "NEED focus", fontsize=font_size, ha='center', va='center', fontweight='bold')
 
     # draw the boxes for dimension 1
     for dim in range(1, 2):
