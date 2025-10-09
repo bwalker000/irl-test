@@ -393,7 +393,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 #------------------------------------------------------------------------------------------
 # Draw the "Key" Table
 
-    key_text_width = 2.5
+    key_text_width = 1.7
     key_num_width = 0.3
     dx = key_text_width + key_num_width
     key_x0 = 0.3
@@ -410,7 +410,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     # draw the boxes for dimensions 8 to 15
     for dim in range(8, 16):
         x = key_x0 + 2*dx
-        y = key_y0 + (dim-7)*dy
+        y = key_y0 - (dim-7)*dy
         rect = patches.Rectangle((x, y), key_text_width, dy, facecolor='none', edgecolor='black', lw=1)
         ax.add_patch(rect)
         #ax.text(x + key_num_width/2, y + dy/2, f"{dim}", fontsize=12, ha='center', va='center')
