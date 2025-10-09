@@ -367,7 +367,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 rotation=60,  # 45-degree angle
                 ha='right',   # Right-align text
                 va='top',     # Align to top of text box
-                fontsize=11)   # Smaller font for long labels
+                fontsize=10)   # Smaller font for long labels
 
 # --------------------------------------------------------------------------------------
     # Now add delta box below the labels
