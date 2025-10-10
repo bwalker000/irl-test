@@ -1,5 +1,6 @@
 from shared import *
 import io
+from draw import *
 
 st.title("Create a Report")
 
@@ -213,15 +214,8 @@ reviewer_name = get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'f
 ax.text(1.16, 9.4, reviewer_name, fontsize=font_size, ha='left', va='bottom', fontweight='bold')
 # Add diamond symbol after name
 name_width = len(reviewer_name) * 0.07  # Approximate width of text
-diamond_half = 0.06 * 1.2  # Same size as in matrix
-diamond = patches.Polygon([
-    (0.08, 9.5 + diamond_half),          # top
-    (0.08 + diamond_half, 9.5),          # right
-    (0.08, 9.5 - diamond_half),          # bottom
-    (0.08 - diamond_half, 9.5),          # left
-], closed=True, facecolor='black', edgecolor='black', lw=1)
+diamond = draw_diamond(0.08, 9.5, 0.12)
 ax.add_patch(diamond)
-
 
 ax.text(3.75, 9.9, "Project / Product:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
 ax.text(3.75, 9.65, "Date:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
@@ -555,3 +549,4 @@ pdf_placeholder.download_button(
 
 # End of report
     
+
