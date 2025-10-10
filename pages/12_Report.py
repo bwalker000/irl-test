@@ -327,7 +327,7 @@ for i in range(n_rows):
             diamond = draw_diamond(cx, cy+radius*1.2, 2*radius, filled=True)
             ax.add_patch(diamond)
         else:
-            diamond = draw_diamond(cx, cy+radius, 2*radius*1.2, filled=False)
+            diamond = draw_diamond(cx, cy+radius*1.2, 2*radius, filled=False)
             ax.add_patch(diamond)
 
 # After all squares, circles, and diamonds are drawn, add labels in a separate loop
