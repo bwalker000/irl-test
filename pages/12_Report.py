@@ -326,9 +326,10 @@ for i in range(n_rows):
         diamond_half = radius*1.2  # scales diamond relative to circle size
         if st.session_state.QR[dim, i] == True:
             diamond = draw_diamond(cx, cy, 0.12, filled=True)
+            ax.add_patch(diamond)
         else:
             diamond = draw_diamond(cx, cy, 0.12, filled=False)
-      ax.add_patch(diamond)
+            ax.add_patch(diamond)
 
 # After all squares, circles, and diamonds are drawn, add labels in a separate loop
 if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and columns
