@@ -214,7 +214,7 @@ reviewer_name = get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'f
 ax.text(1.16, 9.4, reviewer_name, fontsize=font_size, ha='left', va='bottom', fontweight='bold')
 # Add diamond symbol after name
 name_width = len(reviewer_name) * 0.07  # Approximate width of text
-diamond = draw_diamond(0.08, 9.5, 0.12)
+diamond = draw_diamond(0.08, 9.5, 0.12, filled=True)
 ax.add_patch(diamond)
 
 ax.text(3.75, 9.9, "Project / Product:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
@@ -325,20 +325,10 @@ for i in range(n_rows):
         # Draw centered diamond
         diamond_half = radius*1.2  # scales diamond relative to circle size
         if st.session_state.QR[dim, i] == True:
-            diamond = patches.Polygon([
-                (cx, cy + diamond_half+diamond_half),   # top
-                (cx + diamond_half, cy+diamond_half),   # right
-                (cx, cy - diamond_half+diamond_half),   # bottom
-                (cx - diamond_half, cy+diamond_half),   # left
-            ], closed=True, facecolor='black', edgecolor='black', lw=1)
+            diamond = draw_diamond(cx, cy, 0.12, filled=True)
         else:
-            diamond = patches.Polygon([
-                (cx, cy + diamond_half+diamond_half),   # top
-                (cx + diamond_half, cy+diamond_half),   # right
-                (cx, cy - diamond_half+diamond_half),   # bottom
-                (cx - diamond_half, cy+diamond_half),   # left
-            ], closed=True, facecolor='white', edgecolor='black', lw=1)
-        ax.add_patch(diamond)
+            diamond = draw_diamond(cx, cy, 0.12, filled=False)
+      ax.add_patch(diamond)
 
 # After all squares, circles, and diamonds are drawn, add labels in a separate loop
 if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and columns
