@@ -672,7 +672,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         ax.add_patch(rect)
         progress_text = f"{aa_count}/{bb_count}" if bb_count > 0 else "0/0"
         ax.text(col_x + milestone_col_widths[2]/2, row_y + milestone_row_height/2, progress_text, 
-                fontsize=font_size-1, ha='center', va='center', color=milestone_text_color)
+                fontsize=font_size-1, ha='center', va='center', color=milestone_text_color, fontweight='bold')
 
 #------------------------------------------------------------------------------------------
 st.pyplot(fig)
