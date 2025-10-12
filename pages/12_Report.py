@@ -257,15 +257,21 @@ n_cols = num_dims
 dy =  0.9 * 7.15 / n_cols       # 0.9 to reduces the size of the table
 dx = dy
 
+# Calculate total matrix width and center it on the page
+page_width = letter_width - 2*margin  # Available width within margins
+question_num_width = 0.3  # Width for question numbers column
+matrix_width = question_num_width + n_cols * dx  # Total width of matrix
+start_x = (page_width - matrix_width) / 2  # Center the matrix
+
 # Iterate over rows (questions 0 to numQ-1)
 for i in range(n_rows):
     y0 = (9.3-n_rows*dy) + i*dy    
     cy = y0 + dy / 2
-    ax.text(0, cy, i, fontsize=font_size, ha='left', va='center', fontweight='bold')
+    ax.text(start_x, cy, i, fontsize=font_size, ha='left', va='center', fontweight='bold')
 
     # Iterate over columns (dimensions 0 to num_dims-1)
     for dim in range(n_cols): 
-        x0 = 0.3 + dim*dx   
+        x0 = start_x + question_num_width + dim*dx   
 
         # look into the assessment table to determine what milestone is associated
 
@@ -340,7 +346,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     # Add labels for all columns
     for label_dim in range(n_cols):
         # Calculate x position for this dimension (center of square)
-        x0 = 0.3 + label_dim*dx
+        x0 = start_x + question_num_width + label_dim*dx
         x_text = x0 + 0.625*dx  # Center of the rectangle (same as cx calculation above)
         
         # Get abbreviation from assessment table
@@ -354,10 +360,10 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 fontsize=10)   # Smaller font for long labels
 
 # --------------------------------------------------------------------------------------
-    # Now add delta box below the labels
-    delta_box_x = 0.4
-    delta_box_y = label_y - 1.2  # Position below the labels
+    # Now add delta box below the labels (also centered)
     delta_box_width = 1.2
+    delta_box_x = (page_width - delta_box_width) / 2  # Center the delta box
+    delta_box_y = label_y - 1.2  # Position below the labels
     delta_box_height = 0.25
     
     # Draw main box
