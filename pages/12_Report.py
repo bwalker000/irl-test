@@ -692,12 +692,3 @@ pdf_placeholder.download_button(
 )
 
 # End of report
-
-
-
-    file_name=f"IRL_Report_{selected_assessment}.pdf",
-    mime="application/pdf",
-    key="pdf_download"
-)
-
-# End of report
