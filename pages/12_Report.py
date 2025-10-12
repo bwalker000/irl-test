@@ -707,7 +707,7 @@ watermark_y = (letter_height - 2*margin) / 2
 ax.text(watermark_x, watermark_y, watermark_text, 
         fontsize=watermark_fontsize, ha='center', va='center', 
         color=watermark_color, alpha=watermark_alpha, 
-        rotation=45, fontweight='bold', zorder=0)
+        rotation=45, fontweight='bold')
 
 #------------------------------------------------------------------------------------------
 st.pyplot(fig)
