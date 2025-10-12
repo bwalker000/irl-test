@@ -536,6 +536,39 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 #------------------------------------------------------------------------------------------
 # Draw the milestones table
 
+    # Helper function to render text with **bold** markup
+    def render_formatted_text(ax, x, y, text, fontsize, ha='left', va='center'):
+        """
+        Render text with **bold** markup by splitting into segments
+        Returns the total width used
+        """
+        import re
+        
+        # Split text by **bold** markers
+        parts = re.split(r'\*\*(.*?)\*\*', text)
+        
+        current_x = x
+        total_width = 0
+        
+        for i, part in enumerate(parts):
+            if not part:  # Skip empty parts
+                continue
+                
+            # Odd indices (1, 3, 5...) are the content inside ** **
+            fontweight = 'bold' if i % 2 == 1 else 'normal'
+            
+            # Render this part
+            ax.text(current_x, y, part, fontsize=fontsize, 
+                   ha='left', va=va, fontweight=fontweight)
+            
+            # Estimate width (approximate)
+            char_width = fontsize * 0.6 / 72  # Rough character width in inches
+            part_width = len(part) * char_width
+            current_x += part_width
+            total_width += part_width
+            
+        return total_width
+
     # Calculate starting position for milestones table (below the key table)
     milestone_table_y_start = key_y0 - 12*dy  # Start below the lowest key table entry
     milestone_row_height = 0.2
@@ -622,21 +655,30 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 except:
                     continue
         
-        # Column 1: Milestone name
+        # Column 1: Milestone name with mixed formatting
         col_x = milestone_x_start
         rect = patches.Rectangle((col_x, row_y), milestone_col_widths[0], milestone_row_height, 
                                facecolor='white', edgecolor='black', lw=1)
         ax.add_patch(rect)
-        ax.text(col_x + 0.05, row_y + milestone_row_height/2, f"Milestone {milestone_name}", 
-                fontsize=font_size-1, ha='left', va='center', fontweight='bold')
         
-        # Column 2: Label
+        # Use the helper function for mixed formatting
+        milestone_text = f"Milestone **{milestone_name}**"
+        render_formatted_text(ax, col_x + 0.05, row_y + milestone_row_height/2, 
+                             milestone_text, fontsize-1, ha='left', va='center')
+        
+        # Column 2: Label (could also have formatting if needed)
         col_x += milestone_col_widths[0]
         rect = patches.Rectangle((col_x, row_y), milestone_col_widths[1], milestone_row_height, 
                                facecolor='white', edgecolor='black', lw=1)
         ax.add_patch(rect)
-        ax.text(col_x + 0.05, row_y + milestone_row_height/2, milestone_label, 
-                fontsize=font_size-1, ha='left', va='center')
+        
+        # Check if label has formatting markup
+        if '**' in milestone_label:
+            render_formatted_text(ax, col_x + 0.05, row_y + milestone_row_height/2, 
+                                 milestone_label, fontsize-1, ha='left', va='center')
+        else:
+            ax.text(col_x + 0.05, row_y + milestone_row_height/2, milestone_label, 
+                    fontsize=font_size-1, ha='left', va='center')
         
         # Column 3: Progress with milestone color background
         col_x += milestone_col_widths[1]
