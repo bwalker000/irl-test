@@ -539,35 +539,20 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     # Helper function to render text with **bold** markup
     def render_formatted_text(ax, x, y, text, fontsize, ha='left', va='center'):
         """
-        Render text with **bold** markup by splitting into segments
-        Returns the total width used
+        Render text with **bold** markup using LaTeX formatting
         """
         import re
         
-        # Split text by **bold** markers
-        parts = re.split(r'\*\*(.*?)\*\*', text)
+        # Convert **text** to LaTeX bold format
+        latex_text = re.sub(r'\*\*(.*?)\*\*', r'$\\mathbf{\1}$', text)
         
-        current_x = x
-        total_width = 0
+        # Remove any remaining ** markers
+        latex_text = latex_text.replace('**', '')
         
-        for i, part in enumerate(parts):
-            if not part:  # Skip empty parts
-                continue
-                
-            # Odd indices (1, 3, 5...) are the content inside ** **
-            fontweight = 'bold' if i % 2 == 1 else 'normal'
-            
-            # Render this part
-            ax.text(current_x, y, part, fontsize=fontsize, 
-                   ha='left', va=va, fontweight=fontweight)
-            
-            # Estimate width (approximate)
-            char_width = fontsize * 0.6 / 72  # Rough character width in inches
-            part_width = len(part) * char_width
-            current_x += part_width
-            total_width += part_width
-            
-        return total_width
+        # Render the text with LaTeX formatting
+        ax.text(x, y, latex_text, fontsize=fontsize, ha=ha, va=va)
+        
+        return len(text) * fontsize * 0.6 / 72  # Rough width estimate
 
     # Calculate starting position for milestones table (below the key table)
     milestone_table_y_start = key_y0 - 12*dy  # Start below the lowest key table entry
@@ -709,3 +694,10 @@ pdf_placeholder.download_button(
 # End of report
 
 
+
+    file_name=f"IRL_Report_{selected_assessment}.pdf",
+    mime="application/pdf",
+    key="pdf_download"
+)
+
+# End of report
