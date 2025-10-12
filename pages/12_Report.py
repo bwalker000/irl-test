@@ -365,7 +365,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     key_num_width = 0.3
     dx = key_text_width + key_num_width
     key_x0 = 0.4
-    dy = 0.25
+    dy = 0.2
 
     # Now add delta box below the labels (aligned with TECHNOLOGY focus box)
     delta_box_width = 1.2
@@ -533,9 +533,9 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 # Draw the milestones table
 
     # Calculate starting position for milestones table (below the key table)
-    milestone_table_y_start = key_y0 - 8*dy  # Start below the lowest key table entry
+    milestone_table_y_start = key_y0 - 10*dy  # Start below the lowest key table entry
     milestone_row_height = 0.2
-    milestone_col_widths = [1.5, 2.0, 0.8]  # Width for each column
+    milestone_col_widths = [1.25, 4.0, 0.8]  # Width for each column
     milestone_table_width = sum(milestone_col_widths)
     
     # Center the milestones table
