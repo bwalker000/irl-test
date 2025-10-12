@@ -6,15 +6,19 @@ st.title("Impact Readiness Level")
 if 'submitted' not in st.session_state:
     st.session_state.submitted = False
 
-# Initialize EULA acceptance state
+# Initialize EULA and login attempt states
 if 'eula_accepted' not in st.session_state:
     st.session_state.eula_accepted = False
 
+if 'login_attempted' not in st.session_state:
+    st.session_state.login_attempted = False
+
 # Show Demo Request button only on the main screen when not logged in
 if not st.user.is_logged_in:
-    # Show EULA if not yet accepted
-    if not st.session_state.eula_accepted:
+    # Check if user attempted login but hasn't accepted EULA
+    if st.session_state.login_attempted and not st.session_state.eula_accepted:
         st.header("End User License Agreement")
+        st.warning("You must accept the End User License Agreement to proceed with login.")
         
         # Display EULA text in an expandable section
         with st.expander("📋 Please read and accept the End User License Agreement", expanded=True):
@@ -51,31 +55,32 @@ if not st.user.is_logged_in:
             By clicking "I Accept" below, you acknowledge that you have read this EULA, understand it, and agree to be bound by its terms and conditions.
             """)
         
-        # EULA acceptance checkbox and button
-        col1, col2 = st.columns([3, 1])
+        # EULA acceptance checkbox and buttons
+        col1, col2, col3 = st.columns([2, 1, 1])
         with col1:
             eula_checkbox = st.checkbox("I have read and agree to the End User License Agreement")
         with col2:
             if st.button("I Accept", disabled=not eula_checkbox, type="primary"):
                 st.session_state.eula_accepted = True
+                st.login("auth0")
+        with col3:
+            if st.button("Cancel"):
+                st.session_state.login_attempted = False
                 st.rerun()
         
         if not eula_checkbox:
-            st.info("Please read and check the agreement above to proceed.")
+            st.info("Please read and check the agreement above to proceed with login.")
             
-        # Show demo request option even without EULA acceptance
-        st.divider()
-        col1, col2 = st.columns(2)
-        with col2:
-            if st.button("Demo Request"):
-                st.switch_page("pages/0_Demo_Request.py")
-                
     else:
-        # EULA accepted, show login options
+        # Normal login screen (no EULA attempted yet)
         col1, col2 = st.columns(2)
         with col1:
             if st.button("Log in"):
-                st.login("auth0")
+                st.session_state.login_attempted = True
+                if not st.session_state.eula_accepted:
+                    st.rerun()
+                else:
+                    st.login("auth0")
         with col2:
             if st.button("Demo Request"):
                 st.switch_page("pages/0_Demo_Request.py")
@@ -123,6 +128,7 @@ if st.user.is_logged_in:
                     st.switch_page("pages/12_Report.py")
             with col3:
                 if st.button("Log out"):
-                    # Clear EULA acceptance on logout
+                    # Clear EULA acceptance and login attempt on logout
                     st.session_state.eula_accepted = False
+                    st.session_state.login_attempted = False
                     st.logout()
