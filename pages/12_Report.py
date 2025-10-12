@@ -360,9 +360,9 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 fontsize=10)   # Smaller font for long labels
 
 # --------------------------------------------------------------------------------------
-    # Now add delta box below the labels (also centered)
+    # Now add delta box below the labels (aligned with TECHNOLOGY focus box)
     delta_box_width = 1.2
-    delta_box_x = (page_width - delta_box_width) / 2  # Center the delta box
+    delta_box_x = key_x0  # Align with left edge of key table (same as TECHNOLOGY focus)
     delta_box_y = label_y - 1.2  # Position below the labels
     delta_box_height = 0.25
     
@@ -529,8 +529,116 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 #------------------------------------------------------------------------------------------
 # Draw the milestones table
 
-
-
+    # Calculate starting position for milestones table (below the key table)
+    milestone_table_y_start = key_y0 - 8*dy  # Start below the lowest key table entry
+    milestone_row_height = 0.2
+    milestone_col_widths = [1.5, 2.0, 0.8]  # Width for each column
+    milestone_table_width = sum(milestone_col_widths)
+    
+    # Center the milestones table
+    milestone_x_start = (page_width - milestone_table_width) / 2
+    
+    # Get number of milestones
+    num_milestones = len(air_milestones)
+    
+    # Draw table header
+    header_y = milestone_table_y_start
+    col_x = milestone_x_start
+    
+    # Header for column 1
+    rect = patches.Rectangle((col_x, header_y), milestone_col_widths[0], milestone_row_height, 
+                           facecolor='#E0E0E0', edgecolor='black', lw=1)
+    ax.add_patch(rect)
+    ax.text(col_x + milestone_col_widths[0]/2, header_y + milestone_row_height/2, "Milestone", 
+            fontsize=font_size, ha='center', va='center', fontweight='bold')
+    
+    # Header for column 2
+    col_x += milestone_col_widths[0]
+    rect = patches.Rectangle((col_x, header_y), milestone_col_widths[1], milestone_row_height, 
+                           facecolor='#E0E0E0', edgecolor='black', lw=1)
+    ax.add_patch(rect)
+    ax.text(col_x + milestone_col_widths[1]/2, header_y + milestone_row_height/2, "Label", 
+            fontsize=font_size, ha='center', va='center', fontweight='bold')
+    
+    # Header for column 3
+    col_x += milestone_col_widths[1]
+    rect = patches.Rectangle((col_x, header_y), milestone_col_widths[2], milestone_row_height, 
+                           facecolor='#E0E0E0', edgecolor='black', lw=1)
+    ax.add_patch(rect)
+    ax.text(col_x + milestone_col_widths[2]/2, header_y + milestone_row_height/2, "Progress", 
+            fontsize=font_size, ha='center', va='center', fontweight='bold')
+    
+    # Draw data rows
+    for milestone_idx in range(num_milestones):
+        row_y = header_y - (milestone_idx + 1) * milestone_row_height
+        milestone_row = air_milestones.iloc[milestone_idx]
+        milestone_id = milestone_row['id']
+        milestone_name = milestone_row['Name']
+        milestone_label = milestone_row['Label']
+        milestone_color = milestone_row['Color']
+        milestone_text_color = milestone_row.get('Text Color', '#000000')  # Default to black if not specified
+        
+        # Ensure colors have # prefix
+        if pd.notna(milestone_color) and not milestone_color.startswith('#'):
+            milestone_color = f"#{milestone_color}"
+        if pd.isna(milestone_color):
+            milestone_color = '#FFFFFF'
+            
+        if pd.notna(milestone_text_color) and not milestone_text_color.startswith('#'):
+            milestone_text_color = f"#{milestone_text_color}"
+        if pd.isna(milestone_text_color):
+            milestone_text_color = '#000000'
+        
+        # Calculate AA and BB values for this milestone
+        aa_count = 0  # Number of true QR responses for this milestone
+        bb_count = 0  # Total possible responses for this milestone
+        
+        # Check all QR fields to find matches for this milestone
+        for i in range(numQ):
+            for dim in range(num_dims):
+                try:
+                    milestone_field = f"Q{i} Milestone"
+                    assessed_milestone_id = air_assessment.iloc[dim][milestone_field]
+                    
+                    if isinstance(assessed_milestone_id, (list, tuple)):
+                        assessed_milestone_id = assessed_milestone_id[0]
+                    
+                    if assessed_milestone_id == milestone_id:
+                        bb_count += 1  # This position uses this milestone
+                        
+                        # Check if reviewer answered positively
+                        qr_field = f"QR_{i:02d}_{dim}"
+                        if qr_field in air_data.columns:
+                            qr_value = bool(air_data.iloc[0][qr_field])
+                            if qr_value:
+                                aa_count += 1
+                except:
+                    continue
+        
+        # Column 1: Milestone name
+        col_x = milestone_x_start
+        rect = patches.Rectangle((col_x, row_y), milestone_col_widths[0], milestone_row_height, 
+                               facecolor='white', edgecolor='black', lw=1)
+        ax.add_patch(rect)
+        ax.text(col_x + 0.05, row_y + milestone_row_height/2, f"Milestone {milestone_name}", 
+                fontsize=font_size-1, ha='left', va='center', fontweight='bold')
+        
+        # Column 2: Label
+        col_x += milestone_col_widths[0]
+        rect = patches.Rectangle((col_x, row_y), milestone_col_widths[1], milestone_row_height, 
+                               facecolor='white', edgecolor='black', lw=1)
+        ax.add_patch(rect)
+        ax.text(col_x + 0.05, row_y + milestone_row_height/2, milestone_label, 
+                fontsize=font_size-1, ha='left', va='center')
+        
+        # Column 3: Progress with milestone color background
+        col_x += milestone_col_widths[1]
+        rect = patches.Rectangle((col_x, row_y), milestone_col_widths[2], milestone_row_height, 
+                               facecolor=milestone_color, edgecolor='black', lw=1)
+        ax.add_patch(rect)
+        progress_text = f"{aa_count}/{bb_count}" if bb_count > 0 else "0/0"
+        ax.text(col_x + milestone_col_widths[2]/2, row_y + milestone_row_height/2, progress_text, 
+                fontsize=font_size-1, ha='center', va='center', color=milestone_text_color)
 
 #------------------------------------------------------------------------------------------
 st.pyplot(fig)
