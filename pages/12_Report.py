@@ -531,7 +531,7 @@ st.pyplot(fig)
 
 # Now that the figure is generated, create the PDF download button
 pdf_buffer = io.BytesIO()
-plt.savefig(pdf_buffer, format='pdf', bbox_inches='tight', dpi=300)
+plt.savefig(pdf_buffer, format='pdf', dpi=300)
 pdf_buffer.seek(0)
 
 # Display the download button in the placeholder we created earlier
@@ -544,5 +544,5 @@ pdf_placeholder.download_button(
 )
 
 # End of report
-    
+
 
