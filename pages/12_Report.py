@@ -360,6 +360,13 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 fontsize=10)   # Smaller font for long labels
 
 # --------------------------------------------------------------------------------------
+    # Define key table variables first (needed for delta box positioning)
+    key_text_width = 2
+    key_num_width = 0.3
+    dx = key_text_width + key_num_width
+    key_x0 = 0.4
+    dy = 0.25
+
     # Now add delta box below the labels (aligned with TECHNOLOGY focus box)
     delta_box_width = 1.2
     delta_box_x = key_x0  # Align with left edge of key table (same as TECHNOLOGY focus)
@@ -387,13 +394,9 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 #------------------------------------------------------------------------------------------
 # Draw the "Key" Table
 
-    key_text_width = 2
-    key_num_width = 0.3
-    dx = key_text_width + key_num_width
-    key_x0 = 0.4
+    # Use the key table position for delta box
     key_y0 = delta_box_y
-    dy = 0.25
-
+    
     # ************************************************************************************
     # draw the "VENTURE Focus" box
     x = key_x0 + 2*dx
