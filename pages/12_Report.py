@@ -664,7 +664,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         # Use the helper function for mixed formatting
         milestone_text = f"Milestone **{milestone_name}**"
         render_formatted_text(ax, col_x + 0.05, row_y + milestone_row_height/2, 
-                             milestone_text, fontsize-1, ha='left', va='center')
+                             milestone_text, font_size-1, ha='left', va='center')
         
         # Column 2: Label (could also have formatting if needed)
         col_x += milestone_col_widths[0]
@@ -675,7 +675,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         # Check if label has formatting markup
         if '**' in milestone_label:
             render_formatted_text(ax, col_x + 0.05, row_y + milestone_row_height/2, 
-                                 milestone_label, fontsize-1, ha='left', va='center')
+                                 milestone_label, font_size-1, ha='left', va='center')
         else:
             ax.text(col_x + 0.05, row_y + milestone_row_height/2, milestone_label, 
                     fontsize=font_size-1, ha='left', va='center')
