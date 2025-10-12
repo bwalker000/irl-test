@@ -521,6 +521,12 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                    str(max_positive_q), fontsize=font_size, ha='center', va='center')
 
 #------------------------------------------------------------------------------------------
+# Draw the milestones table
+
+
+
+
+#------------------------------------------------------------------------------------------
 st.pyplot(fig)
 
 # Now that the figure is generated, create the PDF download button
