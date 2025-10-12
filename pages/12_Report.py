@@ -254,7 +254,7 @@ for i in range(numQ):
 n_rows = numQ
 n_cols = num_dims
 
-dy =  7.15 / n_cols
+dy =  0.9 * 7.15 / n_cols       # 0.9 to reduces the size of the table
 dx = dy
 
 # Iterate over rows (questions 0 to numQ-1)
