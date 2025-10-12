@@ -533,9 +533,9 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 # Draw the milestones table
 
     # Calculate starting position for milestones table (below the key table)
-    milestone_table_y_start = key_y0 - 10*dy  # Start below the lowest key table entry
+    milestone_table_y_start = key_y0 - 12*dy  # Start below the lowest key table entry
     milestone_row_height = 0.2
-    milestone_col_widths = [1.25, 4.0, 0.8]  # Width for each column
+    milestone_col_widths = [1.1, 5.0, 0.8]  # Width for each column
     milestone_table_width = sum(milestone_col_widths)
     
     # Center the milestones table
