@@ -688,15 +688,15 @@ ax.text(0, footnote_y, "DO NOT DUPLICATE - DO NOT DISTRIBUTE",
 ax.text(page_width/2, footnote_y, "v. 0.31", 
         fontsize=footnote_fontsize, ha='center', va='bottom', color=footnote_color)
 
-# Right: "(C) William F. Walker 2024-5"
-ax.text(page_width, footnote_y, "(C) William F. Walker 2024-5", 
+# Right: "© William F. Walker 2024-5"
+ax.text(page_width, footnote_y, "© William F. Walker 2024-5", 
         fontsize=footnote_fontsize, ha='right', va='bottom', color=footnote_color)
 
 #------------------------------------------------------------------------------------------
 # Add diagonal "CONFIDENTIAL" watermark across the entire page
 watermark_text = "CONFIDENTIAL"
 watermark_fontsize = 72
-watermark_color = '#D3D3D3'  # Light gray color
+watermark_color = '#B0B0B0'  # Slightly darker gray color
 watermark_alpha = 0.3  # Transparency
 
 # Position watermark in center of page
