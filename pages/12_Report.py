@@ -675,6 +675,41 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                 fontsize=font_size-1, ha='center', va='center', color=milestone_text_color, fontweight='bold')
 
 #------------------------------------------------------------------------------------------
+# Add footnote at bottom of page
+footnote_y = 0.1  # Position near bottom of page
+footnote_fontsize = 8
+footnote_color = '#808080'  # Gray color
+
+# Left: "DO NOT DUPLICATE - DO NOT DISTRIBUTE"
+ax.text(0, footnote_y, "DO NOT DUPLICATE - DO NOT DISTRIBUTE", 
+        fontsize=footnote_fontsize, ha='left', va='bottom', color=footnote_color)
+
+# Center: "v. 0.31"
+ax.text(page_width/2, footnote_y, "v. 0.31", 
+        fontsize=footnote_fontsize, ha='center', va='bottom', color=footnote_color)
+
+# Right: "(C) William F. Walker 2024-5"
+ax.text(page_width, footnote_y, "(C) William F. Walker 2024-5", 
+        fontsize=footnote_fontsize, ha='right', va='bottom', color=footnote_color)
+
+#------------------------------------------------------------------------------------------
+# Add diagonal "CONFIDENTIAL" watermark across the entire page
+watermark_text = "CONFIDENTIAL"
+watermark_fontsize = 72
+watermark_color = '#D3D3D3'  # Light gray color
+watermark_alpha = 0.3  # Transparency
+
+# Position watermark in center of page
+watermark_x = page_width / 2
+watermark_y = (letter_height - 2*margin) / 2
+
+# Add the watermark text with rotation
+ax.text(watermark_x, watermark_y, watermark_text, 
+        fontsize=watermark_fontsize, ha='center', va='center', 
+        color=watermark_color, alpha=watermark_alpha, 
+        rotation=45, fontweight='bold', zorder=0)
+
+#------------------------------------------------------------------------------------------
 st.pyplot(fig)
 
 # Now that the figure is generated, create the PDF download button
