@@ -361,7 +361,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
 # --------------------------------------------------------------------------------------
     # Define key table variables first (needed for delta box positioning)
-    key_text_width = 2
+    key_text_width = 1.9
     key_num_width = 0.3
     dx = key_text_width + key_num_width
     key_x0 = 0.4
@@ -394,6 +394,10 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 #------------------------------------------------------------------------------------------
 # Draw the "Key" Table
 
+    # Calculate total key table width and center it
+    key_table_total_width = 3 * dx  # Three columns of boxes
+    key_x0 = (page_width - key_table_total_width) / 2  # Center the key table
+    
     # Use the key table position for delta box
     key_y0 = delta_box_y
     
