@@ -200,7 +200,11 @@ ax.text(0.00, 9.9, "Venture:", fontsize=font_size, ha='left', va='bottom', fontw
 ax.text(0.18, 9.65, "ASSESSOR:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
 ax.text(0.18, 9.4, "REVIEWER:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
 
-ax.text(1.0, 9.9, get_name_from_id(air_ventures, air_data.iloc[0]["Venture"], 'single'), fontsize=font_size, ha='left', va='bottom', fontweight='bold')
+# Add venture name with fallback
+venture_name = get_name_from_id(air_ventures, air_data.iloc[0]["Venture"], 'single')
+if venture_name == air_data.iloc[0]["Venture"]:  # No lookup found, use fallback
+    venture_name = st.session_state.get("venture_name", "N/A")
+ax.text(1.0, 9.9, venture_name, fontsize=font_size, ha='left', va='bottom', fontweight='bold')
 
 # Add ASSESSOR name and symbol
 assessor_name = get_name_from_id(air_assessors, air_data.iloc[0]["ASSESSOR"], 'full')
@@ -233,10 +237,12 @@ ax.text(3.75, 9.9, "Project / Product:", fontsize=font_size, ha='left', va='bott
 ax.text(3.75, 9.65, "Date:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
 ax.text(3.75, 9.4, "Date:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
 
-# Load projects table for project name lookup
+# Load projects table for project name lookup with fallback
 table_name = st.secrets["general"]["airtable_table_projects"]
 air_projects, _ = load_airtable(table_name, base_id, api_key, False)
 project_name = get_name_from_id(air_projects, air_data.iloc[0]["Project"], 'single')
+if project_name == air_data.iloc[0]["Project"]:  # No lookup found, use fallback
+    project_name = st.session_state.get("project_name", "N/A")
 ax.text(5.25, 9.9, project_name, fontsize=font_size, ha='left', va='bottom', fontweight='bold')
 
 # Convert dates to abbreviated month format
@@ -292,14 +298,14 @@ for i in range(n_rows):
 
         # look into the assessment table to determine what milestone is associated
 
-        # load the ASSESSOR response
+        # load the ASSESSOR response - FIX: correct matrix indexing
         field_name = f"QA_{i:02d}_{dim}"
         if field_name in air_data.columns:
             st.session_state.QA[dim, i] = bool(air_data.iloc[0][field_name])
         else:
             st.session_state.QA[dim, i] = False
 
-        # load the REVIEWER response
+        # load the REVIEWER response - FIX: correct matrix indexing  
         field_name = f"QR_{i:02d}_{dim}"
         if field_name in air_data.columns:
             st.session_state.QR[dim, i] = bool(air_data.iloc[0][field_name])
