@@ -298,15 +298,15 @@ for i in range(n_rows):
 
         # look into the assessment table to determine what milestone is associated
 
-        # load the ASSESSOR response - FIX: correct matrix indexing
-        field_name = f"QA_{i:02d}_{dim}"
+        # load the ASSESSOR response - FIXED: field name should be QA_{dim}_{question}
+        field_name = f"QA_{dim:02d}_{i}"
         if field_name in air_data.columns:
             st.session_state.QA[dim, i] = bool(air_data.iloc[0][field_name])
         else:
             st.session_state.QA[dim, i] = False
 
-        # load the REVIEWER response - FIX: correct matrix indexing  
-        field_name = f"QR_{i:02d}_{dim}"
+        # load the REVIEWER response - FIXED: field name should be QR_{dim}_{question}
+        field_name = f"QR_{dim:02d}_{i}"
         if field_name in air_data.columns:
             st.session_state.QR[dim, i] = bool(air_data.iloc[0][field_name])
         else:
