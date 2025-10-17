@@ -388,7 +388,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     delta_box_width = 1.2
     delta_box_x = key_x0  # Align with left edge of key table (same as TECHNOLOGY focus)
     delta_box_y = label_y - 1.2  # Position below the labels
-    delta_box_height = 0.25
+    delta_box_height = dy  # Use same height as key table boxes
     
     # Draw main box
     rect = patches.Rectangle((delta_box_x, delta_box_y), delta_box_width, delta_box_height, 
