@@ -210,12 +210,20 @@ circle = patches.Circle((0.08, 9.75), radius=0.06, facecolor='black', edgecolor=
 ax.add_patch(circle)
 
 # Add REVIEWER name and symbol
-reviewer_name = get_name_from_id(air_reviewers, air_data.iloc[0]["REVIEWER"], 'full')
-ax.text(1.16, 9.4, reviewer_name, fontsize=font_size, ha='left', va='bottom', fontweight='bold')
-# Add diamond symbol after name
-name_width = len(reviewer_name) * 0.07  # Approximate width of text
-diamond = draw_diamond(0.08, 9.5, 0.12, filled=True)
-ax.add_patch(diamond)
+reviewer_id = air_data.iloc[0]["REVIEWER"]
+if pd.notna(reviewer_id) and reviewer_id:  # Check if reviewer exists
+    reviewer_name = get_name_from_id(air_reviewers, reviewer_id, 'full')
+    if reviewer_name and reviewer_name != reviewer_id:  # Valid reviewer found
+        ax.text(1.16, 9.4, reviewer_name, fontsize=font_size, ha='left', va='bottom', fontweight='bold')
+        # Add diamond symbol after name
+        diamond = draw_diamond(0.08, 9.5, 0.12, filled=True)
+        ax.add_patch(diamond)
+    else:
+        # Reviewer ID exists but no matching record found
+        ax.text(1.16, 9.4, "[Pending Assignment]", fontsize=font_size, ha='left', va='bottom', fontweight='normal', style='italic')
+else:
+    # No reviewer assigned yet
+    ax.text(1.16, 9.4, "[Pending Assignment]", fontsize=font_size, ha='left', va='bottom', fontweight='normal', style='italic')
 
 ax.text(3.75, 9.9, "Project / Product:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
 ax.text(3.75, 9.65, "Date:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
@@ -230,13 +238,18 @@ ax.text(5.25, 9.9, project_name, fontsize=font_size, ha='left', va='bottom', fon
 # Convert dates to abbreviated month format
 def format_date(date_str):
     try:
+        if pd.isna(date_str) or not date_str:  # Handle missing dates
+            return "[Pending]"
         date_obj = datetime.strptime(date_str, '%Y-%m-%d')
         return date_obj.strftime('%d-%b-%Y')  # This will show like "29-SEP-2025"
     except:
-        return date_str
+        return "[Pending]"
 
 ax.text(5.25, 9.65, format_date(air_data.iloc[0]["Assess_date"]), fontsize=font_size, ha='left', va='bottom', fontweight='bold')
-ax.text(5.25, 9.4, format_date(air_data.iloc[0]["Review_date"]), fontsize=font_size, ha='left', va='bottom', fontweight='bold')
+
+# Handle review date - might be missing if no reviewer assigned yet
+review_date = air_data.iloc[0].get("Review_date")
+ax.text(5.25, 9.4, format_date(review_date), fontsize=font_size, ha='left', va='bottom', fontweight='bold')
 
 
 # Calculate delta (sum of absolute differences between ASSESSOR and REVIEWER responses)
