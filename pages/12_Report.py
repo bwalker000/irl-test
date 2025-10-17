@@ -642,28 +642,29 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         aa_count = 0  # Number of true QR responses for this milestone
         bb_count = 0  # Total possible responses for this milestone
         
-        if reviewer_available:  # Only calculate if reviewer is available
-            # Check all QR fields to find matches for this milestone
-            for i in range(numQ):
-                for dim in range(num_dims):
-                    try:
-                        milestone_field = f"Q{i} Milestone"
-                        assessed_milestone_id = air_assessment.iloc[dim][milestone_field]
+        # Always calculate bb_count (total possible) regardless of reviewer availability
+        for i in range(numQ):
+            for dim in range(num_dims):
+                try:
+                    milestone_field = f"Q{i} Milestone"
+                    assessed_milestone_id = air_assessment.iloc[dim][milestone_field]
+                    
+                    if isinstance(assessed_milestone_id, (list, tuple)):
+                        assessed_milestone_id = assessed_milestone_id[0]
+                    
+                    if assessed_milestone_id == milestone_id:
+                        bb_count += 1  # This position uses this milestone
                         
-                        if isinstance(assessed_milestone_id, (list, tuple)):
-                            assessed_milestone_id = assessed_milestone_id[0]
-                        
-                        if assessed_milestone_id == milestone_id:
-                            bb_count += 1  # This position uses this milestone
-                            
+                        # Only calculate aa_count if reviewer is available
+                        if reviewer_available:
                             # Check if reviewer answered positively
                             qr_field = f"QR_{i:02d}_{dim}"
                             if qr_field in air_data.columns:
                                 qr_value = bool(air_data.iloc[0][qr_field])
                                 if qr_value:
                                     aa_count += 1
-                    except:
-                        continue
+                except:
+                    continue
         
         # Column 1: Milestone name with mixed formatting
         col_x = milestone_x_start
@@ -696,9 +697,9 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                                facecolor=milestone_color, edgecolor='black', lw=1)
         ax.add_patch(rect)
         
-        # Show X if no reviewer, otherwise show progress
+        # Show X/total if no reviewer, otherwise show actual progress
         if not reviewer_available:
-            progress_text = "X"
+            progress_text = f"X/{bb_count}" if bb_count > 0 else "X/0"
         else:
             progress_text = f"{aa_count}/{bb_count}" if bb_count > 0 else "0/0"
             
