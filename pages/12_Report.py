@@ -211,19 +211,23 @@ ax.add_patch(circle)
 
 # Add REVIEWER name and symbol
 reviewer_id = air_data.iloc[0]["REVIEWER"]
+reviewer_available = False  # Track if reviewer is available for later use
+
 if pd.notna(reviewer_id) and reviewer_id:  # Check if reviewer exists
     reviewer_name = get_name_from_id(air_reviewers, reviewer_id, 'full')
     if reviewer_name and reviewer_name != reviewer_id:  # Valid reviewer found
         ax.text(1.16, 9.4, reviewer_name, fontsize=font_size, ha='left', va='bottom', fontweight='bold')
-        # Add diamond symbol after name
-        diamond = draw_diamond(0.08, 9.5, 0.12, filled=True)
-        ax.add_patch(diamond)
+        reviewer_available = True
     else:
         # Reviewer ID exists but no matching record found
-        ax.text(1.16, 9.4, "[Pending Assignment]", fontsize=font_size, ha='left', va='bottom', fontweight='normal', style='italic')
+        ax.text(1.16, 9.4, "[Pending]", fontsize=font_size, ha='left', va='bottom', fontweight='bold')
 else:
     # No reviewer assigned yet
-    ax.text(1.16, 9.4, "[Pending Assignment]", fontsize=font_size, ha='left', va='bottom', fontweight='normal', style='italic')
+    ax.text(1.16, 9.4, "[Pending]", fontsize=font_size, ha='left', va='bottom', fontweight='bold')
+
+# Always add diamond symbol for reviewer
+diamond = draw_diamond(0.08, 9.5, 0.12, filled=True)
+ax.add_patch(diamond)
 
 ax.text(3.75, 9.9, "Project / Product:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
 ax.text(3.75, 9.65, "Date:", fontsize=font_size, ha='left', va='bottom', fontweight='normal')
@@ -401,7 +405,10 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
     # Add text
     ax.text(delta_box_x + 0.1, delta_box_y + delta_box_height/2, "Delta:", 
             fontsize=font_size, ha='left', va='center')
-    ax.text(delta_box_x + delta_box_width - delta_value_box_width/2, delta_box_y + delta_box_height/2, f"{delta}", 
+    
+    # Show X if no reviewer available, otherwise show delta value
+    delta_display = "X" if not reviewer_available else str(delta)
+    ax.text(delta_box_x + delta_box_width - delta_value_box_width/2, delta_box_y + delta_box_height/2, delta_display, 
             fontsize=font_size, ha='center', va='center')
 
 #------------------------------------------------------------------------------------------
@@ -436,14 +443,18 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
         # Find the highest question number with a positive reviewer response for this dimension
         max_positive_q = -1  # Initialize to -1 to handle case where no positives found
-        for q in range(numQ):
-            qr_field = f"QR_{q:02d}_{dim}"
-            qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
-            if qr_value:
-                max_positive_q = q
+        if reviewer_available:  # Only calculate if reviewer is available
+            for q in range(numQ):
+                qr_field = f"QR_{q:02d}_{dim}"
+                qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
+                if qr_value:
+                    max_positive_q = q
 
-        # Only add text if we found at least one positive response
-        if max_positive_q >= 0:
+        # Show X if no reviewer, otherwise show max question number if positive responses found
+        if not reviewer_available:
+            ax.text(x + key_text_width + key_num_width/2, y + dy/2, 
+                   "X", fontsize=font_size, ha='center', va='center')
+        elif max_positive_q >= 0:
             ax.text(x + key_text_width + key_num_width/2, y + dy/2, 
                    str(max_positive_q), fontsize=font_size, ha='center', va='center')
 
@@ -631,27 +642,28 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         aa_count = 0  # Number of true QR responses for this milestone
         bb_count = 0  # Total possible responses for this milestone
         
-        # Check all QR fields to find matches for this milestone
-        for i in range(numQ):
-            for dim in range(num_dims):
-                try:
-                    milestone_field = f"Q{i} Milestone"
-                    assessed_milestone_id = air_assessment.iloc[dim][milestone_field]
-                    
-                    if isinstance(assessed_milestone_id, (list, tuple)):
-                        assessed_milestone_id = assessed_milestone_id[0]
-                    
-                    if assessed_milestone_id == milestone_id:
-                        bb_count += 1  # This position uses this milestone
+        if reviewer_available:  # Only calculate if reviewer is available
+            # Check all QR fields to find matches for this milestone
+            for i in range(numQ):
+                for dim in range(num_dims):
+                    try:
+                        milestone_field = f"Q{i} Milestone"
+                        assessed_milestone_id = air_assessment.iloc[dim][milestone_field]
                         
-                        # Check if reviewer answered positively
-                        qr_field = f"QR_{i:02d}_{dim}"
-                        if qr_field in air_data.columns:
-                            qr_value = bool(air_data.iloc[0][qr_field])
-                            if qr_value:
-                                aa_count += 1
-                except:
-                    continue
+                        if isinstance(assessed_milestone_id, (list, tuple)):
+                            assessed_milestone_id = assessed_milestone_id[0]
+                        
+                        if assessed_milestone_id == milestone_id:
+                            bb_count += 1  # This position uses this milestone
+                            
+                            # Check if reviewer answered positively
+                            qr_field = f"QR_{i:02d}_{dim}"
+                            if qr_field in air_data.columns:
+                                qr_value = bool(air_data.iloc[0][qr_field])
+                                if qr_value:
+                                    aa_count += 1
+                    except:
+                        continue
         
         # Column 1: Milestone name with mixed formatting
         col_x = milestone_x_start
@@ -683,7 +695,13 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         rect = patches.Rectangle((col_x, row_y), milestone_col_widths[2], milestone_row_height, 
                                facecolor=milestone_color, edgecolor='black', lw=1)
         ax.add_patch(rect)
-        progress_text = f"{aa_count}/{bb_count}" if bb_count > 0 else "0/0"
+        
+        # Show X if no reviewer, otherwise show progress
+        if not reviewer_available:
+            progress_text = "X"
+        else:
+            progress_text = f"{aa_count}/{bb_count}" if bb_count > 0 else "0/0"
+            
         ax.text(col_x + milestone_col_widths[2]/2, row_y + milestone_row_height/2, progress_text, 
                 fontsize=font_size-1, ha='center', va='center', color=milestone_text_color, fontweight='bold')
 
