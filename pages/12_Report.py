@@ -480,14 +480,18 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
         # Find the highest question number with a positive reviewer response for this dimension
         max_positive_q = -1  # Initialize to -1 to handle case where no positives found
-        for q in range(numQ):
-            qr_field = f"QR_{q:02d}_{dim}"
-            qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
-            if qr_value:
-                max_positive_q = q
+        if reviewer_available:  # Only calculate if reviewer is available
+            for q in range(numQ):
+                qr_field = f"QR_{q:02d}_{dim}"
+                qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
+                if qr_value:
+                    max_positive_q = q
 
-        # Only add text if we found at least one positive response
-        if max_positive_q >= 0:
+        # Show X if no reviewer, otherwise show max question number if positive responses found
+        if not reviewer_available:
+            ax.text(x + key_text_width + key_num_width/2, y + dy/2, 
+                   "X", fontsize=font_size, ha='center', va='center')
+        elif max_positive_q >= 0:
             ax.text(x + key_text_width + key_num_width/2, y + dy/2, 
                    str(max_positive_q), fontsize=font_size, ha='center', va='center')
 
@@ -513,14 +517,18 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
         # Find the highest question number with a positive reviewer response for this dimension
         max_positive_q = -1  # Initialize to -1 to handle case where no positives found
-        for q in range(numQ):
-            qr_field = f"QR_{q:02d}_{dim}"
-            qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
-            if qr_value:
-                max_positive_q = q
+        if reviewer_available:  # Only calculate if reviewer is available
+            for q in range(numQ):
+                qr_field = f"QR_{q:02d}_{dim}"
+                qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
+                if qr_value:
+                    max_positive_q = q
 
-        # Only add text if we found at least one positive response
-        if max_positive_q >= 0:
+        # Show X if no reviewer, otherwise show max question number if positive responses found
+        if not reviewer_available:
+            ax.text(x + key_text_width + key_num_width/2, y + dy/2, 
+                   "X", fontsize=font_size, ha='center', va='center')
+        elif max_positive_q >= 0:
             ax.text(x + key_text_width + key_num_width/2, y + dy/2, 
                    str(max_positive_q), fontsize=font_size, ha='center', va='center')
 
@@ -546,14 +554,18 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
 
         # Find the highest question number with a positive reviewer response for this dimension
         max_positive_q = -1  # Initialize to -1 to handle case where no positives found
-        for q in range(numQ):
-            qr_field = f"QR_{q:02d}_{dim}"
-            qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
-            if qr_value:
-                max_positive_q = q
+        if reviewer_available:  # Only calculate if reviewer is available
+            for q in range(numQ):
+                qr_field = f"QR_{q:02d}_{dim}"
+                qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
+                if qr_value:
+                    max_positive_q = q
 
-        # Only add text if we found at least one positive response
-        if max_positive_q >= 0:
+        # Show X if no reviewer, otherwise show max question number if positive responses found
+        if not reviewer_available:
+            ax.text(x + key_text_width + key_num_width/2, y + dy/2, 
+                   "X", fontsize=font_size, ha='center', va='center')
+        elif max_positive_q >= 0:
             ax.text(x + key_text_width + key_num_width/2, y + dy/2, 
                    str(max_positive_q), fontsize=font_size, ha='center', va='center')
 
