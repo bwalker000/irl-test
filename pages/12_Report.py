@@ -266,8 +266,8 @@ ax.text(5.25, 9.4, format_date(review_date), fontsize=font_size, ha='left', va='
 delta = 0
 for i in range(numQ):
     for dim in range(num_dims):
-        qa_field = f"QA_{i:02d}_{dim}"
-        qr_field = f"QR_{i:02d}_{dim}"
+        qa_field = f"QA_{dim:02d}_{i}"  # FIXED: dimension first, then question
+        qr_field = f"QR_{dim:02d}_{i}"  # FIXED: dimension first, then question
         qa_value = bool(air_data.iloc[0][qa_field]) if qa_field in air_data.columns else False
         qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
         delta += abs(int(qa_value) - int(qr_value))
@@ -451,7 +451,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         max_positive_q = -1  # Initialize to -1 to handle case where no positives found
         if reviewer_available:  # Only calculate if reviewer is available
             for q in range(numQ):
-                qr_field = f"QR_{q:02d}_{dim}"
+                qr_field = f"QR_{dim:02d}_{q}"  # FIXED: dimension first, then question
                 qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
                 if qr_value:
                     max_positive_q = q
@@ -488,7 +488,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         max_positive_q = -1  # Initialize to -1 to handle case where no positives found
         if reviewer_available:  # Only calculate if reviewer is available
             for q in range(numQ):
-                qr_field = f"QR_{q:02d}_{dim}"
+                qr_field = f"QR_{dim:02d}_{q}"  # FIXED: dimension first, then question
                 qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
                 if qr_value:
                     max_positive_q = q
@@ -525,7 +525,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         max_positive_q = -1  # Initialize to -1 to handle case where no positives found
         if reviewer_available:  # Only calculate if reviewer is available
             for q in range(numQ):
-                qr_field = f"QR_{q:02d}_{dim}"
+                qr_field = f"QR_{dim:02d}_{q}"  # FIXED: dimension first, then question
                 qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
                 if qr_value:
                     max_positive_q = q
@@ -562,7 +562,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
         max_positive_q = -1  # Initialize to -1 to handle case where no positives found
         if reviewer_available:  # Only calculate if reviewer is available
             for q in range(numQ):
-                qr_field = f"QR_{q:02d}_{dim}"
+                qr_field = f"QR_{dim:02d}_{q}"  # FIXED: dimension first, then question
                 qr_value = bool(air_data.iloc[0][qr_field]) if qr_field in air_data.columns else False
                 if qr_value:
                     max_positive_q = q
@@ -676,7 +676,7 @@ if i == n_rows - 1 and dim == n_cols - 1:  # After completing all rows and colum
                         # Only calculate aa_count if reviewer is available
                         if reviewer_available:
                             # Check if reviewer answered positively
-                            qr_field = f"QR_{i:02d}_{dim}"
+                            qr_field = f"QR_{dim:02d}_{i}"  # FIXED: dimension first, then question
                             if qr_field in air_data.columns:
                                 qr_value = bool(air_data.iloc[0][qr_field])
                                 if qr_value:
