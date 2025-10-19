@@ -1,5 +1,7 @@
 from shared import *
 
+display_logo()
+
 st.title("Impact Readiness Level")
 
 # Initialize session state for submission tracking

@@ -2,15 +2,10 @@ from shared import *
 # Explicitly import shared configuration
 from shared import num_dims, numQ
 
-# Assumptions:
-#        A specific ASSESSOR is intrinsically tied to:
-#            A specific venture
-#        A specific venture is intrinsically tied to:
-#            A specific support organization
-#        The ASSESSOR can select which project they are interested in assessing.
-
 # Clear the cache when entering this page
 st.cache_data.clear()
+
+display_logo()
 
 st.title("Initiate a Review")
 

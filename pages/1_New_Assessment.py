@@ -1,5 +1,7 @@
 from shared import *
 
+display_logo()
+
 st.title("Create a New Assessment")
 
 #st.write(st.session_state.assessor)

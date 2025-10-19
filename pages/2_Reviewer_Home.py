@@ -1,6 +1,8 @@
 from shared import *
 from airtable_utils import load_airtable
 
+display_logo()
+
 st.title("Reviewer Home")
 
 if 'mode' not in st.session_state:

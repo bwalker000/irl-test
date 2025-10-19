@@ -1,5 +1,7 @@
 from shared import *
 
+display_logo()
+
 st.title("Demo Request")
 
 st.write("Please request a demo via email.")

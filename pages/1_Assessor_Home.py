@@ -1,5 +1,7 @@
 from shared import *
 
+display_logo()
+
 st.title("Assessor Home")
 
 if 'mode' not in st.session_state:

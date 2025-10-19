@@ -2,6 +2,8 @@ from shared import *
 import io
 from draw import *
 
+display_logo()
+
 st.title("Create a Report")
 
 # Clear the cache when entering this page

@@ -24,3 +24,10 @@ from fields import IRL_031_data_fields
 num_dims = len([f for f in IRL_031_data_fields if f.startswith('TA_')])  # Count TA fields to get number of dimensions
 numQ = 10       # Number of questions per dimension (this can remain hardcoded)
 
+def display_logo():
+    """Display the Impact Readiness Level logo in the upper left corner"""
+    try:
+        st.image("Logo.png", width=150)
+    except:
+        pass  # Silently fail if logo not found
+
