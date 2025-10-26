@@ -1,8 +1,11 @@
 from shared import *
 # Explicitly import shared configuration
-from shared import num_dims, numQ
+from shared import num_dims, numQ, check_session_timeout, reset_session_timer
 
 display_logo()
+
+# Check for session timeout at page entry
+check_session_timeout()
 
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
@@ -51,13 +54,18 @@ if ('dim' not in st.session_state):
     # REVIEWER Text responses
     st.session_state.TR = [""]*num_dims
     
+    # Initialize submitted flag
+    st.session_state.submitted = False
+    
     # if this is a reivew, then load the assessment data
     if st.session_state.mode == "REVIEWER":
 
         # load the data for the specific assessment
         table_name = st.secrets["general"]["airtable_table_data"]
         air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
-        if "assessment_name" in st.session_state:
+        
+        # Only load existing assessment data if reviewing an existing assessment (not independent review)
+        if "assessment_name" in st.session_state and st.session_state.assessment_name is not None:
             # Convert list columns to strings to avoid hashing issues
             list_cols = air_data.select_dtypes(include=['object']).columns
             for col in list_cols:
@@ -77,10 +85,11 @@ if ('dim' not in st.session_state):
             # load the assessment text responses
             for dim in range(num_dims):
                 field_name = f"TA_{dim:02d}"
-                if field_name in air_data_record:
+                if field_name in air_data_record.columns:
                     st.session_state.TA[dim] = air_data_record.iloc[0][field_name]
                 else:
                     st.session_state.TA[dim] = ""
+        # else: for independent reviews, QA and TA remain as initialized (all zeros/empty strings)
 
 #
 #-----------------------------------------------------------------------------------------
@@ -111,9 +120,6 @@ elif mode == "REVIEWER":
     st.title("REVIEW")
 else:
     st.title("REPORT")
-
-# Add page indicator at top
-st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
 
 st.write("\n\n")
 
@@ -153,6 +159,9 @@ elif mode == "REVIEWER":
     st.write("All Founders believe in their venture. You must help them by applying healthy skepticism. Positive responses must be supported by written data and documented.")
 
 st.write("\n\n")
+
+# Add page indicator at top (above assessment table)
+st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
 
 #
 # Display and collect the questions and answers
@@ -283,6 +292,7 @@ with col3:
     if st.session_state.dim == num_dims - 1:
         if not st.session_state.submitted:  # Only show submit button if not submitted
             if st.button("Submit", key="submit_button"):
+                reset_session_timer()  # User is active
                 submit_record()
                 st.session_state.submitted = True
                 st.rerun()  # Rerun to update UI

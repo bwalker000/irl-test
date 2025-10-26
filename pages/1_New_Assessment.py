@@ -4,6 +4,25 @@ display_logo()
 
 st.title("Create a New Assessment")
 
+# Clear any existing assessment/review data from previous sessions
+# This ensures a clean slate for the new assessment
+if 'dim' in st.session_state:
+    del st.session_state.dim
+if 'QA' in st.session_state:
+    del st.session_state.QA
+if 'QR' in st.session_state:
+    del st.session_state.QR
+if 'TA' in st.session_state:
+    del st.session_state.TA
+if 'TR' in st.session_state:
+    del st.session_state.TR
+if 'submitted' in st.session_state:
+    del st.session_state.submitted
+if 'assessment_name' in st.session_state:
+    del st.session_state.assessment_name
+if 'assessment_record_id' in st.session_state:
+    del st.session_state.assessment_record_id
+
 #st.write(st.session_state.assessor)
 
 st.session_state.mode = "ASSESSOR"

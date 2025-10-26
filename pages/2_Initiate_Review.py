@@ -131,6 +131,21 @@ elif st.session_state.review_mode == 0:
 elif st.session_state.review_mode == 1:
     st.write("Perform an independent review")
 
+    # Clear any existing assessment data from previous reviews/reports
+    # This ensures a clean slate for the independent review
+    if 'dim' in st.session_state:
+        del st.session_state.dim
+    if 'QA' in st.session_state:
+        del st.session_state.QA
+    if 'QR' in st.session_state:
+        del st.session_state.QR
+    if 'TA' in st.session_state:
+        del st.session_state.TA
+    if 'TR' in st.session_state:
+        del st.session_state.TR
+    if 'submitted' in st.session_state:
+        del st.session_state.submitted
+    
     # Set default values for assessor-related session state fields since there is no assessment being reviewed.
     # This ensures the review process can proceed independently of any existing assessment.
     

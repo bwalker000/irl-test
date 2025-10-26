@@ -22,6 +22,82 @@ except AttributeError:
     # Fallback if st.user.is_logged_in is not available
     user_logged_in = hasattr(st, 'user') and hasattr(st.user, 'email') and st.user.email is not None
 
+# If logged in, check for session timeout
+if user_logged_in:
+    check_session_timeout()  # This will auto-logout if idle too long
+    
+    try:
+        user_email = st.user.email
+        st.write(f"User Email: {user_email}\n\n")
+
+        # Reset timer on any page interaction
+        reset_session_timer()
+
+        # Check if user is registered as assessor or reviewer
+        is_registered = assessor_or_reviewer()
+        
+        if not is_registered:
+            st.error("Your email is not registered as an ASSESSOR or REVIEWER.")
+            if st.button("Log out"):
+                # Clear session state
+                for key in list(st.session_state.keys()):
+                    del st.session_state[key]
+                # Log out of Auth0
+                try:
+                    st.logout()
+                except:
+                    st.rerun()
+        else:
+            # Show interface for registered users
+            if st.session_state.mode == "ASSESSOR":
+                st.write("User Mode: ASSESSOR")
+                st.session_state.assessor_email = user_email
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    if st.button("Assess"):
+                        st.switch_page("pages/1_New_Assessment.py")
+                with col2:
+                    if st.button("Report"):
+                        st.switch_page("pages/12_Report.py")
+                with col3:
+                    if st.button("Log out"):
+                        try:
+                            st.logout()
+                        except:
+                            # Clear session and reload
+                            for key in list(st.session_state.keys()):
+                                del st.session_state[key]
+                            st.rerun()
+
+            elif st.session_state.mode == "REVIEWER":
+                st.write("User Mode: REVIEWER")
+                st.session_state.reviewer_email = user_email
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    if st.button("Review"):
+                        st.switch_page("pages/2_Initiate_Review.py")
+                with col2:
+                    if st.button("Report"):
+                        st.switch_page("pages/12_Report.py")
+                with col3:
+                    if st.button("Log out"):
+                        # Clear EULA acceptance and login attempt on logout
+                        st.session_state.eula_accepted = False
+                        st.session_state.login_attempted = False
+                        try:
+                            st.logout()
+                        except:
+                            # Clear session and reload
+                            for key in list(st.session_state.keys()):
+                                del st.session_state[key]
+                            st.rerun()
+    except Exception as e:
+        st.error(f"Error accessing user information: {str(e)}")
+        st.info("Authentication may not be properly configured. Please check your Streamlit configuration.")
+        if st.button("Return to Login"):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.rerun()
 # Show Demo Request button only on the main screen when not logged in
 if not user_logged_in:
     # Check if user attempted login but hasn't accepted EULA
@@ -101,75 +177,3 @@ if not user_logged_in:
         with col2:
             if st.button("Demo Request"):
                 st.switch_page("pages/0_Demo_Request.py")
-
-# Handle logged-in state
-else:
-    try:
-        user_email = st.user.email
-        st.write(f"User Email: {user_email}\n\n")
-
-        # Check if user is registered as assessor or reviewer
-        is_registered = assessor_or_reviewer()
-        
-        if not is_registered:
-            st.error("Your email is not registered as an ASSESSOR or REVIEWER.")
-            if st.button("Log out"):
-                # Clear session state
-                for key in list(st.session_state.keys()):
-                    del st.session_state[key]
-                # Log out of Auth0
-                try:
-                    st.logout()
-                except:
-                    st.rerun()
-        else:
-            # Show interface for registered users
-            if st.session_state.mode == "ASSESSOR":
-                st.write("User Mode: ASSESSOR")
-                st.session_state.assessor_email = user_email
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    if st.button("Assess"):
-                        st.switch_page("pages/1_New_Assessment.py")
-                with col2:
-                    if st.button("Report"):
-                        st.switch_page("pages/12_Report.py")
-                with col3:
-                    if st.button("Log out"):
-                        try:
-                            st.logout()
-                        except:
-                            # Clear session and reload
-                            for key in list(st.session_state.keys()):
-                                del st.session_state[key]
-                            st.rerun()
-
-            elif st.session_state.mode == "REVIEWER":
-                st.write("User Mode: REVIEWER")
-                st.session_state.reviewer_email = user_email
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    if st.button("Review"):
-                        st.switch_page("pages/2_Initiate_Review.py")
-                with col2:
-                    if st.button("Report"):
-                        st.switch_page("pages/12_Report.py")
-                with col3:
-                    if st.button("Log out"):
-                        # Clear EULA acceptance and login attempt on logout
-                        st.session_state.eula_accepted = False
-                        st.session_state.login_attempted = False
-                        try:
-                            st.logout()
-                        except:
-                            # Clear session and reload
-                            for key in list(st.session_state.keys()):
-                                del st.session_state[key]
-                            st.rerun()
-    except Exception as e:
-        st.error(f"Error accessing user information: {str(e)}")
-        st.info("Authentication may not be properly configured. Please check your Streamlit configuration.")
-        if st.button("Return to Login"):
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
-            st.rerun()
