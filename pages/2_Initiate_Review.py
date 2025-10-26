@@ -85,7 +85,7 @@ elif st.session_state.review_mode == 0:
     # Proceed with selection logic
     assessment_names = filtered_records['Name']
     if not assessment_names.empty:
-        # Initialize assessment_name if it's not in session state
+        # Initialize assessment_name if it's not in session_state
         if 'assessment_name' not in st.session_state:
             st.session_state.assessment_name = assessment_names.iloc[0]
         
@@ -224,8 +224,27 @@ elif st.session_state.review_mode == 1:
 
 #---------------------------------------------------------------------------------
 
-if st.button("Continue to Review"):
-    st.switch_page("pages/12_Assess_&_Review.py")
+# Determine if "Continue to Review" should be enabled
+can_continue = False
+if st.session_state.review_mode == 0:
+    # For existing assessment review, need a valid assessment selection
+    can_continue = (
+        'assessment_name' in st.session_state and 
+        st.session_state.assessment_name is not None and
+        'project_name' in st.session_state
+    )
+elif st.session_state.review_mode == 1:
+    # For independent review, need venture and project selected
+    can_continue = (
+        'venture_name' in st.session_state and 
+        'project_name' in st.session_state
+    )
 
-if st.button("Home"):
-    st.switch_page("streamlit_app.py")
+# Navigation buttons in columns for consistency with other pages
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("Continue to Review", disabled=not can_continue):
+        st.switch_page("pages/12_Assess_&_Review.py")
+with col2:
+    if st.button("Home"):
+        st.switch_page("streamlit_app.py")
