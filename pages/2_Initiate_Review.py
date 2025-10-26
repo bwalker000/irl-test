@@ -104,26 +104,27 @@ elif st.session_state.review_mode == 0:
         st.session_state.venture_id = air_data_record.iloc[0]["Venture"]
         st.session_state.project_id = air_data_record.iloc[0]["Project"]
         st.session_state.assess_date = air_data_record.iloc[0]["Assess_date"]  # Store original assessment date
+        
+        # Load assessor details only if we have a valid assessor_id
+        table_name = st.secrets["general"]["airtable_table_assessors"]
+        air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
+
+        st.session_state.assessor_first_name = airtable_value_from_id(air_assessors, st.session_state.assessor_id, "First Name")
+        st.session_state.assessor_last_name = airtable_value_from_id(air_assessors, st.session_state.assessor_id, "Last Name")
+
+        table_name = st.secrets["general"]["airtable_table_ventures"]
+        air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
+        st.session_state.venture_name = airtable_value_from_id(air_ventures, st.session_state.venture_id, "Name")
+
+        table_name = st.secrets["general"]["airtable_table_projects"]
+        air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
+        st.session_state.project_name = airtable_value_from_id(air_projects, st.session_state.project_id, "Name")
     else:
         st.warning("No available assessments to review for your Support Organization.")
         # Reset assessment related session state
-        for key in ['assessment_name', 'assessor_id', 'venture_id', 'project_id']:
+        for key in ['assessment_name', 'assessor_id', 'venture_id', 'project_id', 'assessor_first_name', 'assessor_last_name', 'venture_name', 'project_name']:
             if key in st.session_state:
                 del st.session_state[key]
-
-    table_name = st.secrets["general"]["airtable_table_assessors"]
-    air_assessors, debug_details = load_airtable(table_name, base_id, api_key, debug)
-
-    st.session_state.assessor_first_name = airtable_value_from_id(air_assessors, st.session_state.assessor_id, "First Name")
-    st.session_state.assessor_last_name = airtable_value_from_id(air_assessors, st.session_state.assessor_id, "Last Name")
-
-    table_name = st.secrets["general"]["airtable_table_ventures"]
-    air_ventures, debug_details = load_airtable(table_name, base_id, api_key, debug)
-    st.session_state.venture_name = airtable_value_from_id(air_ventures, st.session_state.venture_id, "Name")
-
-    table_name = st.secrets["general"]["airtable_table_projects"]
-    air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
-    st.session_state.project_name = airtable_value_from_id(air_projects, st.session_state.project_id, "Name")
 
 #---------------------------------------------------------------------------------
 # Perform an independent review
