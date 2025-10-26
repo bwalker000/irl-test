@@ -339,7 +339,7 @@ for i in range(n_rows):
         except Exception as e:
             color = '#FFFFFF'
 
-        rect = patches.Rectangle((x0, y0), dx, dy, facecolor=color, edgecolor='none', lw=1)
+        rect = patches.Rectangle((x0, y0), dx, dy, facecolor=color, edgecolor='white', lw=0.5)
         ax.add_patch(rect)
 
         # Center of the square
@@ -348,17 +348,17 @@ for i in range(n_rows):
         # Draw centered circle
         radius = 0.06  # scales circle relative to square size
         if st.session_state.QA[dim, i] == True:
-            circle = patches.Circle((cx, cy-radius), radius, facecolor='black', edgecolor='black', lw=1)
+            circle = patches.Circle((cx, cy-radius), radius, facecolor='black', edgecolor='black', lw=0.5)
         else:
-            circle = patches.Circle((cx, cy-radius), radius, facecolor='white', edgecolor='black', lw=1)
+            circle = patches.Circle((cx, cy-radius), radius, facecolor='white', edgecolor='black', lw=0.5)
         ax.add_patch(circle)
 
         # Draw centered diamond
         if st.session_state.QR[dim, i] == True:
-            diamond = draw_diamond(cx, cy+radius*1.2, 2*radius, filled=True)
+            diamond = draw_diamond(cx, cy+radius*1.2, 2*radius, filled=True, linewidth=0.5)
             ax.add_patch(diamond)
         else:
-            diamond = draw_diamond(cx, cy+radius*1.2, 2*radius, filled=False)
+            diamond = draw_diamond(cx, cy+radius*1.2, 2*radius, filled=False, linewidth=0.5)
             ax.add_patch(diamond)
 
 # After all squares, circles, and diamonds are drawn, add labels in a separate loop

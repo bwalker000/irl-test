@@ -2,28 +2,29 @@ import matplotlib as mp
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-def draw_diamond(x, y, diam, filled=False):
+def draw_diamond(cx, cy, size, filled=True, linewidth=1):
     """
-    Draw a diamond.
-
-    Parameters:
-    - x = x center
-    - y = y center
-    - diam = diameter of the diamond
-    - filled = if True, fill the diamond (default is False)
+    Draw a diamond (rotated square) centered at (cx, cy) with given size.
+    
+    Args:
+        cx: x-coordinate of center
+        cy: y-coordinate of center
+        size: size (width/height) of the diamond
+        filled: whether to fill the diamond (default True)
+        linewidth: thickness of the diamond border (default 1)
+    
+    Returns:
+        matplotlib Polygon patch
     """
-
-    diamond_half = diam/2 * 1.2  # Same size as in matrix
-
+    half = size / 2
+    vertices = [
+        (cx, cy + half),      # top
+        (cx + half, cy),      # right
+        (cx, cy - half),      # bottom
+        (cx - half, cy),      # left
+    ]
+    
     if filled:
-        face = 'black'
+        return patches.Polygon(vertices, closed=True, facecolor='black', edgecolor='black', lw=linewidth)
     else:
-        face = 'white'
-    diamond = patches.Polygon([
-        (x, y + diamond_half),          # top
-        (x + diamond_half, y),          # right
-        (x, y - diamond_half),          # bottom
-        (x - diamond_half, y),          # left
-    ], closed=True, facecolor=face, edgecolor='black', lw=1)
-
-    return diamond
+        return patches.Polygon(vertices, closed=True, facecolor='white', edgecolor='black', lw=linewidth)
