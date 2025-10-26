@@ -346,19 +346,22 @@ for i in range(n_rows):
         cx = x0 + dx / 2
 
         # Draw centered circle with original size
-        radius = 0.06  # Restore original size
+        radius = 0.06  # Circle radius
         if st.session_state.QA[dim, i] == True:
             circle = patches.Circle((cx, cy-radius), radius, facecolor='black', edgecolor='black', lw=0.5)
         else:
             circle = patches.Circle((cx, cy-radius), radius, facecolor='white', edgecolor='black', lw=0.5)
         ax.add_patch(circle)
 
-        # Draw centered diamond above the circle
+        # Draw centered diamond above the circle - 1.1x the circle diameter
+        diamond_size = 2 * radius * 1.1  # 1.1 times the circle diameter = 0.132
+        # Position diamond so its bottom point touches circle's top point at cy
+        diamond_center_y = cy + (diamond_size / 2)  # cy + 0.066
         if st.session_state.QR[dim, i] == True:
-            diamond = draw_diamond(cx, cy+radius, 2*radius, filled=True, linewidth=0.5)
+            diamond = draw_diamond(cx, diamond_center_y, diamond_size, filled=True, linewidth=0.5)
             ax.add_patch(diamond)
         else:
-            diamond = draw_diamond(cx, cy+radius, 2*radius, filled=False, linewidth=0.5)
+            diamond = draw_diamond(cx, diamond_center_y, diamond_size, filled=False, linewidth=0.5)
             ax.add_patch(diamond)
 
 # After all squares, circles, and diamonds are drawn, add labels in a separate loop
