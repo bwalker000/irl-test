@@ -355,10 +355,10 @@ for i in range(n_rows):
 
         # Draw centered diamond
         if st.session_state.QR[dim, i] == True:
-            diamond = draw_diamond(cx, cy+radius*1.2, 2*radius, filled=True, linewidth=0.5)
+            diamond = draw_diamond(cx, cy+radius*1.41, 2*radius, filled=True, linewidth=0.5)
             ax.add_patch(diamond)
         else:
-            diamond = draw_diamond(cx, cy+radius*1.2, 2*radius, filled=False, linewidth=0.5)
+            diamond = draw_diamond(cx, cy+radius*1.41, 2*radius, filled=False, linewidth=0.5)
             ax.add_patch(diamond)
 
 # After all squares, circles, and diamonds are drawn, add labels in a separate loop
