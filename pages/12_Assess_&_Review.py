@@ -112,6 +112,9 @@ elif mode == "REVIEWER":
 else:
     st.title("REPORT")
 
+# Add page indicator at top
+st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
+
 st.write("\n\n")
 
 #
@@ -260,6 +263,10 @@ with st.container(border=True):
 # -------------------------------------------------------------------------------------------
 # Navigate
 # 
+
+# Add page indicator at bottom
+st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
+st.write("\n")
 
 col1, col2, col3, col4 = st.columns(4)
 with col1:
