@@ -25,6 +25,7 @@ import time
 num_dims = len([f for f in IRL_031_data_fields if f.startswith('TA_')])  # Count TA fields to get number of dimensions
 numQ = 10       # Number of questions per dimension (this can remain hardcoded)
 
+# Session timeout configuration
 IDLE_TIMEOUT = 1800  # 30 minutes in seconds
 
 def display_logo():
