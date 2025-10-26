@@ -739,8 +739,8 @@ footnote_color = '#808080'  # Gray color
 ax.text(0, footnote_y, "DO NOT DUPLICATE - DO NOT DISTRIBUTE", 
         fontsize=footnote_fontsize, ha='left', va='bottom', color=footnote_color)
 
-# Center: "v. 0.31"
-ax.text(page_width/2, footnote_y, "v. 0.31", 
+# Center: "v. 0.50"
+ax.text(page_width/2, footnote_y, "v. 0.50", 
         fontsize=footnote_fontsize, ha='center', va='bottom', color=footnote_color)
 
 # Right: "© Impact Readiness Ltd. 2024-5"
