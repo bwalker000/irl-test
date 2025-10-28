@@ -139,6 +139,55 @@ if not existing_drafts.empty:
             st.rerun()
     st.stop()
 
+# Check for completed assessments for this venture/project
+completed_assessments = air_data_drafts[
+    (air_data_drafts['Venture'] == st.session_state.venture_id) &
+    (air_data_drafts['Project'] == st.session_state.project_id) &
+    (air_data_drafts['Assess_date'].notna()) &
+    (air_data_drafts['Assess_date'] != "")
+]
+
+if not completed_assessments.empty:
+    st.info("📋 **Previous assessments found for this project.**")
+    
+    with st.expander("View previous assessments"):
+        for idx, row in completed_assessments.iterrows():
+            assess_date = row.get('Assess_date', 'Unknown')
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.write(f"• {row['Name']} (Assessed: {assess_date})")
+            with col2:
+                if st.button("Copy Data", key=f"copy_{idx}"):
+                    # Load data from this assessment
+                    st.session_state.copy_from_assessment_id = row['id']
+                    st.rerun()
+    
+    # If user clicked to copy data from an assessment
+    if 'copy_from_assessment_id' in st.session_state:
+        source_record = air_data_drafts[air_data_drafts['id'] == st.session_state.copy_from_assessment_id].iloc[0]
+        
+        # Initialize arrays with data from source assessment
+        from shared import num_dims, numQ
+        st.session_state.QA = np.zeros((num_dims, numQ), dtype=bool)
+        
+        for dim in range(num_dims):
+            for i in range(numQ):
+                field_name = f"QA_{dim:02d}_{i}"
+                if field_name in source_record and pd.notna(source_record[field_name]):
+                    st.session_state.QA[dim, i] = bool(source_record[field_name])
+        
+        # Copy text responses
+        st.session_state.TA = [""] * num_dims
+        for dim in range(num_dims):
+            field_name = f"TA_{dim:02d}"
+            if field_name in source_record and pd.notna(source_record[field_name]):
+                st.session_state.TA[dim] = source_record[field_name]
+        
+        # Clear the copy flag and show success
+        del st.session_state.copy_from_assessment_id
+        st.success(f"✓ Copied data from previous assessment. Starting new assessment with this data as a baseline.")
+        st.info("Click 'Continue to Assessment' to begin your new assessment.")
+
 if st.button("Continue to Assessment"):
     reset_session_timer()  # User is active
     

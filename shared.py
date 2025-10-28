@@ -17,7 +17,7 @@ from airtable_utils import load_airtable_record
 from airtable_utils import assessor_or_reviewer
 from airtable_utils import submit_record
 from datetime import datetime, date
-from fields import IRL_031_data_fields
+from fields import IRL_050_data_fields
 import time
 
 # Common configuration values used across pages

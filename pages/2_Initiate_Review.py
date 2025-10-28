@@ -134,7 +134,44 @@ elif st.session_state.review_mode == 0:
             st.info("🔄 **Found an in-progress review for this assessment!**")
             if st.button("Resume Review Draft", type="primary"):
                 st.session_state.draft_record_id = existing_draft.iloc[0]['id']
-                # Continue with existing flow
+        
+        # Automatically initialize review data with assessment data by default
+        # This eliminates duplication - reviewer starts with assessor's responses
+        if 'QR' not in st.session_state or st.session_state.QR is None:
+            st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
+            
+            # Copy assessment data as starting point for review
+            for dim in range(num_dims):
+                for i in range(numQ):
+                    field_name = f"QA_{dim:02d}_{i}"
+                    if field_name in air_data_record.columns and pd.notna(air_data_record.iloc[0][field_name]):
+                        # Start with assessor's response
+                        st.session_state.QR[dim, i] = bool(air_data_record.iloc[0][field_name])
+            
+            # Copy assessment text comments as starting point
+            st.session_state.TR = [""] * num_dims
+            for dim in range(num_dims):
+                field_name = f"TA_{dim:02d}"
+                if field_name in air_data_record.columns and pd.notna(air_data_record.iloc[0][field_name]):
+                    st.session_state.TR[dim] = air_data_record.iloc[0][field_name]
+            
+            st.info("✅ **Review initialized with assessment data.** You can now modify the responses as needed during your review.")
+        
+        # Check for previous reviews (for reference, not for copying)
+        completed_reviews = air_data[
+            (air_data['Venture'] == st.session_state.venture_id) &
+            (air_data['Project'] == st.session_state.project_id) &
+            (air_data['Review_date'].notna()) &
+            (air_data['Review_date'] != "")
+        ]
+        
+        if not completed_reviews.empty:
+            st.info("📋 **Previous reviews available for reference.**")
+            
+            with st.expander("View previous reviews (for reference)"):
+                for idx, row in completed_reviews.iterrows():
+                    review_date = row.get('Review_date', 'Unknown')
+                    st.write(f"• {row['Name']} (Reviewed: {review_date})")
     else:
         st.warning("No available assessments to review for your Support Organization.")
         # Reset assessment related session state
@@ -237,7 +274,7 @@ elif st.session_state.review_mode == 1:
     else:
         st.warning("No available ventures to review for your Support Organization.")
 
-    # After project selection, check for drafts
+    # After project selection, check for drafts and previous reviews
     if 'project_name' in st.session_state:
         # Check for existing independent review draft
         draft_name = f"DRAFT - {st.session_state.venture_name} - {st.session_state.project_name}"
@@ -254,6 +291,52 @@ elif st.session_state.review_mode == 1:
             st.info("🔄 **Found an in-progress independent review!**")
             if st.button("Resume Independent Review Draft", type="primary"):
                 st.session_state.draft_record_id = existing_draft.iloc[0]['id']
+        
+        # Check for previous independent reviews
+        completed_independent_reviews = air_data_check[
+            (air_data_check['Venture'] == st.session_state.venture_id) &
+            (air_data_check['Project'] == st.session_state.project_id) &
+            (air_data_check['Review_date'].notna()) &
+            (air_data_check['Review_date'] != "") &
+            ((air_data_check['ASSESSOR'].isna()) | (air_data_check['ASSESSOR'].apply(lambda x: len(x) == 0 if isinstance(x, (list, tuple)) else False)))
+        ]
+        
+        if not completed_independent_reviews.empty:
+            st.info("📋 **Previous independent reviews found for this project.**")
+            
+            with st.expander("View previous independent reviews"):
+                for idx, row in completed_independent_reviews.iterrows():
+                    review_date = row.get('Review_date', 'Unknown')
+                    col1, col2 = st.columns([3, 1])
+                    with col1:
+                        st.write(f"• {row['Name']} (Reviewed: {review_date})")
+                    with col2:
+                        if st.button("Copy Data", key=f"copy_indep_{idx}"):
+                            st.session_state.copy_from_independent_id = row['id']
+                            st.rerun()
+            
+            # If user clicked to copy data
+            if 'copy_from_independent_id' in st.session_state:
+                source_record = air_data_check[air_data_check['id'] == st.session_state.copy_from_independent_id].iloc[0]
+                
+                # Initialize with source data
+                st.session_state.QR = np.zeros((num_dims, numQ), dtype=bool)
+                
+                for dim in range(num_dims):
+                    for i in range(numQ):
+                        field_name = f"QR_{dim:02d}_{i}"
+                        if field_name in source_record.index and pd.notna(source_record[field_name]):
+                            st.session_state.QR[dim, i] = bool(source_record[field_name])
+                
+                st.session_state.TR = [""] * num_dims
+                for dim in range(num_dims):
+                    field_name = f"TR_{dim:02d}"
+                    if field_name in source_record.index and pd.notna(source_record[field_name]):
+                        st.session_state.TR[dim] = source_record[field_name]
+                
+                del st.session_state.copy_from_independent_id
+                st.success(f"✓ Copied data from previous independent review. Starting new review with this data as a baseline.")
+                st.info("Click 'Continue to Review' to begin your new independent review.")
 
 
 #---------------------------------------------------------------------------------
