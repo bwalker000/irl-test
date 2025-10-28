@@ -1,8 +1,12 @@
 from shared import *
+from shared import check_session_timeout, reset_session_timer
 import io
 from draw import *
 
 display_logo()
+
+# Check for session timeout at page entry
+check_session_timeout()
 
 st.title("Create a Report")
 
@@ -94,6 +98,8 @@ col1, col2, col3 = st.columns([1, 1, 1])
 
 with col1:
     generate_report = st.button("Generate Report", disabled=(not selected_assessment))
+    if generate_report:
+        reset_session_timer()  # User is active
 
 with col2:
     # We'll populate this with the PDF button after generating the report
@@ -101,6 +107,7 @@ with col2:
 
 with col3:
     if st.button("Return to Home", key="main_home_button"):
+        reset_session_timer()  # User is active
         st.switch_page("streamlit_app.py")
 
 if not selected_assessment or not generate_report:

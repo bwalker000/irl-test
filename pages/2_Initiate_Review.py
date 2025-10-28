@@ -1,11 +1,14 @@
 from shared import *
 # Explicitly import shared configuration
-from shared import num_dims, numQ
+from shared import num_dims, numQ, check_session_timeout, reset_session_timer
 
 # Clear the cache when entering this page
 st.cache_data.clear()
 
 display_logo()
+
+# Check for session timeout at page entry
+check_session_timeout()
 
 st.title("Initiate a Review")
 
@@ -244,7 +247,9 @@ elif st.session_state.review_mode == 1:
 col1, col2 = st.columns(2)
 with col1:
     if st.button("Continue to Review", disabled=not can_continue):
+        reset_session_timer()  # User is active
         st.switch_page("pages/12_Assess_&_Review.py")
 with col2:
     if st.button("Home"):
+        reset_session_timer()  # User is active
         st.switch_page("streamlit_app.py")

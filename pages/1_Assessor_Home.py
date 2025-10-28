@@ -1,6 +1,10 @@
 from shared import *
+from shared import check_session_timeout, reset_session_timer
 
 display_logo()
+
+# Check for session timeout at page entry
+check_session_timeout()
 
 st.title("Assessor Home")
 
@@ -33,8 +37,11 @@ st.session_state.assessor_email = st.selectbox('Select an Assessor:', options = 
 # Navigate
 
 if st.button("Assess"):
+    reset_session_timer()  # User is active
     st.switch_page("pages/1_New_Assessment.py")
 if st.button("Report"):
+    reset_session_timer()  # User is active
     st.switch_page("pages/12_Report.py")
 if st.button("Home"):
+    reset_session_timer()  # User is active
     st.switch_page("streamlit_app.py")

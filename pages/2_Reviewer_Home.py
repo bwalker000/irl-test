@@ -1,7 +1,11 @@
 from shared import *
 from airtable_utils import load_airtable
+from shared import check_session_timeout, reset_session_timer
 
 display_logo()
+
+# Check for session timeout at page entry
+check_session_timeout()
 
 st.title("Reviewer Home")
 
@@ -27,9 +31,12 @@ reviewer_emails = air_reviewers['Email']
 st.session_state.reviewer_email = st.selectbox('Select a REVIEWER:', options=reviewer_emails)
 
 if st.button("Initiate Review"):
+    reset_session_timer()  # User is active
     st.switch_page("pages/2_Initiate_Review.py")
 if st.button("Report"):
+    reset_session_timer()  # User is active
     st.switch_page("pages/12_Report.py")
 if st.button("Home"):
+    reset_session_timer()  # User is active
     st.switch_page("streamlit_app.py")
 

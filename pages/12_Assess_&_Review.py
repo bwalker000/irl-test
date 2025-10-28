@@ -281,11 +281,13 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     if st.session_state.dim > 0:
         if st.button("Previous"):
+            reset_session_timer()  # User is active
             st.session_state.dim -= 1
             st.rerun()
 with col2:
     if st.session_state.dim < num_dims - 1:
         if st.button("Next", key="next_button"):
+            reset_session_timer()  # User is active
             st.session_state.dim += 1
             st.rerun()
 with col3:
@@ -300,5 +302,6 @@ with col3:
             st.success("✓ Successfully submitted!")
 with col4:
     if st.button("Home", key="home_button"):
+        reset_session_timer()  # User is active
         st.switch_page("streamlit_app.py")
 
