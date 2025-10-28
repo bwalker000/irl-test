@@ -104,6 +104,41 @@ with st.container(border=True):
 
     #st.write("\n")
 
+#
+# Check for existing draft
+#
+table_name = st.secrets["general"]["airtable_table_data"]
+air_data_drafts, _ = load_airtable(table_name, base_id, api_key, False)
+
+# Look for drafts by this assessor for this venture/project
+draft_name_pattern = f"DRAFT - {st.session_state.venture_name}"
+existing_drafts = air_data_drafts[
+    (air_data_drafts['Name'].str.startswith(draft_name_pattern, na=False)) &
+    (air_data_drafts['Assess_date'].isnull() | (air_data_drafts['Assess_date'] == ""))
+]
+
+if not existing_drafts.empty:
+    st.warning("🔄 **Found an in-progress assessment!**")
+    st.write("You have a saved draft for this venture. Would you like to continue where you left off?")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Resume Draft", type="primary"):
+            # Load the draft
+            draft_record = existing_drafts.iloc[0]
+            st.session_state.draft_record_id = draft_record['id']
+            st.switch_page("pages/12_Assess_&_Review.py")
+    with col2:
+        if st.button("Start Fresh"):
+            # Delete old draft
+            try:
+                table = Table(api_key, base_id, st.secrets["general"]["airtable_table_data"])
+                table.delete(existing_drafts.iloc[0]['id'])
+            except:
+                pass
+            st.rerun()
+    st.stop()
+
 if st.button("Continue to Assessment"):
     reset_session_timer()  # User is active
     

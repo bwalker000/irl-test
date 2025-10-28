@@ -165,6 +165,108 @@ def assessor_or_reviewer():
 
 
 
+def auto_save_progress():
+    """
+    Auto-save current assessment/review progress as a draft.
+    Overwrites any existing draft for this venture/project/mode combination.
+    """
+    # Build draft record similar to submit_record but without dates
+    responses = {}
+    
+    # Save question responses
+    for dim in range(st.session_state.QA.shape[0]):
+        for i, value in enumerate(st.session_state.QA[dim]):
+            field_name = f"QA_{dim:02d}_{i}"
+            responses[field_name] = value
+
+    for dim in range(st.session_state.QR.shape[0]):
+        for i, value in enumerate(st.session_state.QR[dim]):
+            field_name = f"QR_{dim:02d}_{i}"
+            responses[field_name] = value
+
+    # Save text responses
+    for dim, value in enumerate(st.session_state.TA):
+        field_name = f"TA_{dim:02d}"
+        responses[field_name] = value
+
+    for dim, value in enumerate(st.session_state.TR):
+        field_name = f"TR_{dim:02d}"
+        responses[field_name] = value
+
+    # Add metadata
+    responses["Venture"] = ([st.session_state.venture_id] if isinstance(st.session_state.venture_id, str) 
+                          else list(st.session_state.venture_id) if isinstance(st.session_state.venture_id, (list, tuple)) 
+                          else [])
+    
+    responses["Project"] = ([st.session_state.project_id] if isinstance(st.session_state.project_id, str)
+                          else list(st.session_state.project_id) if isinstance(st.session_state.project_id, (list, tuple))
+                          else [])
+    
+    responses["Support Organization"] = ([st.session_state.support_id[0]] if isinstance(st.session_state.support_id, (list, tuple)) and st.session_state.support_id
+                                       else [st.session_state.support_id] if st.session_state.support_id
+                                       else [])
+    
+    # For independent reviews, assessor_id might be empty
+    if st.session_state.mode == "REVIEWER" and (
+        st.session_state.get('assessor_first_name', 'N/A') == 'N/A' or 
+        not st.session_state.get('assessor_id')
+    ):
+        responses["ASSESSOR"] = []
+    else:
+        responses["ASSESSOR"] = ([st.session_state.assessor_id[0]] if isinstance(st.session_state.assessor_id, (list, tuple)) and st.session_state.assessor_id
+                               else [st.session_state.assessor_id] if st.session_state.assessor_id
+                               else [])
+
+    venture_name = st.session_state.venture_name
+    project_name = st.session_state.project_name
+    
+    # Create DRAFT name
+    draft_name = f"DRAFT - {venture_name} - {project_name}"
+    
+    if st.session_state.mode == "REVIEWER":
+        # Add reviewer ID
+        responses["REVIEWER"] = ([st.session_state.reviewer_id[0]] if isinstance(st.session_state.reviewer_id, (list, tuple))
+                               else [st.session_state.reviewer_id] if st.session_state.reviewer_id
+                               else [])
+        # Preserve assessment date if reviewing existing assessment
+        if st.session_state.get('assessment_name') and st.session_state.get('assess_date'):
+            responses["Assess_date"] = st.session_state.assess_date
+    
+    responses["Name"] = draft_name
+    # Note: No Assess_date or Review_date = indicates this is a draft
+    
+    api_key = st.secrets["general"]["airtable_api_key"]
+    base_id = st.secrets["general"]["airtable_base_id"]
+    table_name = st.secrets["general"]["airtable_table_data"]
+    table = Table(api_key, base_id, table_name)
+
+    # Clean numpy types
+    cleaned_responses = {}
+    for k, v in responses.items():
+        if isinstance(v, np.generic):
+            v = v.item()
+        elif isinstance(v, pd.Series):
+            if v.shape == (1,):
+                v = v.item()
+            else:
+                v = v.tolist()
+        elif isinstance(v, pd.DataFrame):
+            v = v.to_dict(orient="records")
+        cleaned_responses[k] = v
+
+    # Check if draft already exists and update it, otherwise create new
+    if 'draft_record_id' in st.session_state and st.session_state.draft_record_id:
+        try:
+            table.update(st.session_state.draft_record_id, cleaned_responses)
+        except:
+            # If update fails (record deleted), create new
+            record = table.create(cleaned_responses)
+            st.session_state.draft_record_id = record['id']
+    else:
+        record = table.create(cleaned_responses)
+        st.session_state.draft_record_id = record['id']
+
+
 def submit_record():
     # This code saves the assessment to the airtable database
     responses = {}
@@ -242,15 +344,6 @@ def submit_record():
 
     table = Table(api_key, base_id, table_name)
 
-
-    # Convert numpy types to native Python types before sending to Airtable
-    #cleaned_responses = {}
-    #for k, v in responses.items():
-        # Convert numpy bool to plain Python bool
-    #    if isinstance(v, np.generic):
-    #        v = v.item()  # Converts numpy types to native types
-    #    cleaned_responses[k] = v
-
     cleaned_responses = {}
     for k, v in responses.items():
         if isinstance(v, np.generic):
@@ -265,15 +358,25 @@ def submit_record():
             v = v.to_dict(orient="records")
         cleaned_responses[k] = v
 
-
-
-    # If this is a review of an existing assessment, update that record
+    # Determine which record to update
+    record_id_to_update = None
+    
+    # Priority 1: If reviewing an existing assessment, update that record
     if st.session_state.mode == "REVIEWER" and st.session_state.get('assessment_record_id'):
-        table.update(st.session_state.assessment_record_id, cleaned_responses)
+        record_id_to_update = st.session_state.assessment_record_id
+    # Priority 2: If there's a draft, overwrite it
+    elif st.session_state.get('draft_record_id'):
+        record_id_to_update = st.session_state.draft_record_id
+    
+    if record_id_to_update:
+        table.update(record_id_to_update, cleaned_responses)
     else:
-        # Otherwise create a new record
+        # Create new record
         table.create(cleaned_responses)
 
+    # Clean up draft reference
+    if 'draft_record_id' in st.session_state:
+        del st.session_state.draft_record_id
 
     # Mark as submitted to prevent resubmission
     st.session_state.submitted = True

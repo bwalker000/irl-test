@@ -122,6 +122,19 @@ elif st.session_state.review_mode == 0:
         table_name = st.secrets["general"]["airtable_table_projects"]
         air_projects, debug_details = load_airtable(table_name, base_id, api_key, debug)
         st.session_state.project_name = airtable_value_from_id(air_projects, st.session_state.project_id, "Name")
+
+        # Check for existing review draft for this assessment
+        draft_name = f"DRAFT - {st.session_state.venture_name} - {st.session_state.project_name}"
+        existing_draft = air_data[
+            (air_data['Name'] == draft_name) &
+            (air_data['Review_date'].isnull() | (air_data['Review_date'] == ""))
+        ]
+        
+        if not existing_draft.empty:
+            st.info("🔄 **Found an in-progress review for this assessment!**")
+            if st.button("Resume Review Draft", type="primary"):
+                st.session_state.draft_record_id = existing_draft.iloc[0]['id']
+                # Continue with existing flow
     else:
         st.warning("No available assessments to review for your Support Organization.")
         # Reset assessment related session state
@@ -223,6 +236,24 @@ elif st.session_state.review_mode == 1:
             st.warning("Selected Venture not found.")
     else:
         st.warning("No available ventures to review for your Support Organization.")
+
+    # After project selection, check for drafts
+    if 'project_name' in st.session_state:
+        # Check for existing independent review draft
+        draft_name = f"DRAFT - {st.session_state.venture_name} - {st.session_state.project_name}"
+        
+        table_name = st.secrets["general"]["airtable_table_data"]
+        air_data_check, _ = load_airtable(table_name, base_id, api_key, False)
+        
+        existing_draft = air_data_check[
+            (air_data_check['Name'] == draft_name) &
+            (air_data_check['Review_date'].isnull() | (air_data_check['Review_date'] == ""))
+        ]
+        
+        if not existing_draft.empty:
+            st.info("🔄 **Found an in-progress independent review!**")
+            if st.button("Resume Independent Review Draft", type="primary"):
+                st.session_state.draft_record_id = existing_draft.iloc[0]['id']
 
 
 #---------------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 from shared import *
 # Explicitly import shared configuration
 from shared import num_dims, numQ, check_session_timeout, reset_session_timer
+from airtable_utils import auto_save_progress
 
 display_logo()
 
@@ -56,6 +57,9 @@ if ('dim' not in st.session_state):
     
     # Initialize submitted flag
     st.session_state.submitted = False
+    
+    # Initialize auto-save timer
+    st.session_state.last_autosave = time.time()
     
     # if this is a reivew, then load the assessment data
     if st.session_state.mode == "REVIEWER":
@@ -162,6 +166,10 @@ st.write("\n\n")
 
 # Add page indicator at top (above assessment table)
 st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
+
+# Show draft indicator if this is a draft (no submission date)
+if st.session_state.get('draft_record_id'):
+    st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
 
 #
 # Display and collect the questions and answers
@@ -282,12 +290,14 @@ with col1:
     if st.session_state.dim > 0:
         if st.button("Previous"):
             reset_session_timer()  # User is active
+            auto_save_progress()  # Auto-save on navigation
             st.session_state.dim -= 1
             st.rerun()
 with col2:
     if st.session_state.dim < num_dims - 1:
         if st.button("Next", key="next_button"):
             reset_session_timer()  # User is active
+            auto_save_progress()  # Auto-save on navigation
             st.session_state.dim += 1
             st.rerun()
 with col3:
@@ -303,5 +313,6 @@ with col3:
 with col4:
     if st.button("Home", key="home_button"):
         reset_session_timer()  # User is active
+        auto_save_progress()  # Auto-save before leaving
         st.switch_page("streamlit_app.py")
 
