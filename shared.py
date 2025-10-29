@@ -22,7 +22,7 @@ import time
 
 # Common configuration values used across pages
 # Calculate num_dims dynamically from the fields structure
-num_dims = len([f for f in IRL_031_data_fields if f.startswith('TA_')])  # Count TA fields to get number of dimensions
+num_dims = len([f for f in IRL_050_data_fields if f.startswith('TA_')])  # Count TA fields to get number of dimensions
 numQ = 10       # Number of questions per dimension (this can remain hardcoded)
 
 # Session timeout configuration
