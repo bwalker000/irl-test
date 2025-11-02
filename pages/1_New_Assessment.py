@@ -102,6 +102,10 @@ with st.container(border=True):
     # Streamlit selectbox for choosing the Project
     st.session_state.project_name = st.selectbox('__Project:__', options=project_names)
 
+    # Set project_id immediately after project selection
+    row = records[records["Name"] == st.session_state.project_name]
+    st.session_state.project_id = row["id"].tolist()
+
     #st.write("\n")
 
 #
@@ -191,10 +195,7 @@ if not completed_assessments.empty:
 if st.button("Continue to Assessment"):
     reset_session_timer()  # User is active
     
-    ### Check the following block
-    row = records[records["Name"] == st.session_state.project_name]
-    st.session_state.project_id = row["id"].tolist()
-
+    # project_id is already set above, so we can go directly to the assessment page
     st.switch_page("pages/12_Assess_&_Review.py")
 
 if st.button("Home"):
