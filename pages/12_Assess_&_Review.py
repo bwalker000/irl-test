@@ -8,15 +8,8 @@ display_logo()
 # Check for session timeout at page entry
 check_session_timeout()
 
-# Force scroll to top on page load (after navigation)
-st.markdown(
-    """
-    <script>
-        window.parent.document.querySelector('section.main').scrollTo(0, 0);
-    </script>
-    """,
-    unsafe_allow_html=True
-)
+# Create an anchor at the top for scrolling
+st.markdown('<div id="top"></div>', unsafe_allow_html=True)
 
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
@@ -71,8 +64,30 @@ if ('dim' not in st.session_state):
     # Initialize auto-save timer
     st.session_state.last_autosave = time.time()
     
+    # Load draft data if resuming a draft assessment
+    if 'draft_record_id' in st.session_state:
+        table_name = st.secrets["general"]["airtable_table_data"]
+        air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
+        
+        draft_record = air_data[air_data['id'] == st.session_state.draft_record_id]
+        if not draft_record.empty:
+            draft_record = draft_record.iloc[0]
+            
+            # Load question responses
+            for dim in range(num_dims):
+                for i in range(numQ):
+                    field_name = f"QA_{dim:02d}_{i}"
+                    if field_name in draft_record and pd.notna(draft_record[field_name]):
+                        st.session_state.QA[dim, i] = bool(draft_record[field_name])
+            
+            # Load text responses
+            for dim in range(num_dims):
+                field_name = f"TA_{dim:02d}"
+                if field_name in draft_record and pd.notna(draft_record[field_name]):
+                    st.session_state.TA[dim] = draft_record[field_name]
+    
     # if this is a reivew, then load the assessment data
-    if st.session_state.mode == "REVIEWER":
+    elif st.session_state.mode == "REVIEWER":
 
         # load the data for the specific assessment
         table_name = st.secrets["general"]["airtable_table_data"]
@@ -176,6 +191,19 @@ st.write("\n\n")
 
 # Add page indicator at top (above assessment table)
 st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
+
+# Force scroll to top using JavaScript with anchor
+st.markdown(
+    """
+    <script>
+        const topElement = window.parent.document.getElementById('top');
+        if (topElement) {
+            topElement.scrollIntoView({behavior: 'instant', block: 'start'});
+        }
+    </script>
+    """,
+    unsafe_allow_html=True
+)
 
 # Show draft indicator if this is a draft (no submission date)
 if st.session_state.get('draft_record_id'):
