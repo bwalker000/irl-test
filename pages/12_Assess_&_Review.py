@@ -8,6 +8,16 @@ display_logo()
 # Check for session timeout at page entry
 check_session_timeout()
 
+# Force scroll to top on page load (after navigation)
+st.markdown(
+    """
+    <script>
+        window.parent.document.querySelector('section.main').scrollTo(0, 0);
+    </script>
+    """,
+    unsafe_allow_html=True
+)
+
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
