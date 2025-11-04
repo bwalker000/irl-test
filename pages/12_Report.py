@@ -295,6 +295,12 @@ question_num_width = 0.3  # Width for question numbers column
 matrix_width = question_num_width + n_cols * dx  # Total width of matrix
 start_x = (page_width - matrix_width) / 2  # Center the matrix
 
+# SAVE MATRIX DIMENSIONS BEFORE THEY GET OVERWRITTEN
+matrix_dx = dx
+matrix_dy = dy
+matrix_start_x = start_x
+matrix_start_y = 9.3 - n_rows*dy
+
 # Iterate over rows (questions 0 to numQ-1)
 for i in range(n_rows):
     y0 = (9.3-n_rows*dy) + i*dy    
@@ -817,10 +823,10 @@ st.components.v1.html(f"""
 <script>
 const questions = {question_json};
 const matrixConfig = {{
-    startX: {start_x},
-    startY: {9.3 - n_rows*dy},
-    dx: {dx},
-    dy: {dy},
+    startX: {matrix_start_x},
+    startY: {matrix_start_y},
+    dx: {matrix_dx},
+    dy: {matrix_dy},
     numRows: {numQ},
     numCols: {num_dims},
     questionNumWidth: {question_num_width},
