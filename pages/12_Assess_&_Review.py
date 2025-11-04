@@ -8,24 +8,6 @@ display_logo()
 # Check for session timeout at page entry
 check_session_timeout()
 
-# Force scroll to top by injecting JavaScript in the header section
-if st.session_state.get('scroll_to_top', False):
-    st.markdown(
-        """
-        <script>
-            setTimeout(function() {
-                window.scrollTo(0, 0);
-                window.parent.document.body.scrollTop = 0;
-                window.parent.document.documentElement.scrollTop = 0;
-                const mainSection = window.parent.document.querySelector('section.main');
-                if (mainSection) mainSection.scrollTop = 0;
-            }, 100);
-        </script>
-        """,
-        unsafe_allow_html=True
-    )
-    st.session_state.scroll_to_top = False
-
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
@@ -335,7 +317,8 @@ with col1:
             reset_session_timer()
             auto_save_progress()
             st.session_state.dim -= 1
-            st.session_state.scroll_to_top = True
+            # Force fresh page load by updating query params
+            st.query_params["_reload"] = str(time.time())
             st.rerun()
 with col2:
     if st.session_state.dim < num_dims - 1:
@@ -343,7 +326,8 @@ with col2:
             reset_session_timer()
             auto_save_progress()
             st.session_state.dim += 1
-            st.session_state.scroll_to_top = True
+            # Force fresh page load by updating query params
+            st.query_params["_reload"] = str(time.time())
             st.rerun()
 with col3:
     if st.session_state.dim == num_dims - 1:
