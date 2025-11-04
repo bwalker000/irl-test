@@ -774,6 +774,102 @@ ax.text(watermark_x, watermark_y, watermark_text,
 #------------------------------------------------------------------------------------------
 st.pyplot(fig)
 
+# Add interactive question tooltips using HTML/JavaScript
+st.markdown("---")
+st.markdown("### Interactive Matrix Guide")
+st.markdown("*Hover over any cell in the matrix above to see the corresponding question*")
+
+# Build a lookup dictionary for questions
+question_lookup = {}
+for dim in range(num_dims):
+    dimension_name = air_assessment.iloc[dim]["Dimension"]
+    dimension_abbrev = air_assessment.iloc[dim]["Abbreviation"]
+    for i in range(numQ):
+        question_field = f"Q{i}"
+        question_text = air_assessment.iloc[dim][question_field] if question_field in air_assessment.columns else f"Question {i}"
+        question_lookup[f"{dim}_{i}"] = {
+            "dimension": dimension_name,
+            "abbrev": dimension_abbrev,
+            "question_num": i,
+            "question": question_text
+        }
+
+# Convert to JSON for JavaScript
+import json
+question_json = json.dumps(question_lookup)
+
+# Create an interactive HTML component with mouse tracking
+st.components.v1.html(f"""
+<div id="tooltip-container" style="position: relative; width: 100%; height: 150px; border: 1px solid #ccc; padding: 10px; background: #f9f9f9;">
+    <div id="tooltip-content" style="font-size: 14px;">
+        <p style="color: #666;">Move your mouse over the matrix above to see question details here.</p>
+    </div>
+</div>
+
+<script>
+const questions = {question_json};
+const matrixConfig = {{
+    startX: {start_x},
+    startY: {9.3 - n_rows*dy},
+    dx: {dx},
+    dy: {dy},
+    numRows: {numQ},
+    numCols: {num_dims},
+    questionNumWidth: {question_num_width},
+    pageHeight: {letter_height - 2*margin},
+    dpi: 96  // Approximate screen DPI
+}};
+
+// Get the matplotlib figure image
+const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
+const matrixFigure = figures[figures.length - 1];  // Get the last figure (our report)
+
+if (matrixFigure) {{
+    matrixFigure.style.cursor = 'crosshair';
+    
+    matrixFigure.addEventListener('mousemove', function(e) {{
+        const rect = matrixFigure.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Convert pixel coordinates to figure coordinates
+        const figX = (x / rect.width) * (matrixConfig.pageHeight);
+        const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight;
+        
+        // Check if we're in the matrix area
+        if (figX >= matrixConfig.startX + matrixConfig.questionNumWidth && 
+            figX < matrixConfig.startX + matrixConfig.questionNumWidth + (matrixConfig.numCols * matrixConfig.dx) &&
+            figY >= matrixConfig.startY && 
+            figY < matrixConfig.startY + (matrixConfig.numRows * matrixConfig.dy)) {{
+            
+            // Calculate which cell we're hovering over
+            const col = Math.floor((figX - matrixConfig.startX - matrixConfig.questionNumWidth) / matrixConfig.dx);
+            const row = Math.floor((figY - matrixConfig.startY) / matrixConfig.dy);
+            
+            if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
+                const key = `${{col}}_${{row}}`;
+                const q = questions[key];
+                
+                if (q) {{
+                    const tooltipDiv = document.getElementById('tooltip-content');
+                    tooltipDiv.innerHTML = `
+                        <p style="margin: 0 0 5px 0;"><strong>Dimension:</strong> ${{q.abbrev}} - ${{q.dimension}}</p>
+                        <p style="margin: 0 0 5px 0;"><strong>Question ${{q.question_num}}:</strong></p>
+                        <p style="margin: 0; color: #333;">${{q.question}}</p>
+                    `;
+                }}
+            }}
+        }}
+    }});
+    
+    matrixFigure.addEventListener('mouseleave', function() {{
+        const tooltipDiv = document.getElementById('tooltip-content');
+        tooltipDiv.innerHTML = '<p style="color: #666;">Move your mouse over the matrix above to see question details here.</p>';
+    }});
+}}
+</script>
+""", height=200)
+
 # Now that the figure is generated, create the PDF download button
 pdf_buffer = io.BytesIO()
 plt.savefig(pdf_buffer, format='pdf', dpi=300)
