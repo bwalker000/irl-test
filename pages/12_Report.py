@@ -883,13 +883,15 @@ if (matrixFigure) {{
                 if (q) {{
                     tooltip.innerHTML = `
                         <div style="padding-bottom: 8px; margin-bottom: 8px; border-bottom: 2px solid #0066cc;">
-                            <strong style="font-size: 18px; color: #0066cc;">${{q.abbrev}}</strong>
-                            <div style="font-size: 12px; color: #666; margin-top: 4px; font-style: italic;">${{q.dimension}}</div>
+                            <div style="font-size: 14px;">
+                                <strong style="color: #0066cc;">${{q.abbrev}}:</strong>
+                                <span style="color: #333; margin-left: 8px;">${{q.dimension}}</span>
+                            </div>
                         </div>
                         <div style="margin-bottom: 6px; margin-top: 8px;">
-                            <strong style="color: #333; font-size: 13px;">Question ${{q.question_num}}:</strong>
+                            <strong style="color: #333; font-size: 14px;">Question ${{q.question_num}}:</strong>
                         </div>
-                        <div style="color: #333; line-height: 1.5; font-size: 13px;">${{q.question}}</div>
+                        <div style="color: #333; line-height: 1.5; font-size: 14px;">${{q.question}}</div>
                     `;
                     
                     // Position tooltip near cursor but keep it on screen
