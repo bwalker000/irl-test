@@ -860,8 +860,12 @@ if (matrixFigure) {{
         const y = e.clientY - rect.top;
         
         // Convert pixel coordinates to figure coordinates
-        const figX = (x / rect.width) * (matrixConfig.pageHeight);
-        const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight;
+        // The figure aspect ratio might not match the pixel aspect ratio
+        const figWidth = {page_width};
+        const figHeight = {letter_height - 2*margin};
+        
+        const figX = (x / rect.width) * figWidth;
+        const figY = figHeight - (y / rect.height) * figHeight;
         
         // Check if we're in the matrix area
         if (figX >= matrixConfig.startX + matrixConfig.questionNumWidth && 
@@ -871,9 +875,6 @@ if (matrixFigure) {{
             
             // Calculate which cell we're hovering over
             const col = Math.floor((figX - matrixConfig.startX - matrixConfig.questionNumWidth) / matrixConfig.dx);
-            // FIXED: Since drawing has i=0 at bottom (smallest y), and figY increases upward,
-            // we need to map directly: row = floor((figY - startY) / dy)
-            // This gives us: bottom of matrix -> row 0, top of matrix -> row 9
             const row = Math.floor((figY - matrixConfig.startY) / matrixConfig.dy);
             
             if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
