@@ -179,10 +179,10 @@ st.write("\n\n")
 
 if mode == "ASSESSOR":
     st.write("__General Instructions:__")
-    st.write("A positive response must be supported by written data.")
+    st.write("A level is considered “achieved” when the you can confidently defend that level with supporting documentation and consensus among your leadership team. ")
 elif mode == "REVIEWER":
     st.write("__General Instructions:__")
-    st.write("All Founders believe in their venture. You must help them by applying healthy skepticism. Positive responses must be supported by written data and documented.")
+    st.write("You will constructively challenge the ASSESSOR on each level they indicate that they have achieved. You should ask for evidence of achievement. If there is no tangible record, then you must reject the ASSESSOR’s indication and will instead indicate a lower level of achievement.")
 
 st.write("\n\n")
 
