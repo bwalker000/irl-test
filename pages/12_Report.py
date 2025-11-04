@@ -774,11 +774,7 @@ ax.text(watermark_x, watermark_y, watermark_text,
 #------------------------------------------------------------------------------------------
 st.pyplot(fig)
 
-# Add interactive question tooltips using HTML/JavaScript
-st.markdown("---")
-st.markdown("### Interactive Matrix Guide")
-st.markdown("*Hover over any cell in the matrix above to see the corresponding question*")
-
+# Add floating tooltip overlay using HTML/JavaScript
 # Build a lookup dictionary for questions
 question_lookup = {}
 for dim in range(num_dims):
@@ -798,13 +794,25 @@ for dim in range(num_dims):
 import json
 question_json = json.dumps(question_lookup)
 
-# Create an interactive HTML component with mouse tracking
+# Create a floating tooltip that appears over the matrix
 st.components.v1.html(f"""
-<div id="tooltip-container" style="position: relative; width: 100%; height: 150px; border: 1px solid #ccc; padding: 10px; background: #f9f9f9;">
-    <div id="tooltip-content" style="font-size: 14px;">
-        <p style="color: #666;">Move your mouse over the matrix above to see question details here.</p>
-    </div>
-</div>
+<style>
+#floating-tooltip {{
+    position: fixed;
+    display: none;
+    background: rgba(255, 255, 255, 0.98);
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    max-width: 400px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 10000;
+    pointer-events: none;
+    font-family: sans-serif;
+}}
+</style>
+
+<div id="floating-tooltip"></div>
 
 <script>
 const questions = {question_json};
@@ -816,13 +824,31 @@ const matrixConfig = {{
     numRows: {numQ},
     numCols: {num_dims},
     questionNumWidth: {question_num_width},
-    pageHeight: {letter_height - 2*margin},
-    dpi: 96  // Approximate screen DPI
+    pageHeight: {letter_height - 2*margin}
 }};
 
 // Get the matplotlib figure image
 const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
-const matrixFigure = figures[figures.length - 1];  // Get the last figure (our report)
+const matrixFigure = figures[figures.length - 1];
+
+// Create tooltip element in parent document
+const tooltip = window.parent.document.createElement('div');
+tooltip.id = 'floating-tooltip';
+tooltip.style.cssText = `
+    position: fixed;
+    display: none;
+    background: rgba(255, 255, 255, 0.98);
+    border: 2px solid #333;
+    border-radius: 8px;
+    padding: 12px;
+    max-width: 400px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 10000;
+    pointer-events: none;
+    font-family: sans-serif;
+    font-size: 14px;
+`;
+window.parent.document.body.appendChild(tooltip);
 
 if (matrixFigure) {{
     matrixFigure.style.cursor = 'crosshair';
@@ -851,24 +877,44 @@ if (matrixFigure) {{
                 const q = questions[key];
                 
                 if (q) {{
-                    const tooltipDiv = document.getElementById('tooltip-content');
-                    tooltipDiv.innerHTML = `
-                        <p style="margin: 0 0 5px 0;"><strong>Dimension:</strong> ${{q.abbrev}} - ${{q.dimension}}</p>
-                        <p style="margin: 0 0 5px 0;"><strong>Question ${{q.question_num}}:</strong></p>
-                        <p style="margin: 0; color: #333;">${{q.question}}</p>
+                    tooltip.innerHTML = `
+                        <div style="margin-bottom: 5px;"><strong>${{q.abbrev}}</strong> - ${{q.dimension}}</div>
+                        <div style="margin-bottom: 5px;"><strong>Question ${{q.question_num}}:</strong></div>
+                        <div style="color: #333;">${{q.question}}</div>
                     `;
+                    
+                    // Position tooltip near cursor but keep it on screen
+                    let tooltipX = e.clientX + 15;
+                    let tooltipY = e.clientY + 15;
+                    
+                    // Adjust if tooltip would go off right edge
+                    if (tooltipX + 420 > window.parent.innerWidth) {{
+                        tooltipX = e.clientX - 420;
+                    }}
+                    
+                    // Adjust if tooltip would go off bottom edge
+                    if (tooltipY + 150 > window.parent.innerHeight) {{
+                        tooltipY = e.clientY - 150;
+                    }}
+                    
+                    tooltip.style.left = tooltipX + 'px';
+                    tooltip.style.top = tooltipY + 'px';
+                    tooltip.style.display = 'block';
                 }}
+            }} else {{
+                tooltip.style.display = 'none';
             }}
+        }} else {{
+            tooltip.style.display = 'none';
         }}
     }});
     
     matrixFigure.addEventListener('mouseleave', function() {{
-        const tooltipDiv = document.getElementById('tooltip-content');
-        tooltipDiv.innerHTML = '<p style="color: #666;">Move your mouse over the matrix above to see question details here.</p>';
+        tooltip.style.display = 'none';
     }});
 }}
 </script>
-""", height=200)
+""", height=0)
 
 # Now that the figure is generated, create the PDF download button
 pdf_buffer = io.BytesIO()
