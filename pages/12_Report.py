@@ -824,8 +824,8 @@ const matrixConfig = {{
     numRows: {numQ},
     numCols: {num_dims},
     questionNumWidth: {question_num_width},
-    pageHeight: {letter_height - 2*margin},
-    figureTop: {9.3}  // Top of matrix in figure coordinates
+    pageWidth: {page_width},
+    pageHeight: {letter_height - 2*margin}
 }};
 
 // Get the matplotlib figure image
@@ -860,22 +860,22 @@ if (matrixFigure) {{
         const y = e.clientY - rect.top;
         
         // Convert pixel coordinates to figure coordinates
-        // The figure aspect ratio might not match the pixel aspect ratio
-        const figWidth = {page_width};
-        const figHeight = {letter_height - 2*margin};
-        
-        const figX = (x / rect.width) * figWidth;
-        const figY = figHeight - (y / rect.height) * figHeight;
+        // Account for the actual aspect ratio of the rendered figure
+        const figX = (x / rect.width) * matrixConfig.pageWidth;
+        const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight;
         
         // Check if we're in the matrix area
-        if (figX >= matrixConfig.startX + matrixConfig.questionNumWidth && 
-            figX < matrixConfig.startX + matrixConfig.questionNumWidth + (matrixConfig.numCols * matrixConfig.dx) &&
-            figY >= matrixConfig.startY && 
-            figY < matrixConfig.startY + (matrixConfig.numRows * matrixConfig.dy)) {{
+        const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
+        const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
+        const matrixBottom = matrixConfig.startY;
+        const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
+        
+        if (figX >= matrixLeft && figX < matrixRight && 
+            figY >= matrixBottom && figY < matrixTop) {{
             
             // Calculate which cell we're hovering over
-            const col = Math.floor((figX - matrixConfig.startX - matrixConfig.questionNumWidth) / matrixConfig.dx);
-            const row = Math.floor((figY - matrixConfig.startY) / matrixConfig.dy);
+            const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
+            const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
             
             if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
                 const key = `${{col}}_${{row}}`;
