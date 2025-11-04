@@ -299,11 +299,11 @@ start_x = (page_width - matrix_width) / 2  # Center the matrix
 matrix_dx = dx
 matrix_dy = dy
 matrix_start_x = start_x
-matrix_start_y = 9.3 - n_rows*dy
+matrix_start_y = 9.3 - n_rows * matrix_dy  # Use matrix_dy here, not dy!
 
 # Iterate over rows (questions 0 to numQ-1)
 for i in range(n_rows):
-    y0 = (9.3-n_rows*dy) + i*dy    
+    y0 = matrix_start_y + i*dy  # This uses the current dy (which is still matrix_dy at this point)
     cy = y0 + dy / 2
     ax.text(start_x, cy, i, fontsize=font_size, ha='left', va='center', fontweight='bold')
 
