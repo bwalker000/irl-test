@@ -871,7 +871,9 @@ if (matrixFigure) {{
             
             // Calculate which cell we're hovering over
             const col = Math.floor((figX - matrixConfig.startX - matrixConfig.questionNumWidth) / matrixConfig.dx);
-            // Row calculation: Q0 is at bottom (smallest figY), Q9 at top (largest figY)
+            // FIXED: Since drawing has i=0 at bottom (smallest y), and figY increases upward,
+            // we need to map directly: row = floor((figY - startY) / dy)
+            // This gives us: bottom of matrix -> row 0, top of matrix -> row 9
             const row = Math.floor((figY - matrixConfig.startY) / matrixConfig.dy);
             
             if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
@@ -880,9 +882,14 @@ if (matrixFigure) {{
                 
                 if (q) {{
                     tooltip.innerHTML = `
-                        <div style="margin-bottom: 5px;"><strong>${{q.abbrev}}</strong> - ${{q.dimension}}</div>
-                        <div style="margin-bottom: 5px;"><strong>Question ${{q.question_num}}:</strong></div>
-                        <div style="color: #333;">${{q.question}}</div>
+                        <div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #ddd;">
+                            <strong style="font-size: 16px;">${{q.abbrev}}</strong>
+                            <div style="font-size: 13px; color: #666; margin-top: 2px;">${{q.dimension}}</div>
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <strong style="color: #0066cc;">Question ${{q.question_num}}:</strong>
+                        </div>
+                        <div style="color: #333; line-height: 1.4;">${{q.question}}</div>
                     `;
                     
                     // Position tooltip near cursor but keep it on screen
