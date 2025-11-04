@@ -8,6 +8,24 @@ display_logo()
 # Check for session timeout at page entry
 check_session_timeout()
 
+# Force scroll to top by injecting JavaScript in the header section
+if st.session_state.get('scroll_to_top', False):
+    st.markdown(
+        """
+        <script>
+            setTimeout(function() {
+                window.scrollTo(0, 0);
+                window.parent.document.body.scrollTop = 0;
+                window.parent.document.documentElement.scrollTop = 0;
+                const mainSection = window.parent.document.querySelector('section.main');
+                if (mainSection) mainSection.scrollTop = 0;
+            }, 100);
+        </script>
+        """,
+        unsafe_allow_html=True
+    )
+    st.session_state.scroll_to_top = False
+
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
@@ -187,21 +205,10 @@ elif mode == "REVIEWER":
 st.write("\n\n")
 
 # Add page indicator at top (above assessment table)
-st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
-
-# Use components.html to force scroll - more reliable than inline script
-import streamlit.components.v1 as components
-components.html(
-    """
-    <script>
-        window.parent.document.querySelector('section.main').scrollTo({
-            top: 0,
-            behavior: 'auto'
-        });
-    </script>
-    """,
-    height=0,
-)
+# Create a unique container to force re-render from top
+page_anchor = st.empty()
+with page_anchor.container():
+    st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
 
 # Show draft indicator if this is a draft (no submission date)
 if st.session_state.get('draft_record_id'):
@@ -325,16 +332,18 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     if st.session_state.dim > 0:
         if st.button("Previous"):
-            reset_session_timer()  # User is active
-            auto_save_progress()  # Auto-save on navigation
+            reset_session_timer()
+            auto_save_progress()
             st.session_state.dim -= 1
+            st.session_state.scroll_to_top = True
             st.rerun()
 with col2:
     if st.session_state.dim < num_dims - 1:
         if st.button("Next", key="next_button"):
-            reset_session_timer()  # User is active
-            auto_save_progress()  # Auto-save on navigation
+            reset_session_timer()
+            auto_save_progress()
             st.session_state.dim += 1
+            st.session_state.scroll_to_top = True
             st.rerun()
 with col3:
     if st.session_state.dim == num_dims - 1:
