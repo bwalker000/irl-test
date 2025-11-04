@@ -8,9 +8,6 @@ display_logo()
 # Check for session timeout at page entry
 check_session_timeout()
 
-# Create an anchor at the top for scrolling
-st.markdown('<div id="top"></div>', unsafe_allow_html=True)
-
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
@@ -192,17 +189,18 @@ st.write("\n\n")
 # Add page indicator at top (above assessment table)
 st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
 
-# Force scroll to top using JavaScript with anchor
-st.markdown(
+# Use components.html to force scroll - more reliable than inline script
+import streamlit.components.v1 as components
+components.html(
     """
     <script>
-        const topElement = window.parent.document.getElementById('top');
-        if (topElement) {
-            topElement.scrollIntoView({behavior: 'instant', block: 'start'});
-        }
+        window.parent.document.querySelector('section.main').scrollTo({
+            top: 0,
+            behavior: 'auto'
+        });
     </script>
     """,
-    unsafe_allow_html=True
+    height=0,
 )
 
 # Show draft indicator if this is a draft (no submission date)
