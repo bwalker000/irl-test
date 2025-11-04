@@ -824,7 +824,8 @@ const matrixConfig = {{
     numRows: {numQ},
     numCols: {num_dims},
     questionNumWidth: {question_num_width},
-    pageHeight: {letter_height - 2*margin}
+    pageHeight: {letter_height - 2*margin},
+    figureTop: {9.3}  // Top of matrix in figure coordinates
 }};
 
 // Get the matplotlib figure image
@@ -870,6 +871,7 @@ if (matrixFigure) {{
             
             // Calculate which cell we're hovering over
             const col = Math.floor((figX - matrixConfig.startX - matrixConfig.questionNumWidth) / matrixConfig.dx);
+            // Row calculation: Q0 is at bottom (smallest figY), Q9 at top (largest figY)
             const row = Math.floor((figY - matrixConfig.startY) / matrixConfig.dy);
             
             if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
