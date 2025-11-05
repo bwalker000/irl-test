@@ -296,14 +296,15 @@ matrix_width = question_num_width + n_cols * dx  # Total width of matrix
 start_x = (page_width - matrix_width) / 2  # Center the matrix
 
 # SAVE MATRIX DIMENSIONS BEFORE THEY GET OVERWRITTEN
+# These values MUST match exactly what's used in the drawing loop below
 matrix_dx = dx
 matrix_dy = dy
 matrix_start_x = start_x
-matrix_start_y = 9.3 - n_rows * matrix_dy  # Use matrix_dy here, not dy!
+matrix_start_y = 9.3 - n_rows * dy  # Use current dy value (same as drawing loop)
 
 # Iterate over rows (questions 0 to numQ-1)
 for i in range(n_rows):
-    y0 = matrix_start_y + i*dy  # This uses the current dy (which is still matrix_dy at this point)
+    y0 = (9.3-n_rows*dy) + i*dy    # ORIGINAL CODE - DO NOT CHANGE
     cy = y0 + dy / 2
     ax.text(start_x, cy, i, fontsize=font_size, ha='left', va='center', fontweight='bold')
 
@@ -882,6 +883,10 @@ if (matrixFigure) {{
             // Calculate which cell we're hovering over
             const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
             const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
+            
+            // DEBUG: Log values to console
+            console.log('Mouse:', x.toFixed(2), y.toFixed(2), '| Fig:', figX.toFixed(3), figY.toFixed(3), 
+                       '| Cell:', col, row, '| Bounds:', matrixBottom.toFixed(3), '-', matrixTop.toFixed(3));
             
             if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
                 const key = `${{col}}_${{row}}`;
