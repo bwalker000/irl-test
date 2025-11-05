@@ -302,6 +302,15 @@ matrix_dy = dy
 matrix_start_x = start_x
 matrix_start_y = 9.3 - n_rows * dy  # Use current dy value (same as drawing loop)
 
+# DEBUG: Display the matrix configuration values
+st.write("### Debug: Matrix Configuration")
+st.write(f"- matrix_dx (cell width): {matrix_dx:.6f}")
+st.write(f"- matrix_dy (cell height): {matrix_dy:.6f}")
+st.write(f"- matrix_start_x: {matrix_start_x:.6f}")
+st.write(f"- matrix_start_y: {matrix_start_y:.6f}")
+st.write(f"- n_rows: {n_rows}, n_cols: {n_cols}")
+st.write(f"- Matrix should span Y from {matrix_start_y:.6f} to {(matrix_start_y + n_rows*matrix_dy):.6f}")
+
 # Iterate over rows (questions 0 to numQ-1)
 for i in range(n_rows):
     y0 = (9.3-n_rows*dy) + i*dy    # ORIGINAL CODE - DO NOT CHANGE
