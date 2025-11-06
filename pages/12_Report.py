@@ -298,9 +298,14 @@ start_x = (page_width - matrix_width) / 2  # Center the matrix
 # SAVE MATRIX DIMENSIONS BEFORE THEY GET OVERWRITTEN
 # These values MUST match exactly what's used in the drawing loop below
 matrix_dx = dx
-matrix_dy = dy
+matrix_dy = dy  # Save dy before it gets overwritten
 matrix_start_x = start_x
-matrix_start_y = 9.3 - n_rows * dy  # Use current dy value (same as drawing loop)
+matrix_start_y = 9.3 - n_rows * dy
+
+# Debug: Display matrix configuration
+st.write("### Debug: Matrix Configuration")
+st.write(f"matrix_start_y: {matrix_start_y}")
+st.write(f"matrix_dy: {matrix_dy}")
 
 # Iterate over rows (questions 0 to numQ-1)
 for i in range(n_rows):
@@ -828,100 +833,53 @@ const matrixConfig = {{
     startY: {matrix_start_y},
     dx: {matrix_dx},
     dy: {matrix_dy},
-    numRows: {numQ},
-    numCols: {num_dims},
+    numRows: {n_rows},
+    numCols: {n_cols},
     questionNumWidth: {question_num_width},
     pageWidth: {page_width},
-    pageHeight: {letter_height - 2*margin}
+    pageHeight: {letter_height - 2 * margin}
 }};
 
-// Get the matplotlib figure image
-const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
-const matrixFigure = figures[figures.length - 1];
+console.log("Matrix Config:", matrixConfig);
 
-// Create tooltip element in parent document
-const tooltip = window.parent.document.createElement('div');
-tooltip.id = 'floating-tooltip';
-tooltip.style.cssText = `
-    position: fixed;
-    display: none;
-    background: rgba(255, 255, 255, 0.98);
-    border: 2px solid #333;
-    border-radius: 8px;
-    padding: 12px;
-    max-width: 400px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    z-index: 10000;
-    pointer-events: none;
-    font-family: sans-serif;
-    font-size: 14px;
-`;
-window.parent.document.body.appendChild(tooltip);
-
-if (matrixFigure) {{
-    matrixFigure.style.cursor = 'crosshair';
-    
-    matrixFigure.addEventListener('mousemove', function(e) {{
-        const rect = matrixFigure.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight;
+const row = Math.floor((figY - matrixConfig.startY) / matrixConfig.dy);
         
-        // Convert pixel coordinates to figure coordinates
-        // Account for the actual aspect ratio of the rendered figure
-        const figX = (x / rect.width) * matrixConfig.pageWidth;
-        const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight;
-        
-        // Check if we're in the matrix area
-        const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
-        const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
-        const matrixBottom = matrixConfig.startY;
-        const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
-        
-        if (figX >= matrixLeft && figX < matrixRight && 
-            figY >= matrixBottom && figY < matrixTop) {{
+        if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
+            const key = `${{col}}_${{row}}`;
+            const q = questions[key];
             
-            // Calculate which cell we're hovering over
-            const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
-            const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
-            
-            if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
-                const key = `${{col}}_${{row}}`;
-                const q = questions[key];
+            if (q) {{
+                tooltip.innerHTML = `
+                    <div style="padding-bottom: 8px; margin-bottom: 8px; border-bottom: 2px solid #0066cc;">
+                        <div style="font-size: 14px;">
+                            <strong style="color: #0066cc;">${{q.abbrev}}:</strong>
+                            <span style="color: #333; margin-left: 8px;">${{q.dimension}}</span>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 6px; margin-top: 8px;">
+                        <strong style="color: #333; font-size: 14px;">Question ${{q.question_num}}:</strong>
+                    </div>
+                    <div style="color: #333; line-height: 1.5; font-size: 14px;">${{q.question}}</div>
+                `;
                 
-                if (q) {{
-                    tooltip.innerHTML = `
-                        <div style="padding-bottom: 8px; margin-bottom: 8px; border-bottom: 2px solid #0066cc;">
-                            <div style="font-size: 14px;">
-                                <strong style="color: #0066cc;">${{q.abbrev}}:</strong>
-                                <span style="color: #333; margin-left: 8px;">${{q.dimension}}</span>
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 6px; margin-top: 8px;">
-                            <strong style="color: #333; font-size: 14px;">Question ${{q.question_num}}:</strong>
-                        </div>
-                        <div style="color: #333; line-height: 1.5; font-size: 14px;">${{q.question}}</div>
-                    `;
-                    
-                    // Position tooltip near cursor but keep it on screen
-                    let tooltipX = e.clientX + 15;
-                    let tooltipY = e.clientY + 15;
-                    
-                    // Adjust if tooltip would go off right edge
-                    if (tooltipX + 420 > window.parent.innerWidth) {{
-                        tooltipX = e.clientX - 420;
-                    }}
-                    
-                    // Adjust if tooltip would go off bottom edge
-                    if (tooltipY + 150 > window.parent.innerHeight) {{
-                        tooltipY = e.clientY - 150;
-                    }}
-                    
-                    tooltip.style.left = tooltipX + 'px';
-                    tooltip.style.top = tooltipY + 'px';
-                    tooltip.style.display = 'block';
+                // Position tooltip near cursor but keep it on screen
+                let tooltipX = e.clientX + 15;
+                let tooltipY = e.clientY + 15;
+                
+                // Adjust if tooltip would go off right edge
+                if (tooltipX + 420 > window.parent.innerWidth) {{
+                    tooltipX = e.clientX - 420;
                 }}
-            }} else {{
-                tooltip.style.display = 'none';
+                
+                // Adjust if tooltip would go off bottom edge
+                if (tooltipY + 150 > window.parent.innerHeight) {{
+                    tooltipY = e.clientY - 150;
+                }}
+                
+                tooltip.style.left = tooltipX + 'px';
+                tooltip.style.top = tooltipY + 'px';
+                tooltip.style.display = 'block';
             }}
         }} else {{
             tooltip.style.display = 'none';
