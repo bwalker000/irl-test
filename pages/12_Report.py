@@ -849,8 +849,12 @@ st.components.v1.html(f"""
             
             const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
             const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
-            const matrixBottom = matrixConfig.startY;
-            const matrixTop = matrixConfig.startY + (matrixConfig.numRows * matrixConfig.dy);  // Correct: numRows * dy gives exact matrix height
+            
+            // CORRECTED: Adjust for actual rendered position
+            // The matrix rendering adds ~0.16 offset and appears to be scaled
+            const verticalOffset = 0.16;  // Empirical offset from console measurements
+            const matrixBottom = matrixConfig.startY + verticalOffset;
+            const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
 
             if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
                 const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
