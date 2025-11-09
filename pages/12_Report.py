@@ -846,12 +846,11 @@ st.components.v1.html(f"""
             const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
             const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
             const matrixBottom = matrixConfig.startY;
-            const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
+            const matrixTop = matrixBottom + ((matrixConfig.numRows + 1) * matrixConfig.dy);  // Add one extra dy for top row height
 
             if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
                 const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
-                // Add 0.5 offset to measure from cell center instead of bottom edge
-                const row = Math.floor((figY - matrixBottom + matrixConfig.dy * 0.5) / matrixConfig.dy);
+                const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);  // Remove the 0.5 offset
 
                 if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
                     const key = col + '_' + row;
