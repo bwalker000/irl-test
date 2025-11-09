@@ -840,17 +840,11 @@ const matrixConfig = {{
     pageHeight: {letter_height - 2 * margin}
 }};
 
-console.log("Matrix Config:", matrixConfig);
-
 const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
 const matrixFigure = figures[figures.length - 1];
 
 if (matrixFigure) {{
     const tooltip = window.parent.document.getElementById('floating-tooltip');
-    if (!tooltip) {{
-        console.error("Tooltip element not found in the DOM.");
-        return;
-    }}
 
     matrixFigure.addEventListener('mousemove', function(e) {{
         const rect = matrixFigure.getBoundingClientRect();
@@ -859,10 +853,7 @@ if (matrixFigure) {{
 
         // Convert pixel coordinates to figure coordinates
         const figX = (x / rect.width) * matrixConfig.pageWidth;
-        const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight; // Restored original calculation
-
-        console.log("Mouse Y:", y);
-        console.log("Figure Y:", figY);
+        const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight;
 
         // Check if we're in the matrix area
         const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
@@ -870,14 +861,9 @@ if (matrixFigure) {{
         const matrixBottom = matrixConfig.startY;
         const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
 
-        console.log("Matrix Bottom (startY):", matrixBottom);
-        console.log("Matrix Top:", matrixTop);
-
         if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
             const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
             const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
-
-            console.log("Calculated Row:", row);
 
             if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
                 const key = `${{col}}_${{row}}`;
@@ -885,30 +871,11 @@ if (matrixFigure) {{
 
                 if (q) {{
                     tooltip.innerHTML = `
-                        <div style="padding-bottom: 8px; margin-bottom: 8px; border-bottom: 2px solid #0066cc;">
-                            <div style="font-size: 14px;">
-                                <strong style="color: #0066cc;">${{q.abbrev}}:</strong>
-                                <span style="color: #333; margin-left: 8px;">${{q.dimension}}</span>
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 6px; margin-top: 8px;">
-                            <strong style="color: #333; font-size: 14px;">Question ${{q.question_num}}:</strong>
-                        </div>
-                        <div style="color: #333; line-height: 1.5; font-size: 14px;">${{q.question}}</div>
+                        <strong>${{q.abbrev}}:</strong> ${{q.dimension}}<br>
+                        <strong>Question ${{q.question_num}}:</strong> ${{q.question}}
                     `;
-
-                    let tooltipX = e.clientX + 15;
-                    let tooltipY = e.clientY + 15;
-
-                    if (tooltipX + 420 > window.parent.innerWidth) {{
-                        tooltipX = e.clientX - 420;
-                    }}
-                    if (tooltipY + 150 > window.parent.innerHeight) {{
-                        tooltipY = e.clientY - 150;
-                    }}
-
-                    tooltip.style.left = tooltipX + 'px';
-                    tooltip.style.top = tooltipY + 'px';
+                    tooltip.style.left = e.clientX + 15 + 'px';
+                    tooltip.style.top = e.clientY + 15 + 'px';
                     tooltip.style.display = 'block';
                 }}
             }}
@@ -920,8 +887,6 @@ if (matrixFigure) {{
     matrixFigure.addEventListener('mouseleave', function() {{
         tooltip.style.display = 'none';
     }});
-}} else {{
-    console.error("Matrix figure not found in the DOM.");
 }}
 </script>
 """, height=0)
