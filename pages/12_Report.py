@@ -851,7 +851,7 @@ st.components.v1.html(f"""
             const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
             
             // CORRECTED: Adjust vertical offset and scaling to align detection zone with visual matrix
-            const matrixBottom = 5.0;
+            const matrixBottom = 5.05;
             const verticalScale = 0.95;  // Scale to 95% of theoretical height
             const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy * verticalScale);
 
