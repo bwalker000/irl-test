@@ -850,10 +850,9 @@ st.components.v1.html(f"""
             const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
             const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
             
-            // CORRECTED: The visual matrix is shifted DOWN from theoretical position
-            // Subtract offset to shift detection zone down
-            const verticalOffset = 0.16;
-            const matrixBottom = matrixConfig.startY - verticalOffset;
+            // CORRECTED: Adjust vertical offset to align detection zone with visual matrix
+            // matrixConfig.startY is ~5.278, we want matrixBottom at 5.1
+            const matrixBottom = 5.1;
             const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
 
             if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
