@@ -849,9 +849,8 @@ st.components.v1.html(f"""
             
             const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
             const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
-            // TEST: Shift bottom boundary DOWN by half a cell height
-            const matrixBottom = matrixConfig.startY - (matrixConfig.dy * 0.5);
-            const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
+            const matrixBottom = matrixConfig.startY;
+            const matrixTop = matrixConfig.startY + (matrixConfig.numRows * matrixConfig.dy);  // Correct: numRows * dy gives exact matrix height
 
             if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
                 const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
