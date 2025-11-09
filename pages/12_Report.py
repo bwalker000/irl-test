@@ -808,6 +808,8 @@ question_json = json.dumps(question_lookup)
 
 # Create a floating tooltip that appears over the matrix
 st.components.v1.html(f"""
+                      
+// define styles for the floating tooltip
 <style>
 #floating-tooltip {{
     position: fixed;
