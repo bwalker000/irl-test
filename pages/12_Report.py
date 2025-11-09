@@ -26,8 +26,7 @@ air_data, _ = load_airtable(table_name, base_id, api_key, False)
 
 # Initialize session state if needed
 if "mode" not in st.session_state:
-    st.warning("Please start from the home page to set your user role.")
-    st.stop()
+    st.switch_page("streamlit_app.py")
 
 if air_data.empty:
     st.warning("No records found in the Airtable table.")
@@ -789,12 +788,12 @@ st.pyplot(fig)
 # Add floating tooltip overlay using HTML/JavaScript
 # Build a lookup dictionary for questions
 question_lookup = {}
-for dim in range(num_dims):
-    dimension_name = air_assessment.iloc[dim]["Dimension"]
-    dimension_abbrev = air_assessment.iloc[dim]["Abbreviation"]
+for dim in air_assessment.index:
+    dimension_name = air_assessment.loc[dim, "Dimension"]
+    dimension_abbrev = air_assessment.loc[dim, "Abbreviation"]
     for i in range(numQ):
         question_field = f"Q{i}"
-        question_text = air_assessment.iloc[dim][question_field] if question_field in air_assessment.columns else f"Question {i}"
+        question_text = air_assessment.loc[dim, question_field] if question_field in air_assessment.columns else f"Question {i}"
         question_lookup[f"{dim}_{i}"] = {
             "dimension": dimension_name,
             "abbrev": dimension_abbrev,
@@ -808,8 +807,6 @@ question_json = json.dumps(question_lookup)
 
 # Create a floating tooltip that appears over the matrix
 st.components.v1.html(f"""
-                      
-// define styles for the floating tooltip
 <style>
 #floating-tooltip {{
     position: fixed;
@@ -825,71 +822,87 @@ st.components.v1.html(f"""
     font-family: sans-serif;
 }}
 </style>
-                      
+
 <div id="floating-tooltip"></div>
 
 <script>
-const questions = {question_json};
-const matrixConfig = {{
-    startX: {matrix_start_x},
-    startY: {matrix_start_y},
-    dx: {matrix_dx},
-    dy: {matrix_dy},
-    numRows: {n_rows},
-    numCols: {n_cols},
-    questionNumWidth: {question_num_width},
-    pageWidth: {page_width},
-    pageHeight: {letter_height - 2 * margin}
-}};
+(function() {{
+    const questions = {question_json};
+    const matrixConfig = {{
+        startX: {matrix_start_x},
+        startY: {matrix_start_y},
+        dx: {matrix_dx},
+        dy: {matrix_dy},
+        numRows: {n_rows},
+        numCols: {n_cols},
+        questionNumWidth: {question_num_width},
+        pageWidth: {page_width},
+        pageHeight: {letter_height - 2 * margin}
+    }};
 
-const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
-const matrixFigure = figures[figures.length - 1];
+    // Wait for DOM to be ready
+    function initTooltip() {{
+        const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
+        const matrixFigure = figures[figures.length - 1];
 
-if (matrixFigure) {{
-    const tooltip = window.parent.document.getElementById('floating-tooltip');
-
-    matrixFigure.addEventListener('mousemove', function(e) {{
-        const rect = matrixFigure.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Convert pixel coordinates to figure coordinates
-        const figX = (x / rect.width) * matrixConfig.pageWidth;
-        const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight;
-
-        // Check if we're in the matrix area
-        const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
-        const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
-        const matrixBottom = matrixConfig.startY;
-        const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
-
-        if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
-            const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
-            const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
-
-            if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
-                const key = `${{col}}_${{row}}`;
-                const q = questions[key];
-
-                if (q) {{
-                    tooltip.innerHTML = `
-                        <strong>${{q.abbrev}}:</strong> ${{q.dimension}}<br>
-                        <strong>Question ${{q.question_num}}:</strong> ${{q.question}}
-                    `;
-                    tooltip.style.left = e.clientX + 15 + 'px';
-                    tooltip.style.top = e.clientY + 15 + 'px';
-                    tooltip.style.display = 'block';
-                }}
-            }}
-        }} else {{
-            tooltip.style.display = 'none';
+        if (!matrixFigure) {{
+            console.warn('Matrix figure not found, retrying...');
+            setTimeout(initTooltip, 100);
+            return;
         }}
-    }});
 
-    matrixFigure.addEventListener('mouseleave', function() {{
-        tooltip.style.display = 'none';
-    }});
-}}
+        const tooltip = window.parent.document.getElementById('floating-tooltip');
+        if (!tooltip) {{
+            console.warn('Tooltip element not found, retrying...');
+            setTimeout(initTooltip, 100);
+            return;
+        }}
+
+        matrixFigure.addEventListener('mousemove', function(e) {{
+            const rect = matrixFigure.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const figX = (x / rect.width) * matrixConfig.pageWidth;
+            const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight;
+
+            const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
+            const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
+            const matrixBottom = matrixConfig.startY;
+            const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
+
+            if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
+                const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
+                const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
+
+                if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
+                    const key = col + '_' + row;
+                    const q = questions[key];
+
+                    if (q) {{
+                        tooltip.innerHTML = '<strong>' + q.abbrev + ':</strong> ' + q.dimension + '<br><strong>Question ' + q.question_num + ':</strong> ' + q.question;
+                        tooltip.style.left = (e.clientX + 15) + 'px';
+                        tooltip.style.top = (e.clientY + 15) + 'px';
+                        tooltip.style.display = 'block';
+                    }}
+                }}
+            }} else {{
+                tooltip.style.display = 'none';
+            }}
+        }});
+
+        matrixFigure.addEventListener('mouseleave', function() {{
+            tooltip.style.display = 'none';
+        }});
+    }}
+
+    // Start initialization after a short delay to ensure DOM is ready
+    if (document.readyState === 'loading') {{
+        document.addEventListener('DOMContentLoaded', initTooltip);
+    }} else {{
+        setTimeout(initTooltip, 100);
+    }}
+}})();
 </script>
 """, height=0)
 
