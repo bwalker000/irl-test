@@ -850,10 +850,10 @@ st.components.v1.html(f"""
             const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
             const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
             
-            // CORRECTED: Adjust for actual rendered position
-            // The matrix rendering adds ~0.16 offset and appears to be scaled
-            const verticalOffset = 0.16;  // Empirical offset from console measurements
-            const matrixBottom = matrixConfig.startY + verticalOffset;
+            // CORRECTED: The visual matrix is shifted DOWN from theoretical position
+            // Subtract offset to shift detection zone down
+            const verticalOffset = 0.16;
+            const matrixBottom = matrixConfig.startY - verticalOffset;
             const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
 
             if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
