@@ -301,11 +301,6 @@ matrix_dy = dy  # Save dy before it gets overwritten
 matrix_start_x = start_x
 matrix_start_y = 9.3 - n_rows * dy
 
-# Debug: Display matrix configuration
-st.write("### Debug: Matrix Configuration")
-st.write(f"matrix_start_y: {matrix_start_y}")
-st.write(f"matrix_dy: {matrix_dy}")
-
 # Iterate over rows (questions 0 to numQ-1)
 for i in range(n_rows):
     y0 = (9.3-n_rows*dy) + i*dy    # ORIGINAL CODE - DO NOT CHANGE
@@ -785,6 +780,13 @@ ax.text(watermark_x, watermark_y, watermark_text,
 #------------------------------------------------------------------------------------------
 st.pyplot(fig)
 
+# Simple JavaScript test - this should show an alert if JavaScript is working
+st.components.v1.html("""
+<script>
+alert('JavaScript is working!');
+</script>
+""", height=0)
+
 # Add floating tooltip overlay using HTML/JavaScript
 # Build a lookup dictionary for questions
 question_lookup = {}
@@ -807,24 +809,6 @@ question_json = json.dumps(question_lookup)
 
 # Create a floating tooltip that appears over the matrix
 st.components.v1.html(f"""
-<style>
-#floating-tooltip {{
-    position: fixed;
-    display: none;
-    background: rgba(255, 255, 255, 0.98);
-    border: 2px solid #333;
-    border-radius: 8px;
-    padding: 12px;
-    max-width: 400px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    z-index: 10000;
-    pointer-events: none;
-    font-family: sans-serif;
-}}
-</style>
-
-<div id="floating-tooltip"></div>
-
 <script>
 (function() {{
     const questions = {question_json};
@@ -840,20 +824,20 @@ st.components.v1.html(f"""
         pageHeight: {letter_height - 2 * margin}
     }};
 
-    // Wait for DOM to be ready
     function initTooltip() {{
+        // Find or create the tooltip in the parent document
+        let tooltip = window.parent.document.getElementById('floating-tooltip');
+        if (!tooltip) {{
+            tooltip = window.parent.document.createElement('div');
+            tooltip.id = 'floating-tooltip';
+            tooltip.style.cssText = 'position: fixed; display: none; background: rgba(255, 255, 255, 0.98); border: 2px solid #333; border-radius: 8px; padding: 12px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10000; pointer-events: none; font-family: sans-serif;';
+            window.parent.document.body.appendChild(tooltip);
+        }}
+
         const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
         const matrixFigure = figures[figures.length - 1];
 
         if (!matrixFigure) {{
-            console.warn('Matrix figure not found, retrying...');
-            setTimeout(initTooltip, 100);
-            return;
-        }}
-
-        const tooltip = window.parent.document.getElementById('floating-tooltip');
-        if (!tooltip) {{
-            console.warn('Tooltip element not found, retrying...');
             setTimeout(initTooltip, 100);
             return;
         }}
@@ -896,12 +880,7 @@ st.components.v1.html(f"""
         }});
     }}
 
-    // Start initialization after a short delay to ensure DOM is ready
-    if (document.readyState === 'loading') {{
-        document.addEventListener('DOMContentLoaded', initTooltip);
-    }} else {{
-        setTimeout(initTooltip, 100);
-    }}
+    setTimeout(initTooltip, 500);
 }})();
 </script>
 """, height=0)
