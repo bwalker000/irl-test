@@ -850,14 +850,14 @@ st.components.v1.html(f"""
             const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
             const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
             
-            // CORRECTED: Adjust vertical offset to align detection zone with visual matrix
-            // matrixConfig.startY is ~5.278, we want matrixBottom at 5.1
-            const matrixBottom = 5.1;
-            const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
+            // CORRECTED: Adjust vertical offset and scaling to align detection zone with visual matrix
+            const matrixBottom = 5.0;
+            const verticalScale = 0.95;  // Scale to 95% of theoretical height
+            const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy * verticalScale);
 
             if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
                 const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
-                const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
+                const row = Math.floor((figY - matrixBottom) / (matrixConfig.dy * verticalScale));
                 
                 // DEBUG: Log the calculated position
                 console.log('figY:', figY.toFixed(3), 'row:', row, 'matrixBottom:', matrixBottom.toFixed(3), 'matrixTop:', matrixTop.toFixed(3));
