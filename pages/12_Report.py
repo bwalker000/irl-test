@@ -823,7 +823,7 @@ st.components.v1.html(f"""
     font-family: sans-serif;
 }}
 </style>
-
+                      
 <div id="floating-tooltip"></div>
 
 <script>
