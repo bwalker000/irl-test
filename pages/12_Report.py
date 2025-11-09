@@ -840,33 +840,50 @@ const matrixConfig = {{
     pageHeight: {letter_height - 2 * margin}
 }};
 
+console.log("Matrix Config:", matrixConfig);
+
 const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
 const matrixFigure = figures[figures.length - 1];
 
 if (matrixFigure) {{
+    const tooltip = window.parent.document.getElementById('floating-tooltip');
+    if (!tooltip) {{
+        console.error("Tooltip element not found in the DOM.");
+        return;
+    }}
+
     matrixFigure.addEventListener('mousemove', function(e) {{
         const rect = matrixFigure.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
+        // Convert pixel coordinates to figure coordinates
         const figX = (x / rect.width) * matrixConfig.pageWidth;
-        const figY = (1 - y / rect.height) * matrixConfig.pageHeight;
+        const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight; // Restored original calculation
 
+        console.log("Mouse Y:", y);
+        console.log("Figure Y:", figY);
+
+        // Check if we're in the matrix area
         const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
         const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
         const matrixBottom = matrixConfig.startY;
         const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
 
+        console.log("Matrix Bottom (startY):", matrixBottom);
+        console.log("Matrix Top:", matrixTop);
+
         if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
             const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
             const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
+
+            console.log("Calculated Row:", row);
 
             if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
                 const key = `${{col}}_${{row}}`;
                 const q = questions[key];
 
                 if (q) {{
-                    const tooltip = window.parent.document.getElementById('floating-tooltip');
                     tooltip.innerHTML = `
                         <div style="padding-bottom: 8px; margin-bottom: 8px; border-bottom: 2px solid #0066cc;">
                             <div style="font-size: 14px;">
@@ -895,8 +912,16 @@ if (matrixFigure) {{
                     tooltip.style.display = 'block';
                 }}
             }}
+        }} else {{
+            tooltip.style.display = 'none';
         }}
     }});
+
+    matrixFigure.addEventListener('mouseleave', function() {{
+        tooltip.style.display = 'none';
+    }});
+}} else {{
+    console.error("Matrix figure not found in the DOM.");
 }}
 </script>
 """, height=0)
