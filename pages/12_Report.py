@@ -815,17 +815,21 @@ st.components.v1.html(f"""
         numCols: {n_cols},
         questionNumWidth: {question_num_width},
         pageWidth: {page_width},
-        pageHeight: {letter_height - 2 * margin}  // VERTICAL SCALE: This is the full page height (10 inches)
+        pageHeight: {letter_height - 2 * margin}
     }};
 
     function initTooltip() {{
-        let tooltip = window.parent.document.getElementById('floating-tooltip');
-        if (!tooltip) {{
-            tooltip = window.parent.document.createElement('div');
-            tooltip.id = 'floating-tooltip';
-            tooltip.style.cssText = 'position: fixed; display: none; background: rgba(255, 255, 255, 0.98); border: 2px solid #333; border-radius: 8px; padding: 12px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10000; pointer-events: none; font-family: sans-serif;';
-            window.parent.document.body.appendChild(tooltip);
+        // FORCE REMOVE any existing tooltip first
+        let oldTooltip = window.parent.document.getElementById('floating-tooltip');
+        if (oldTooltip) {{
+            oldTooltip.remove();
         }}
+        
+        // Create fresh tooltip
+        let tooltip = window.parent.document.createElement('div');
+        tooltip.id = 'floating-tooltip';
+        tooltip.style.cssText = 'position: fixed; display: none; background: rgba(255, 255, 255, 0.98); border: 2px solid #333; border-radius: 8px; padding: 12px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10000; pointer-events: none; font-family: sans-serif;';
+        window.parent.document.body.appendChild(tooltip);
 
         const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
         const matrixFigure = figures[figures.length - 1];
@@ -846,11 +850,11 @@ st.components.v1.html(f"""
             const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
             const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
             const matrixBottom = matrixConfig.startY;
-            const matrixTop = matrixBottom + ((matrixConfig.numRows + 1) * matrixConfig.dy);  // Add one extra dy for top row height
+            const matrixTop = matrixBottom + (matrixConfig.numRows * matrixConfig.dy);
 
             if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
                 const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
-                const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);  // Remove the 0.5 offset
+                const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
 
                 if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
                     const key = col + '_' + row;
