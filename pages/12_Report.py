@@ -780,22 +780,16 @@ ax.text(watermark_x, watermark_y, watermark_text,
 #------------------------------------------------------------------------------------------
 st.pyplot(fig)
 
-# Simple JavaScript test - this should show an alert if JavaScript is working
-st.components.v1.html("""
-<script>
-alert('JavaScript is working!');
-</script>
-""", height=0)
-
 # Add floating tooltip overlay using HTML/JavaScript
 # Build a lookup dictionary for questions
 question_lookup = {}
-for dim in air_assessment.index:
-    dimension_name = air_assessment.loc[dim, "Dimension"]
-    dimension_abbrev = air_assessment.loc[dim, "Abbreviation"]
+for dim in range(num_dims):
+    dimension_name = air_assessment.iloc[dim]["Dimension"]
+    dimension_abbrev = air_assessment.iloc[dim]["Abbreviation"]
     for i in range(numQ):
         question_field = f"Q{i}"
-        question_text = air_assessment.loc[dim, question_field] if question_field in air_assessment.columns else f"Question {i}"
+        question_text = air_assessment.iloc[dim][question_field] if question_field in air_assessment.columns else f"Question {i}"
+        # KEY FIX: Use dim_row format where dim is column, row is question number
         question_lookup[f"{dim}_{i}"] = {
             "dimension": dimension_name,
             "abbrev": dimension_abbrev,
@@ -821,11 +815,10 @@ st.components.v1.html(f"""
         numCols: {n_cols},
         questionNumWidth: {question_num_width},
         pageWidth: {page_width},
-        pageHeight: {letter_height - 2 * margin}
+        pageHeight: {letter_height - 2 * margin}  // VERTICAL SCALE: This is the full page height (10 inches)
     }};
 
     function initTooltip() {{
-        // Find or create the tooltip in the parent document
         let tooltip = window.parent.document.getElementById('floating-tooltip');
         if (!tooltip) {{
             tooltip = window.parent.document.createElement('div');
@@ -849,7 +842,7 @@ st.components.v1.html(f"""
 
             const figX = (x / rect.width) * matrixConfig.pageWidth;
             const figY = matrixConfig.pageHeight - (y / rect.height) * matrixConfig.pageHeight;
-
+            
             const matrixLeft = matrixConfig.startX + matrixConfig.questionNumWidth;
             const matrixRight = matrixLeft + (matrixConfig.numCols * matrixConfig.dx);
             const matrixBottom = matrixConfig.startY;
@@ -857,7 +850,8 @@ st.components.v1.html(f"""
 
             if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
                 const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
-                const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
+                // Add 0.5 offset to measure from cell center instead of bottom edge
+                const row = Math.floor((figY - matrixBottom + matrixConfig.dy * 0.5) / matrixConfig.dy);
 
                 if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
                     const key = col + '_' + row;
