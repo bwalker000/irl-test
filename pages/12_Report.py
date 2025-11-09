@@ -855,6 +855,9 @@ st.components.v1.html(f"""
             if (figX >= matrixLeft && figX < matrixRight && figY >= matrixBottom && figY < matrixTop) {{
                 const col = Math.floor((figX - matrixLeft) / matrixConfig.dx);
                 const row = Math.floor((figY - matrixBottom) / matrixConfig.dy);
+                
+                // DEBUG: Log the calculated position
+                console.log('figY:', figY.toFixed(3), 'row:', row, 'matrixBottom:', matrixBottom.toFixed(3), 'matrixTop:', matrixTop.toFixed(3));
 
                 if (col >= 0 && col < matrixConfig.numCols && row >= 0 && row < matrixConfig.numRows) {{
                     const key = col + '_' + row;
