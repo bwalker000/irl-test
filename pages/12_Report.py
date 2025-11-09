@@ -96,7 +96,7 @@ if not selected_assessment:
 col1, col2, col3 = st.columns([1, 1, 1])
 
 with col1:
-    generate_report = st.button("Generate Report", disabled=(not selected_assessment))
+    generate_report = st.button("Generate Report", disabled=(not selected_assessment), type="secondary")
     if generate_report:
         reset_session_timer()  # User is active
 
