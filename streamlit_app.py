@@ -105,60 +105,46 @@ if not user_logged_in:
         st.header("End User License Agreement")
         st.warning("You must accept the End User License Agreement to proceed with login.")
         
-        # Display EULA text in an expandable section
-        with st.expander("📋 Please read and accept the End User License Agreement", expanded=True):
-            st.markdown("""
-            **IMPACT READINESS LEVEL™ END USER LICENSE AGREEMENT**
-            
-            **IMPORTANT - READ CAREFULLY:** This End User License Agreement ("EULA") is a legal agreement between you (either an individual or a single entity) and Impact Readiness Ltd. for the Impact Readiness Level™ software application and associated documentation.
-            
-            **1. GRANT OF LICENSE**
-            Subject to the terms of this EULA, you are granted a limited, non-exclusive, non-transferable license to use the Impact Readiness Level™ software for evaluation and assessment purposes only.
-            
-            **2. RESTRICTIONS**
-            - You may NOT duplicate, distribute, or share this software or any outputs
-            - You may NOT reverse engineer, decompile, or disassemble the software
-            - You may NOT modify, adapt, or create derivative works
-            - All assessment data and reports are confidential and proprietary
-            - You may NOT duplicate, reuse, or paraphrase any survey instruments, questions, or assessment methodologies
-            
-            **3. CONFIDENTIALITY**
-            All information, data, methodologies, and outputs from this software are CONFIDENTIAL and proprietary to Impact Readiness Ltd. You agree to maintain strict confidentiality and not disclose any information to third parties.
-            
-            **4. INTELLECTUAL PROPERTY**
-            Impact Readiness Level™ is a trademark of Impact Readiness Ltd. All rights, title, and interest in the software, including all survey instruments, questions, assessment methodologies, and evaluation frameworks, remain with Impact Readiness Ltd. All elements of this software are copyrighted material and may not be duplicated, reused, or paraphrased without express written permission.
-            
-            **5. NO WARRANTY**
-            This software is provided "AS IS" without warranty of any kind, either express or implied.
-            
-            **6. LIMITATION OF LIABILITY**
-            Impact Readiness Ltd. shall not be liable for any damages arising from the use of this software.
-            
-            **7. TERMINATION**
-            This license is effective until terminated. Your rights under this license will terminate automatically without notice if you fail to comply with any term of this EULA.
-            
-            By clicking "I Accept" below, you acknowledge that you have read this EULA, understand it, and agree to be bound by its terms and conditions.
-            """)
+        # Load EULA from external file
+        eula_file_found = True
+        try:
+            with open("EULA.md", "r") as f:
+                eula_text = f.read()
+        except FileNotFoundError:
+            st.error("❌ **EULA file not found. Unable to proceed with login.**")
+            st.error("Please contact support at [support email]. The End User License Agreement file is missing from the system.")
+            eula_text = "**Error:** EULA document could not be loaded."
+            eula_file_found = False
         
-        # EULA acceptance checkbox and buttons
-        col1, col2, col3 = st.columns([2, 1, 1])
-        with col1:
-            eula_checkbox = st.checkbox("I have read and agree to the End User License Agreement")
-        with col2:
-            if st.button("I Accept", disabled=not eula_checkbox, type="primary"):
-                st.session_state.eula_accepted = True
-                try:
-                    st.login("auth0")
-                except Exception as e:
-                    st.error(f"Login failed: {str(e)}")
-                    st.info("Please check your authentication configuration.")
-        with col3:
+        # Display EULA text in an expandable section (only if file was found)
+        if eula_file_found:
+            with st.expander("📋 Please read and accept the End User License Agreement", expanded=True):
+                st.markdown(eula_text)
+        
+            # EULA acceptance checkbox and buttons
+            col1, col2, col3 = st.columns([2, 1, 1])
+            with col1:
+                eula_checkbox = st.checkbox("I have read and agree to the End User License Agreement")
+            with col2:
+                if st.button("I Accept", disabled=not eula_checkbox, type="primary"):
+                    st.session_state.eula_accepted = True
+                    try:
+                        st.login("auth0")
+                    except Exception as e:
+                        st.error(f"Login failed: {str(e)}")
+                        st.info("Please check your authentication configuration.")
+            with col3:
+                if st.button("Cancel"):
+                    st.session_state.login_attempted = False
+                    st.rerun()
+            
+            if not eula_checkbox:
+                st.info("Please read and check the agreement above to proceed with login.")
+        else:
+            # EULA file not found - only show Cancel button
             if st.button("Cancel"):
                 st.session_state.login_attempted = False
                 st.rerun()
-        
-        if not eula_checkbox:
-            st.info("Please read and check the agreement above to proceed with login.")
             
     else:
         # Normal login screen (no EULA attempted yet)

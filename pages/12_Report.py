@@ -828,7 +828,7 @@ st.components.v1.html(f"""
         // Create fresh tooltip
         let tooltip = window.parent.document.createElement('div');
         tooltip.id = 'floating-tooltip';
-        tooltip.style.cssText = 'position: fixed; display: none; background: rgba(255, 255, 255, 0.98); border: 2px solid #333; border-radius: 8px; padding: 12px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10000; pointer-events: none; font-family: sans-serif;';
+        tooltip.style.cssText = 'position: fixed; display: none; background: rgba(255, 255, 255, 0.98); border: 2px solid #333; border-radius: 8px; padding: 12px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10000; pointer-events: none; font-family: sans-serif; font-size: 14px;';
         window.parent.document.body.appendChild(tooltip);
 
         const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
