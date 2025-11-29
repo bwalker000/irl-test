@@ -8,6 +8,13 @@ check_session_timeout()
 
 st.title("Create a New Assessment")
 
+# Add back button at the top
+col1, col2, col3 = st.columns([1, 3, 1])
+with col1:
+    if st.button("← Back", key="back_top"):
+        reset_session_timer()
+        st.switch_page("streamlit_app.py")
+
 # Clear any existing assessment/review data from previous sessions
 # This ensures a clean slate for the new assessment
 if 'dim' in st.session_state:
@@ -125,7 +132,7 @@ if not existing_drafts.empty:
     st.warning("🔄 **Found an in-progress assessment!**")
     st.write("You have a saved draft for this venture. Would you like to continue where you left off?")
     
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("Resume Draft", type="primary"):
             # Load the draft
@@ -141,6 +148,10 @@ if not existing_drafts.empty:
             except:
                 pass
             st.rerun()
+    with col3:
+        if st.button("Cancel"):
+            reset_session_timer()
+            st.switch_page("streamlit_app.py")
     st.stop()
 
 # Check for completed assessments for this venture/project
@@ -192,12 +203,13 @@ if not completed_assessments.empty:
         st.success(f"✓ Copied data from previous assessment. Starting new assessment with this data as a baseline.")
         st.info("Click 'Continue to Assessment' to begin your new assessment.")
 
-if st.button("Continue to Assessment"):
-    reset_session_timer()  # User is active
-    
-    # project_id is already set above, so we can go directly to the assessment page
-    st.switch_page("pages/12_Assess_&_Review.py")
-
-if st.button("Home"):
-    reset_session_timer()  # User is active
-    st.switch_page("streamlit_app.py")
+# Navigation buttons at bottom
+col1, col2, col3 = st.columns([1, 2, 1])
+with col1:
+    if st.button("← Back to Home", key="back_bottom"):
+        reset_session_timer()
+        st.switch_page("streamlit_app.py")
+with col3:
+    if st.button("Continue to Assessment →", type="primary"):
+        reset_session_timer()
+        st.switch_page("pages/12_Assess_&_Review.py")
