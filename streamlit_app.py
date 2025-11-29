@@ -48,49 +48,19 @@ if user_logged_in:
                 except:
                     st.rerun()
         else:
-            # Show interface for registered users
+            # Show interface for registered users - redirect to home pages
             if st.session_state.mode == "ASSESSOR":
                 st.write("User Mode: ASSESSOR")
                 st.session_state.assessor_email = user_email
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    if st.button("Assess"):
-                        st.switch_page("pages/1_New_Assessment.py")
-                with col2:
-                    if st.button("Report"):
-                        st.switch_page("pages/12_Report.py")
-                with col3:
-                    if st.button("Log out"):
-                        try:
-                            st.logout()
-                        except:
-                            # Clear session and reload
-                            for key in list(st.session_state.keys()):
-                                del st.session_state[key]
-                            st.rerun()
+                st.info("Redirecting to Assessor Home...")
+                st.switch_page("pages/1_Assessor_Home.py")
 
             elif st.session_state.mode == "REVIEWER":
                 st.write("User Mode: REVIEWER")
                 st.session_state.reviewer_email = user_email
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    if st.button("Review"):
-                        st.switch_page("pages/2_Initiate_Review.py")
-                with col2:
-                    if st.button("Report"):
-                        st.switch_page("pages/12_Report.py")
-                with col3:
-                    if st.button("Log out"):
-                        # Clear EULA acceptance and login attempt on logout
-                        st.session_state.eula_accepted = False
-                        st.session_state.login_attempted = False
-                        try:
-                            st.logout()
-                        except:
-                            # Clear session and reload
-                            for key in list(st.session_state.keys()):
-                                del st.session_state[key]
-                            st.rerun()
+                st.info("Redirecting to Reviewer Home...")
+                st.switch_page("pages/2_Reviewer_Home.py")
+
     except Exception as e:
         st.error(f"Error accessing user information: {str(e)}")
         st.info("Authentication may not be properly configured. Please check your Streamlit configuration.")
@@ -161,5 +131,5 @@ if not user_logged_in:
                         st.error(f"Login failed: {str(e)}")
                         st.info("Please check your authentication configuration.")
         with col2:
-            if st.button("Demo Request"):
+            st.empty()            if st.button("Demo Request"):
                 st.switch_page("pages/0_Demo_Request.py")
