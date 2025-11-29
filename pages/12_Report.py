@@ -107,7 +107,13 @@ with col2:
 with col3:
     if st.button("Return to Home", key="main_home_button"):
         reset_session_timer()  # User is active
-        st.switch_page("streamlit_app.py")
+        # Navigate based on user mode
+        if st.session_state.get("mode") == "ASSESSOR":
+            st.switch_page("pages/1_Assessor_Home.py")
+        elif st.session_state.get("mode") == "REVIEWER":
+            st.switch_page("pages/2_Reviewer_Home.py")
+        else:
+            st.switch_page("streamlit_app.py")
 
 if not selected_assessment or not generate_report:
     st.stop()
