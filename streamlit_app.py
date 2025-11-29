@@ -39,14 +39,18 @@ if user_logged_in:
         if not is_registered:
             st.error("Your email is not registered as an ASSESSOR or REVIEWER.")
             if st.button("Log out"):
-                # Clear session state
-                for key in list(st.session_state.keys()):
-                    del st.session_state[key]
-                # Log out of Auth0
+                # Call st.logout() FIRST
                 try:
                     st.logout()
                 except:
-                    st.rerun()
+                    pass
+                
+                # Clear session state
+                for key in list(st.session_state.keys()):
+                    del st.session_state[key]
+                
+                # Force rerun to show login screen
+                st.rerun()
         else:
             # Automatically redirect to appropriate home page based on role
             if st.session_state.mode == "ASSESSOR":
