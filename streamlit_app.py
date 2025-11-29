@@ -48,17 +48,12 @@ if user_logged_in:
                 except:
                     st.rerun()
         else:
-            # Show interface for registered users - redirect to home pages
+            # Automatically redirect to appropriate home page based on role
             if st.session_state.mode == "ASSESSOR":
-                st.write("User Mode: ASSESSOR")
                 st.session_state.assessor_email = user_email
-                st.info("Redirecting to Assessor Home...")
                 st.switch_page("pages/1_Assessor_Home.py")
-
             elif st.session_state.mode == "REVIEWER":
-                st.write("User Mode: REVIEWER")
                 st.session_state.reviewer_email = user_email
-                st.info("Redirecting to Reviewer Home...")
                 st.switch_page("pages/2_Reviewer_Home.py")
 
     except Exception as e:

@@ -36,7 +36,7 @@ st.session_state.assessor_email = st.selectbox('Select an Assessor:', options = 
 # ---------------------------------------------------------------------------------
 # Navigate
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 with col1:
     if st.button("Assess"):
         reset_session_timer()
@@ -49,7 +49,7 @@ with col3:
     if st.button("Report"):
         reset_session_timer()
         st.switch_page("pages/12_Report.py")
-
-if st.button("Home"):
-    reset_session_timer()
-    st.switch_page("streamlit_app.py")
+with col4:
+    if st.button("Home"):
+        reset_session_timer()
+        st.switch_page("streamlit_app.py")
