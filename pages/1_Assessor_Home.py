@@ -40,21 +40,27 @@ with col3:
         st.switch_page("pages/12_Report.py")
 with col4:
     if st.button("Log out"):
-        # IMPORTANT: Call st.logout() FIRST before clearing session state
+        # Store flags to clear AFTER logout completes
+        logout_flags = {
+            'eula_accepted': False,
+            'login_attempted': False
+        }
+        
+        # Call logout and handle its completion
         try:
-            st.logout()  # This terminates the Auth0 session
+            st.logout()
+            # If we reach here, logout was called - now clear state
+            for key, value in logout_flags.items():
+                st.session_state[key] = value
+            
+            # Clear all other session state
+            keys_to_delete = [k for k in st.session_state.keys() if k not in logout_flags.keys()]
+            for key in keys_to_delete:
+                del st.session_state[key]
+                
         except Exception as e:
-            st.write(f"Logout error: {e}")
+            # Logout failed - force clear everything anyway
+            st.session_state.clear()
         
-        # Then clear session state flags
-        if 'eula_accepted' in st.session_state:
-            st.session_state.eula_accepted = False
-        if 'login_attempted' in st.session_state:
-            st.session_state.login_attempted = False
-        
-        # Finally clear all session state
-        for key in list(st.session_state.keys()):
-            del st.session_state[key]
-        
-        # Force navigation to main page
-        st.switch_page("streamlit_app.py")
+        # Use stop() to prevent further execution, then let Streamlit handle the redirect
+        st.stop()
