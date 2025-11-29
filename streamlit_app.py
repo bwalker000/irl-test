@@ -131,5 +131,5 @@ if not user_logged_in:
                         st.error(f"Login failed: {str(e)}")
                         st.info("Please check your authentication configuration.")
         with col2:
-            st.empty()            if st.button("Demo Request"):
+            if st.button("Demo Request"):
                 st.switch_page("pages/0_Demo_Request.py")
