@@ -12,26 +12,15 @@ if 'mode' not in st.session_state:
     st.session_state.mode = 'ASSESSOR'
 
 # ---------------------------------------------------------------------------------
-# initiate the pyairtable API
-api_key = st.secrets["general"]["airtable_api_key"]
-api = Api(api_key)
+# Verify assessor session state is set
+if 'assessor_email' not in st.session_state or 'assessor_id' not in st.session_state:
+    st.error("Assessor information not found. Please log in again.")
+    if st.button("Return to Login"):
+        st.switch_page("streamlit_app.py")
+    st.stop()
 
-# ---------------------------------------------------------------------------------
-# Load emails of assessors
-base_id = st.secrets["general"]["airtable_base_id"]
-table_name = st.secrets["general"]["airtable_table_assessors"]
-
-air_assessors = api.table(base_id, table_name)
-air_assessors = air_assessors.all()
-
-df_assessors = pd.json_normalize(air_assessors)
-assessor_emails = df_assessors['fields.Email'].tolist()
-
-# ---------------------------------------------------------------------------------
-# Select the assessor
-
-### *** In the future this will happen automatically at login.
-st.session_state.assessor_email = st.selectbox('Select an Assessor:', options = assessor_emails)
+# Display current assessor
+st.info(f"**Logged in as:** {st.session_state.assessor_email}")
 
 # ---------------------------------------------------------------------------------
 # Navigate
@@ -50,6 +39,14 @@ with col3:
         reset_session_timer()
         st.switch_page("pages/12_Report.py")
 with col4:
-    if st.button("Home"):
-        reset_session_timer()
-        st.switch_page("streamlit_app.py")
+    if st.button("Log out"):
+        # Clear EULA acceptance and login attempt on logout
+        st.session_state.eula_accepted = False
+        st.session_state.login_attempted = False
+        # Clear all session state
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        try:
+            st.logout()
+        except:
+            st.rerun()
