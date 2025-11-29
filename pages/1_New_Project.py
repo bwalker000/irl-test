@@ -131,7 +131,6 @@ with col3:
             created_record = projects_table.create(new_project)
             
             st.success(f"✅ Project '{project_name.strip()}' created successfully!")
-            st.balloons()
             
             # Add a button to return to assessor home
             if st.button("Return to Assessor Home"):
