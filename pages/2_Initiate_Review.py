@@ -341,6 +341,17 @@ elif st.session_state.review_mode == 1:
 
 #---------------------------------------------------------------------------------
 
+# Check for existing draft or completed assessment for this venture/project combination
+# Extract single ID from list if needed
+venture_id_to_check = st.session_state.venture_id[0] if isinstance(st.session_state.venture_id, (list, tuple)) else st.session_state.venture_id
+project_id_to_check = st.session_state.project_id[0] if isinstance(st.session_state.project_id, (list, tuple)) else st.session_state.project_id
+
+existing_draft_or_assessment = air_data_check[
+    (air_data_check['Venture'].apply(lambda x: (x[0] if isinstance(x, (list, tuple)) else x) == venture_id_to_check)) &
+    (air_data_check['Project'].apply(lambda x: (x[0] if isinstance(x, (list, tuple)) else x) == project_id_to_check))
+]
+
+
 # Determine if "Continue to Review" should be enabled
 can_continue = False
 if st.session_state.review_mode == 0:
