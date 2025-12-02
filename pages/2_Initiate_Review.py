@@ -175,7 +175,7 @@ elif st.session_state.review_mode == 0:
         if not completed_reviews.empty:
             st.info("📋 **Previous reviews available for reference.**")
             
-            with st.expander("View previous reviews (for reference)"):
+            with st.expander("View previous reviews (for reference)":
                 for idx, row in completed_reviews.iterrows():
                     review_date = row.get('Review_date', 'Unknown')
                     st.write(f"• {row['Name']} (Reviewed: {review_date})")
@@ -308,7 +308,11 @@ elif st.session_state.review_mode == 1:
             (air_data_check['Project'].apply(lambda x: (x[0] if isinstance(x, (list, tuple)) else x) == project_id_to_check)) &
             (air_data_check['Review_date'].notna()) &
             (air_data_check['Review_date'] != "") &
-            ((air_data_check['ASSESSOR'].isna()) | (air_data_check['ASSESSOR'].apply(lambda x: len(x) == 0 if isinstance(x, (list, tuple)) else False)))
+            (air_data_check['Review_date'] != pd.NaT) &
+            (
+                (air_data_check['ASSESSOR'].isna()) |  # No assessor (independent review)
+                (air_data_check['ASSESSOR'].apply(lambda x: len(x) == 0 if isinstance(x, (list, tuple)) and x is not None else pd.isna(x)))  # Empty assessor list
+            )
         ]
         
         if not completed_independent_reviews.empty:
@@ -317,9 +321,10 @@ elif st.session_state.review_mode == 1:
             with st.expander("View previous independent reviews"):
                 for idx, row in completed_independent_reviews.iterrows():
                     review_date = row.get('Review_date', 'Unknown')
+                    reviewer_name = row.get('Name', 'Unknown Review')
                     col1, col2 = st.columns([3, 1])
                     with col1:
-                        st.write(f"• {row['Name']} (Reviewed: {review_date})")
+                        st.write(f"• {reviewer_name} (Reviewed: {review_date})")
                     with col2:
                         if st.button("Copy Data", key=f"copy_indep_{idx}"):
                             st.session_state.copy_from_independent_id = row['id']
