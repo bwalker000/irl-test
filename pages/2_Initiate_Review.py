@@ -293,9 +293,12 @@ elif st.session_state.review_mode == 1:
                 st.session_state.draft_record_id = existing_draft.iloc[0]['id']
         
         # Check for previous independent reviews
+        venture_id_to_check = st.session_state.venture_id[0] if isinstance(st.session_state.venture_id, (list, tuple)) else st.session_state.venture_id
+        project_id_to_check = st.session_state.project_id[0] if isinstance(st.session_state.project_id, (list, tuple)) else st.session_state.project_id
+        
         completed_independent_reviews = air_data_check[
-            (air_data_check['Venture'] == st.session_state.venture_id) &
-            (air_data_check['Project'] == st.session_state.project_id) &
+            (air_data_check['Venture'].apply(lambda x: (x[0] if isinstance(x, (list, tuple)) else x) == venture_id_to_check)) &
+            (air_data_check['Project'].apply(lambda x: (x[0] if isinstance(x, (list, tuple)) else x) == project_id_to_check)) &
             (air_data_check['Review_date'].notna()) &
             (air_data_check['Review_date'] != "") &
             ((air_data_check['ASSESSOR'].isna()) | (air_data_check['ASSESSOR'].apply(lambda x: len(x) == 0 if isinstance(x, (list, tuple)) else False)))
@@ -344,6 +347,11 @@ elif st.session_state.review_mode == 1:
 # Check for existing draft or completed assessment for this venture/project combination
 # Only check if venture_id and project_id are available in session state
 if hasattr(st.session_state, 'venture_id') and hasattr(st.session_state, 'project_id'):
+    # Load air_data_check if not already loaded
+    if 'air_data_check' not in locals():
+        table_name = st.secrets["general"]["airtable_table_data"]
+        air_data_check, _ = load_airtable(table_name, base_id, api_key, False)
+    
     # Extract single ID from list if needed
     venture_id_to_check = st.session_state.venture_id[0] if isinstance(st.session_state.venture_id, (list, tuple)) else st.session_state.venture_id
     project_id_to_check = st.session_state.project_id[0] if isinstance(st.session_state.project_id, (list, tuple)) else st.session_state.project_id
