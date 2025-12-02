@@ -175,7 +175,7 @@ elif st.session_state.review_mode == 0:
         if not completed_reviews.empty:
             st.info("📋 **Previous reviews available for reference.**")
             
-            with st.expander("View previous reviews (for reference)":
+            with st.expander("View previous reviews (for reference)"):
                 for idx, row in completed_reviews.iterrows():
                     review_date = row.get('Review_date', 'Unknown')
                     st.write(f"• {row['Name']} (Reviewed: {review_date})")
