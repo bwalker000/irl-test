@@ -77,12 +77,19 @@ elif st.session_state.review_mode == 0:
     table_name = st.secrets["general"]["airtable_table_data"]
     air_data, debug_details = load_airtable(table_name, base_id, api_key, debug)
 
-    # Filter records by support organization and blank review dates
+    # Filter records by support organization, completed assessments only, and blank review dates
     filtered_records = air_data[air_data["Support Organization"] == st.session_state.support_id]
+    
+    # Only show assessments that are completed (have an Assess_date) and not yet reviewed
     filtered_records = filtered_records[
-        (filtered_records["Review_date"].isnull()) |
-        (filtered_records["Review_date"] == "") |
-        (filtered_records["Review_date"] == pd.NaT)
+        (filtered_records["Assess_date"].notna()) &  # Must have completed assessment date
+        (filtered_records["Assess_date"] != "") &    # Assessment date must not be empty
+        (filtered_records["Assess_date"] != pd.NaT) &  # Assessment date must be valid
+        (
+            (filtered_records["Review_date"].isnull()) |  # No review date yet
+            (filtered_records["Review_date"] == "") |     # Or empty review date
+            (filtered_records["Review_date"] == pd.NaT)   # Or invalid review date
+        )
     ]
 
     # Proceed with selection logic
