@@ -71,21 +71,13 @@ with col3:
         st.switch_page("pages/12_Report.py")
 with col4:
     if st.button("Log out"):
-        # Clear session state flags first
-        if 'eula_accepted' in st.session_state:
-            st.session_state.eula_accepted = False
-        if 'login_attempted' in st.session_state:
-            st.session_state.login_attempted = False
-        
+        # Clear EULA acceptance and login attempt on logout
+        st.session_state.eula_accepted = False
+        st.session_state.login_attempted = False
         # Clear all session state
         for key in list(st.session_state.keys()):
             del st.session_state[key]
-        
-        # Redirect to Auth0 logout with proper parameters
-        import urllib.parse
-        client_id = st.secrets['auth']['auth0']['client_id']
-        return_url = urllib.parse.quote("https://www.impact-readiness.com", safe='')
-        auth0_logout_url = f"https://impact-readiness.ca.auth0.com/v2/logout?client_id={client_id}&returnTo={return_url}"
-        st.markdown(f'<meta http-equiv="refresh" content="0;url={auth0_logout_url}">', unsafe_allow_html=True)
-        st.stop()
-
+        try:
+            st.logout()
+        except:
+            st.rerun()
