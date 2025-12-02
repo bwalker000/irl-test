@@ -325,20 +325,29 @@ elif st.session_state.review_mode == 1:
             )
         ]
         
-        # Additional filter: Remove any records where Name is literally 'nan' or similar garbage
+        # Aggressive filter: Remove records with nan/null values in critical fields
         completed_independent_reviews = completed_independent_reviews[
-            ~completed_independent_reviews['Name'].isin(['nan', 'NaN', 'null', 'None'])
+            (~completed_independent_reviews['Name'].isin(['nan', 'NaN', 'null', 'None'])) &
+            (~completed_independent_reviews['Name'].astype(str).str.lower().isin(['nan', 'none', 'null'])) &
+            (completed_independent_reviews['Name'].astype(str) != 'nan') &
+            (completed_independent_reviews['Review_date'].astype(str) != 'nan') &
+            (completed_independent_reviews['Review_date'] != 'NaT')
         ]
         
-        # Debug: show what records are being found
-        if not completed_independent_reviews.empty:
-            st.write("🔍 DEBUG: Found records that match independent review criteria:")
+        # Final sanity check: only keep records where Name is actually a meaningful string
+        completed_independent_reviews = completed_independent_reviews[
+            completed_independent_reviews['Name'].astype(str).str.len() >= 1  # Name must be at least 1 character
+        ]
+
+        # Debug: show what records are being found (remove this once working)
+        st.write("🔍 DEBUG: Records after all filtering:")
+        if completed_independent_reviews.empty:
+            st.write("  - No valid independent reviews found")
+        else:
             for idx, row in completed_independent_reviews.iterrows():
-                st.write(f"  - Name: {row.get('Name', 'NO NAME')}")
-                st.write(f"  - ASSESSOR: {row.get('ASSESSOR', 'NO ASSESSOR')}")
-                st.write(f"  - Assess_date: {row.get('Assess_date', 'NO ASSESS DATE')}")
-                st.write(f"  - Review_date: {row.get('Review_date', 'NO REVIEW DATE')}")
-        
+                st.write(f"  - Name: '{row.get('Name', 'NO NAME')}'")
+                st.write(f"  - Review_date: '{row.get('Review_date', 'NO REVIEW DATE')}'")
+
         if not completed_independent_reviews.empty:
             st.info("📋 **Previous independent reviews found for this project.**")
             
