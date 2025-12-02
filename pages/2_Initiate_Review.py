@@ -303,17 +303,27 @@ elif st.session_state.review_mode == 1:
         venture_id_to_check = st.session_state.venture_id[0] if isinstance(st.session_state.venture_id, (list, tuple)) else st.session_state.venture_id
         project_id_to_check = st.session_state.project_id[0] if isinstance(st.session_state.project_id, (list, tuple)) else st.session_state.project_id
         
+        # Filter for true independent reviews only - must have no ASSESSOR field populated
         completed_independent_reviews = air_data_check[
             (air_data_check['Venture'].apply(lambda x: (x[0] if isinstance(x, (list, tuple)) else x) == venture_id_to_check)) &
             (air_data_check['Project'].apply(lambda x: (x[0] if isinstance(x, (list, tuple)) else x) == project_id_to_check)) &
             (air_data_check['Review_date'].notna()) &
             (air_data_check['Review_date'] != "") &
             (air_data_check['Review_date'] != pd.NaT) &
-            (
-                (air_data_check['ASSESSOR'].isna()) |  # No assessor (independent review)
-                (air_data_check['ASSESSOR'].apply(lambda x: len(x) == 0 if isinstance(x, (list, tuple)) and x is not None else pd.isna(x)))  # Empty assessor list
-            )
+            (~air_data_check['Name'].str.startswith('DRAFT', na=False)) &  # Exclude DRAFT records
+            (air_data_check['Assess_date'].isna() | (air_data_check['Assess_date'] == "")) &  # No assessment date (independent)
+            (air_data_check['ASSESSOR'].isna() | 
+             (air_data_check['ASSESSOR'].apply(lambda x: len(x) == 0 if isinstance(x, (list, tuple)) and pd.notna(x) else True)))  # No assessor
         ]
+        
+        # Debug: show what records are being found
+        if not completed_independent_reviews.empty:
+            st.write("🔍 DEBUG: Found records that match independent review criteria:")
+            for idx, row in completed_independent_reviews.iterrows():
+                st.write(f"  - Name: {row.get('Name', 'NO NAME')}")
+                st.write(f"  - ASSESSOR: {row.get('ASSESSOR', 'NO ASSESSOR')}")
+                st.write(f"  - Assess_date: {row.get('Assess_date', 'NO ASSESS DATE')}")
+                st.write(f"  - Review_date: {row.get('Review_date', 'NO REVIEW DATE')}")
         
         if not completed_independent_reviews.empty:
             st.info("📋 **Previous independent reviews found for this project.**")
@@ -329,7 +339,7 @@ elif st.session_state.review_mode == 1:
                         if st.button("Copy Data", key=f"copy_indep_{idx}"):
                             st.session_state.copy_from_independent_id = row['id']
                             st.rerun()
-            
+
             # If user clicked to copy data
             if 'copy_from_independent_id' in st.session_state:
                 source_record = air_data_check[air_data_check['id'] == st.session_state.copy_from_independent_id].iloc[0]
