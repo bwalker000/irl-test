@@ -339,15 +339,6 @@ elif st.session_state.review_mode == 1:
             completed_independent_reviews['Name'].astype(str).str.len() >= 1  # Name must be at least 1 character
         ]
 
-        # Debug: show what records are being found (remove this once working)
-        st.write("🔍 DEBUG: Records after all filtering:")
-        if completed_independent_reviews.empty:
-            st.write("  - No valid independent reviews found")
-        else:
-            for idx, row in completed_independent_reviews.iterrows():
-                st.write(f"  - Name: '{row.get('Name', 'NO NAME')}'")
-                st.write(f"  - Review_date: '{row.get('Review_date', 'NO REVIEW DATE')}'")
-
         if not completed_independent_reviews.empty:
             st.info("📋 **Previous independent reviews found for this project.**")
             
