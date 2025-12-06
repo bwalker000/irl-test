@@ -430,7 +430,20 @@ def submit_record():
                 result = table.create(cleaned_responses)
 
             st.success("Record submitted successfully!")
-            st.write(f"**Result:** {result}")
+            
+            # DEBUG: Show what was actually submitted AFTER successful submission
+            st.write("### 🎯 DEBUG - What Was Actually Submitted to Airtable")
+            st.write(f"**Operation:** {'UPDATE' if record_id_to_update else 'CREATE'}")
+            if record_id_to_update:
+                st.write(f"**Record ID Updated:** {record_id_to_update}")
+            st.write(f"**Name sent:** {cleaned_responses.get('Name', 'NOT SENT')}")
+            st.write(f"**Review_date sent:** {cleaned_responses.get('Review_date', 'NOT SENT')}")
+            st.write(f"**Assess_date sent:** {cleaned_responses.get('Assess_date', 'NOT SENT')}")
+            st.write(f"**REVIEWER sent:** {cleaned_responses.get('REVIEWER', 'NOT SENT')}")
+            st.write(f"**Venture sent:** {cleaned_responses.get('Venture', 'NOT SENT')}")
+            st.write(f"**Project sent:** {cleaned_responses.get('Project', 'NOT SENT')}")
+            
+            st.write(f"**Airtable Result:** {result}")
             
             # Clean up draft reference
             if 'draft_record_id' in st.session_state:
