@@ -271,8 +271,12 @@ def submit_record():
     # This code saves the assessment to the airtable database
     responses = {}
 
-    #st.write(type(st.session_state.QA))
-    #st.write(st.session_state.QA)
+    # DEBUG: Show session state values before processing
+    st.write("### DEBUG - Session State Values Before Processing")
+    st.write(f"**venture_id:** {st.session_state.venture_id} (type: {type(st.session_state.venture_id)})")
+    st.write(f"**project_id:** {st.session_state.project_id} (type: {type(st.session_state.project_id)})")
+    st.write(f"**support_id:** {st.session_state.support_id} (type: {type(st.session_state.support_id)})")
+    st.write(f"**assessor_id:** {st.session_state.assessor_id} (type: {type(st.session_state.assessor_id)})")
 
     for dim in range(st.session_state.QA.shape[0]):
         for i, value in enumerate(st.session_state.QA[dim]):
@@ -316,12 +320,18 @@ def submit_record():
                                else [st.session_state.assessor_id] if st.session_state.assessor_id
                                else [])
 
+    # DEBUG: Show what was assigned to responses
+    st.write("### DEBUG - Linked Record Fields After Processing")
+    st.write(f"**Venture:** {responses['Venture']} (type: {type(responses['Venture'])})")
+    st.write(f"**Project:** {responses['Project']} (type: {type(responses['Project'])})")  
+    st.write(f"**Support Organization:** {responses['Support Organization']} (type: {type(responses['Support Organization'])})")
+    st.write(f"**ASSESSOR:** {responses['ASSESSOR']} (type: {type(responses['ASSESSOR'])})")
+
     today = datetime.now().date()
     airtable_date = today.isoformat()
 
     venture_name = st.session_state.venture_name
     project_name = st.session_state.project_name
-
 
     if st.session_state.mode == "ASSESSOR":
         responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date
@@ -336,7 +346,6 @@ def submit_record():
         # Preserve the original assessment date if reviewing an existing assessment
         if st.session_state.get('assessment_name'):
             responses["Assess_date"] = st.session_state.get('assess_date')
-
 
     api_key = st.secrets["general"]["airtable_api_key"]
     base_id = st.secrets["general"]["airtable_base_id"]
@@ -358,33 +367,54 @@ def submit_record():
             v = v.to_dict(orient="records")
         cleaned_responses[k] = v
 
-    # Determine which record to update
-    record_id_to_update = None
-    
-    # Priority 1: If reviewing an existing assessment, update that record
-    if st.session_state.mode == "REVIEWER" and st.session_state.get('assessment_record_id'):
-        record_id_to_update = st.session_state.assessment_record_id
-    # Priority 2: If there's a draft, overwrite it
-    elif st.session_state.get('draft_record_id'):
-        record_id_to_update = st.session_state.draft_record_id
-    
-    if record_id_to_update:
-        table.update(record_id_to_update, cleaned_responses)
-    else:
-        # Create new record
-        table.create(cleaned_responses)
+    # DEBUG: Show final cleaned responses for linked records
+    st.write("### DEBUG - Final Cleaned Responses for Linked Records")
+    for key in ['Venture', 'Project', 'Support Organization', 'ASSESSOR', 'REVIEWER']:
+        if key in cleaned_responses:
+            st.write(f"**{key}:** {cleaned_responses[key]} (type: {type(cleaned_responses[key])})")
 
-    # Clean up draft reference
-    if 'draft_record_id' in st.session_state:
-        del st.session_state.draft_record_id
+    # Add confirmation button before actually submitting
+    if st.button("⚠️ CONFIRM SUBMIT (Debug Mode)", type="primary"):
+        try:
+            # Determine which record to update
+            record_id_to_update = None
+            
+            # Priority 1: If reviewing an existing assessment, update that record
+            if st.session_state.mode == "REVIEWER" and st.session_state.get('assessment_record_id'):
+                record_id_to_update = st.session_state.assessment_record_id
+                st.write(f"**DEBUG:** Updating existing assessment record: {record_id_to_update}")
+            # Priority 2: If there's a draft, overwrite it
+            elif st.session_state.get('draft_record_id'):
+                record_id_to_update = st.session_state.draft_record_id
+                st.write(f"**DEBUG:** Updating draft record: {record_id_to_update}")
+            else:
+                st.write("**DEBUG:** Creating new record")
+            
+            if record_id_to_update:
+                result = table.update(record_id_to_update, cleaned_responses)
+            else:
+                # Create new record
+                result = table.create(cleaned_responses)
 
-    # Mark as submitted to prevent resubmission
-    st.session_state.submitted = True
+            st.success("Record submitted successfully!")
+            st.write(f"**Result:** {result}")
+            
+            # Clean up draft reference
+            if 'draft_record_id' in st.session_state:
+                del st.session_state.draft_record_id
 
-    if st.session_state.mode == "ASSESSOR":
-        st.success("Assessment submitted successfully!")
-    elif st.session_state.mode == "REVIEWER":
-        st.success("Review submitted successfully!")
+            # Mark as submitted to prevent resubmission
+            st.session_state.submitted = True
+
+            if st.session_state.mode == "ASSESSOR":
+                st.success("Assessment submitted successfully!")
+            elif st.session_state.mode == "REVIEWER":
+                st.success("Review submitted successfully!")
+                
+        except Exception as e:
+            st.error(f"**Submission failed:** {str(e)}")
+            st.write("**Full error details:**")
+            st.exception(e)
 
     # Show home button
     if st.button("Return to Home"):
