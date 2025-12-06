@@ -402,11 +402,10 @@ with col3:
                 else:
                     st.write("**Submit Path:** Will create new record")
                 
-                # Add confirmation before proceeding
-                if st.button("⚠️ CONFIRM SUBMIT", type="primary"):
-                    submit_record()
-                    st.session_state.submitted = True
-                    st.rerun()  # Rerun to update UI
+                # Call submit_record directly (it has its own debug and confirmation)
+                submit_record()
+                st.session_state.submitted = True
+                st.rerun()  # Rerun to update UI
         else:
             st.success("✓ Successfully submitted!")
 with col4:
