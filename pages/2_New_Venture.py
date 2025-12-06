@@ -1,6 +1,6 @@
 from shared import *
 from shared import check_session_timeout, reset_session_timer
-from pyairtable import Table
+from pyairtable import Api
 
 display_logo()
 
@@ -176,6 +176,10 @@ with col3:
         try:
             assessor_id = None
             
+            # Initialize Airtable API
+            api = Api(api_key)
+            base = api.base(base_id)
+            
             # Handle assessor creation if needed
             if assessor_choice == "Create new assessor":
                 # Load assessors table to check for duplicate email
@@ -199,22 +203,21 @@ with col3:
                 if new_assessor_phone and new_assessor_phone.strip():
                     new_assessor_data["Phone"] = new_assessor_phone.strip()
                 
-                assessors_table = Table(api_key, base_id, st.secrets["general"]["airtable_table_assessors"])
+                assessors_table = base.table(st.secrets["general"]["airtable_table_assessors"])
                 created_assessor = assessors_table.create(new_assessor_data)
                 assessor_id = created_assessor['id']
                 
                 st.success(f"✅ New assessor '{new_assessor_first} {new_assessor_last}' created successfully!")
             
-            # Create new project record
+            # Create new project record (without Support Organization field)
             new_project_data = {
-                "Name": project_name.strip(),
-                "Support Organization": [support_org_id]
+                "Name": project_name.strip()
             }
             
             if project_description and project_description.strip():
                 new_project_data["Description"] = project_description.strip()
             
-            projects_table = Table(api_key, base_id, st.secrets["general"]["airtable_table_projects"])
+            projects_table = base.table(st.secrets["general"]["airtable_table_projects"])
             created_project = projects_table.create(new_project_data)
             project_id = created_project['id']
             
@@ -233,7 +236,7 @@ with col3:
                 new_venture["ASSESSOR"] = [assessor_id]
             
             # Create the venture record in Airtable
-            ventures_table = Table(api_key, base_id, st.secrets["general"]["airtable_table_ventures"])
+            ventures_table = base.table(st.secrets["general"]["airtable_table_ventures"])
             created_record = ventures_table.create(new_venture)
             
             # Update project to link back to venture
