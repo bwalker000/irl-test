@@ -350,17 +350,27 @@ def submit_record():
     elif st.session_state.mode == "REVIEWER":
         responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date
         responses["Review_date"] = airtable_date
+        
+        # DEBUG: Show what we just set for reviewer mode
+        st.write("### DEBUG - REVIEWER Mode Field Assignment")
+        st.write(f"**Setting Name:** {responses['Name']}")
+        st.write(f"**Setting Review_date:** {responses['Review_date']}")
+        st.write(f"**Assessment Name in session:** {st.session_state.get('assessment_name', 'None')}")
+        
         # Add reviewer ID to the record
         responses["REVIEWER"] = ([st.session_state.reviewer_id[0]] if isinstance(st.session_state.reviewer_id, (list, tuple))
                                else [st.session_state.reviewer_id] if st.session_state.reviewer_id
                                else [])
+        
         # Preserve the original assessment date if reviewing an existing assessment
         if st.session_state.get('assessment_name'):
             responses["Assess_date"] = st.session_state.get('assess_date')
+            st.write(f"**Preserving Assess_date:** {responses['Assess_date']} (existing assessment review)")
         # For independent reviews, ensure we don't preserve any assessment date
         elif not st.session_state.get('assessment_name'):
             # This is an independent review - make sure no Assess_date is set
             responses.pop("Assess_date", None)
+            st.write("**Independent review detected - removed any Assess_date**")
 
     api_key = st.secrets["general"]["airtable_api_key"]
     base_id = st.secrets["general"]["airtable_base_id"]
@@ -387,6 +397,14 @@ def submit_record():
     for key in ['Venture', 'Project', 'Support Organization', 'ASSESSOR', 'REVIEWER']:
         if key in cleaned_responses:
             st.write(f"**{key}:** {cleaned_responses[key]} (type: {type(cleaned_responses[key])})")
+    
+    # DEBUG: Show Name and Review_date specifically for independent reviews
+    st.write("### DEBUG - Name and Date Fields")
+    st.write(f"**Name:** {cleaned_responses.get('Name', 'NOT SET')} (type: {type(cleaned_responses.get('Name', 'NOT SET'))})")
+    st.write(f"**Review_date:** {cleaned_responses.get('Review_date', 'NOT SET')} (type: {type(cleaned_responses.get('Review_date', 'NOT SET'))})")
+    st.write(f"**Assess_date:** {cleaned_responses.get('Assess_date', 'NOT SET')} (type: {type(cleaned_responses.get('Assess_date', 'NOT SET'))})")
+    st.write(f"**Mode:** {st.session_state.mode}")
+    st.write(f"**Assessment Name:** {st.session_state.get('assessment_name', 'None (Independent Review)')}")
 
     # Add confirmation button before actually submitting
     if st.button("⚠️ CONFIRM SUBMIT (Debug Mode)", type="primary"):
