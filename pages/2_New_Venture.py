@@ -83,48 +83,50 @@ venture_name = st.text_input(
     help="Required field"
 )
 
-st.subheader("Select or Create Reviewer")
+# Project creation section
+st.subheader("Create New Project")
+st.info("A new project will be created for this venture.")
 
-# Load all reviewers for selection
-all_reviewers = air_reviewers.copy()
-
-# Create a display name for each reviewer
-reviewer_options = []
-reviewer_lookup = {}
-for idx, reviewer in all_reviewers.iterrows():
-    first_name = reviewer.get('First Name', '')
-    last_name = reviewer.get('Last Name', '')
-    email = reviewer.get('Email', '')
-    display_name = f"{first_name} {last_name} ({email})"
-    reviewer_options.append(display_name)
-    reviewer_lookup[display_name] = reviewer['id']
-
-# Option to select existing or create new
-reviewer_choice = st.radio(
-    "Choose an option:",
-    ["Select existing reviewer", "Create new reviewer"],
-    horizontal=True
+project_name = st.text_input(
+    "Project Name*",
+    placeholder="Enter the project name",
+    help="Required field"
 )
 
-selected_reviewer_id = None
+project_description = st.text_area(
+    "Project Description",
+    placeholder="Enter a description of the project (optional)",
+    help="Optional field"
+)
 
-if reviewer_choice == "Select existing reviewer":
-    selected_reviewer_display = st.selectbox(
-        "Select Reviewer*",
-        options=reviewer_options,
-        help="Required field"
-    )
-    if selected_reviewer_display:
-        selected_reviewer_id = reviewer_lookup[selected_reviewer_display]
-else:
-    st.write("**New Reviewer Information**")
+# Assessor creation section
+st.subheader("Assessor Assignment")
+
+assessor_choice = st.radio(
+    "Choose assessor option:",
+    ["Create new assessor", "Reviewer-only venture (no assessor)"],
+    help="Select whether this venture will have an assessor or be reviewer-only"
+)
+
+new_assessor_first = ""
+new_assessor_last = ""
+new_assessor_email = ""
+new_assessor_phone = ""
+
+if assessor_choice == "Create new assessor":
+    st.info("A new assessor will be created for this venture. You will be automatically assigned as the reviewer.")
+    
+    # New assessor form
+    st.write("**New Assessor Information**")
     col1, col2 = st.columns(2)
     with col1:
-        new_reviewer_first = st.text_input("First Name*", placeholder="Enter first name")
-        new_reviewer_email = st.text_input("Email*", placeholder="Enter email address")
+        new_assessor_first = st.text_input("First Name*", placeholder="Enter first name")
+        new_assessor_email = st.text_input("Email*", placeholder="Enter email address")
     with col2:
-        new_reviewer_last = st.text_input("Last Name*", placeholder="Enter last name")
-        new_reviewer_phone = st.text_input("Phone", placeholder="Enter phone number (optional)")
+        new_assessor_last = st.text_input("Last Name*", placeholder="Enter last name")
+        new_assessor_phone = st.text_input("Phone", placeholder="Enter phone number (optional)")
+else:
+    st.info("This venture will be reviewer-only. No assessor will be assigned. You will perform independent reviews for this venture.")
 
 # Navigation buttons
 col1, col2, col3 = st.columns([1, 1, 1])
@@ -135,15 +137,16 @@ with col1:
         st.switch_page("pages/2_Reviewer_Home.py")
 
 with col3:
-    # Determine if submit should be disabled
-    submit_disabled = not venture_name or not venture_name.strip()
+    # Check if all required fields are filled
+    submit_disabled = (not venture_name or not venture_name.strip() or
+                      not project_name or not project_name.strip())
     
-    if reviewer_choice == "Create new reviewer":
-        submit_disabled = submit_disabled or not new_reviewer_first or not new_reviewer_first.strip() or \
-                         not new_reviewer_last or not new_reviewer_last.strip() or \
-                         not new_reviewer_email or not new_reviewer_email.strip()
-    else:
-        submit_disabled = submit_disabled or selected_reviewer_id is None
+    if assessor_choice == "Create new assessor":
+        submit_disabled = submit_disabled or (
+            not new_assessor_first or not new_assessor_first.strip() or
+            not new_assessor_last or not new_assessor_last.strip() or
+            not new_assessor_email or not new_assessor_email.strip()
+        )
     
     if st.button("Submit →", type="primary", disabled=submit_disabled):
         reset_session_timer()
@@ -152,6 +155,17 @@ with col3:
         if not venture_name.strip():
             st.error("Venture name is required.")
             st.stop()
+            
+        # Validate project name
+        if not project_name.strip():
+            st.error("Project name is required.")
+            st.stop()
+        
+        # Validate assessor fields if creating assessor
+        if assessor_choice == "Create new assessor":
+            if not new_assessor_first.strip() or not new_assessor_last.strip() or not new_assessor_email.strip():
+                st.error("Assessor First Name, Last Name, and Email are required.")
+                st.stop()
         
         # Check for duplicate venture names within the support organization
         duplicate_check = support_org_ventures[support_org_ventures['Name'].str.lower() == venture_name.strip().lower()]
@@ -160,50 +174,76 @@ with col3:
             st.stop()
         
         try:
-            # Handle reviewer creation if needed
-            final_reviewer_id = selected_reviewer_id
+            assessor_id = None
             
-            if reviewer_choice == "Create new reviewer":
-                # Validate new reviewer fields
-                if not new_reviewer_first.strip() or not new_reviewer_last.strip() or not new_reviewer_email.strip():
-                    st.error("First Name, Last Name, and Email are required for creating a new reviewer.")
-                    st.stop()
+            # Handle assessor creation if needed
+            if assessor_choice == "Create new assessor":
+                # Load assessors table to check for duplicate email
+                table_name = st.secrets["general"]["airtable_table_assessors"]
+                air_assessors, _ = load_airtable(table_name, base_id, api_key, False)
                 
-                # Check for duplicate email
-                email_check = air_reviewers[air_reviewers['Email'].str.lower() == new_reviewer_email.strip().lower()]
+                # Check for duplicate assessor email
+                email_check = air_assessors[air_assessors['Email'].str.lower() == new_assessor_email.strip().lower()]
                 if not email_check.empty:
-                    st.error(f"A reviewer with email '{new_reviewer_email.strip()}' already exists. Please select the existing reviewer or use a different email.")
+                    st.error(f"An assessor with email '{new_assessor_email.strip()}' already exists. Please use a different email.")
                     st.stop()
                 
-                # Create new reviewer record
-                new_reviewer_data = {
-                    "First Name": new_reviewer_first.strip(),
-                    "Last Name": new_reviewer_last.strip(),
-                    "Email": new_reviewer_email.strip(),
-                    "Support Organization": [support_org_id]
+                # Create new assessor record
+                new_assessor_data = {
+                    "First Name": new_assessor_first.strip(),
+                    "Last Name": new_assessor_last.strip(),
+                    "Email": new_assessor_email.strip(),
+                    "Organization": [support_org_id]
                 }
                 
-                if new_reviewer_phone and new_reviewer_phone.strip():
-                    new_reviewer_data["Phone"] = new_reviewer_phone.strip()
+                if new_assessor_phone and new_assessor_phone.strip():
+                    new_assessor_data["Phone"] = new_assessor_phone.strip()
                 
-                reviewers_table = Table(api_key, base_id, st.secrets["general"]["airtable_table_reviewers"])
-                created_reviewer = reviewers_table.create(new_reviewer_data)
-                final_reviewer_id = created_reviewer['id']
+                assessors_table = Table(api_key, base_id, st.secrets["general"]["airtable_table_assessors"])
+                created_assessor = assessors_table.create(new_assessor_data)
+                assessor_id = created_assessor['id']
                 
-                st.success(f"✅ New reviewer '{new_reviewer_first} {new_reviewer_last}' created successfully!")
+                st.success(f"✅ New assessor '{new_assessor_first} {new_assessor_last}' created successfully!")
+            
+            # Create new project record
+            new_project_data = {
+                "Name": project_name.strip(),
+                "Support Organization": [support_org_id]
+            }
+            
+            if project_description and project_description.strip():
+                new_project_data["Description"] = project_description.strip()
+            
+            projects_table = Table(api_key, base_id, st.secrets["general"]["airtable_table_projects"])
+            created_project = projects_table.create(new_project_data)
+            project_id = created_project['id']
+            
+            st.success(f"✅ Project '{project_name.strip()}' created successfully!")
             
             # Prepare the venture record for Airtable
             new_venture = {
                 "Name": venture_name.strip(),
                 "Support Organization": [support_org_id],
-                "REVIEWER": [final_reviewer_id]
+                "REVIEWER": [reviewer_id],  # Current reviewer
+                "Projects": [project_id]    # Link to newly created project
             }
+            
+            # Only add assessor if one was created
+            if assessor_id:
+                new_venture["ASSESSOR"] = [assessor_id]
             
             # Create the venture record in Airtable
             ventures_table = Table(api_key, base_id, st.secrets["general"]["airtable_table_ventures"])
             created_record = ventures_table.create(new_venture)
             
+            # Update project to link back to venture
+            projects_table.update(project_id, {"Venture": [created_record['id']]})
+            
             st.success(f"✅ Venture '{venture_name.strip()}' created successfully!")
+            st.success(f"✅ You have been assigned as the reviewer for this venture.")
+            
+            if assessor_choice == "Reviewer-only venture (no assessor)":
+                st.info("ℹ️ This venture is set up for independent reviews only (no assessor assigned).")
             
             # Add a button to return to reviewer home
             if st.button("Return to Reviewer Home"):
