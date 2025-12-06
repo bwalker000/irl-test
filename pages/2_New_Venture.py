@@ -233,7 +233,7 @@ with col3:
             
             # Only add assessor if one was created
             if assessor_id:
-                new_venture["ASSESSOR"] = [assessor_id]
+                new_venture["ASSESSOR"] = [assessor_id]  # Use correct field name "ASSESSOR"
             
             # Create the venture record in Airtable
             ventures_table = base.table(st.secrets["general"]["airtable_table_ventures"])
