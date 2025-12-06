@@ -357,6 +357,10 @@ def submit_record():
         # Preserve the original assessment date if reviewing an existing assessment
         if st.session_state.get('assessment_name'):
             responses["Assess_date"] = st.session_state.get('assess_date')
+        # For independent reviews, ensure we don't preserve any assessment date
+        elif not st.session_state.get('assessment_name'):
+            # This is an independent review - make sure no Assess_date is set
+            responses.pop("Assess_date", None)
 
     api_key = st.secrets["general"]["airtable_api_key"]
     base_id = st.secrets["general"]["airtable_base_id"]
