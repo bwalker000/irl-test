@@ -207,18 +207,33 @@ if st.session_state.get('draft_record_id'):
 #
 with st.container(border=True):
 
-    col_widths = [0.06, 0.12, 0.12, 0.70]
+    # Determine if this is an independent review (no assessor)
+    is_independent_review = (st.session_state.mode == "REVIEWER" and 
+                           st.session_state.get("assessment_name") is None)
+    
+    # Set column widths based on review type
+    if is_independent_review:
+        col_widths = [0.06, 0.12, 0.82]  # No ASSESS column for independent reviews
+    else:
+        col_widths = [0.06, 0.12, 0.12, 0.70]  # Normal layout with ASSESS column
 
     # ----- Heading Row -----
     with st.container():
-        col1, col2, col3, col4 = st.columns(col_widths)
-        with col2:
-            st.markdown("<div style='text-align: left'><b>ASSESS</b></div>", unsafe_allow_html=True)
-        with col3:
-            if mode !="ASSESSOR":
+        if is_independent_review:
+            col1, col2, col3 = st.columns(col_widths)
+            with col2:
                 st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
-        with col4:
-            st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
+            with col3:
+                st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
+        else:
+            col1, col2, col3, col4 = st.columns(col_widths)
+            with col2:
+                st.markdown("<div style='text-align: left'><b>ASSESS</b></div>", unsafe_allow_html=True)
+            with col3:
+                if mode != "ASSESSOR":
+                    st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
+            with col4:
+                st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
         st.markdown("<hr style='margin: 2px 0; border: 0.5px solid #e0e0e0;'>", unsafe_allow_html=True)
 
     # ----- Data Rows -----
@@ -226,74 +241,100 @@ with st.container(border=True):
 
     for i in range(numQ):
         with st.container():
-            col1, col2, col3, col4 = st.columns(col_widths)
-
-            with col1:
-                st.markdown(
-                    f"""
-                    <div style='display: flex; align-items: center; height: {ROW_HEIGHT}px'>
-                        {i}
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-            with col2:
-                st.session_state.QA[st.session_state.dim, i] = st.checkbox(
-                    f"Assessment Question {i+1}",
-                    value=bool(st.session_state.QA[st.session_state.dim, i]),
-                    key=f"QA_{st.session_state.dim}_{i}",
-                    disabled=not (mode == "ASSESSOR"),
-                    label_visibility="collapsed"
-                )
-
-            with col3:
-                if mode == "REVIEWER":
+            if is_independent_review:
+                col1, col2, col3 = st.columns(col_widths)
+                
+                with col1:
+                    st.markdown(
+                        f"""
+                        <div style='display: flex; align-items: center; height: {ROW_HEIGHT}px'>
+                            {i}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                with col2:
                     st.session_state.QR[st.session_state.dim, i] = st.checkbox(
                         f"Review Question {i+1}",
                         value=bool(st.session_state.QR[st.session_state.dim, i]),
                         key=f"QR_{st.session_state.dim}_{i}",
-                        label_visibility="collapsed",
-                        disabled=not (mode == "REVIEWER"),
+                        label_visibility="collapsed"
+                    )
+                with col3:
+                    question = df.loc[df["Dimension"] == dim, f"Q{i}"].iloc[0]
+                    st.markdown(
+                        f"""
+                        <div style='display: flex; align-items: center; height: {ROW_HEIGHT}px'>
+                            {question}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+            else:
+                col1, col2, col3, col4 = st.columns(col_widths)
+
+                with col1:
+                    st.markdown(
+                        f"""
+                        <div style='display: flex; align-items: center; height: {ROW_HEIGHT}px'>
+                            {i}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                with col2:
+                    st.session_state.QA[st.session_state.dim, i] = st.checkbox(
+                        f"Assessment Question {i+1}",
+                        value=bool(st.session_state.QA[st.session_state.dim, i]),
+                        key=f"QA_{st.session_state.dim}_{i}",
+                        disabled=not (mode == "ASSESSOR"),
+                        label_visibility="collapsed"
                     )
 
-            with col4:
-                question = df.loc[df["Dimension"] == dim, f"Q{i}"].iloc[0]
-                st.markdown(
-                    f"""
-                    <div style='display: flex; align-items: center; height: {ROW_HEIGHT}px'>
-                        {question}
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                with col3:
+                    if mode == "REVIEWER":
+                        st.session_state.QR[st.session_state.dim, i] = st.checkbox(
+                            f"Review Question {i+1}",
+                            value=bool(st.session_state.QR[st.session_state.dim, i]),
+                            key=f"QR_{st.session_state.dim}_{i}",
+                            label_visibility="collapsed",
+                            disabled=not (mode == "REVIEWER"),
+                        )
+
+                with col4:
+                    question = df.loc[df["Dimension"] == dim, f"Q{i}"].iloc[0]
+                    st.markdown(
+                        f"""
+                        <div style='display: flex; align-items: center; height: {ROW_HEIGHT}px'>
+                            {question}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
         
         # Add horizontal line after each row (except the last one)
         if i < numQ:
             st.markdown("<hr style='margin: 2px 0; border: 0.5px solid #e0e0e0;'>", unsafe_allow_html=True)
 
-
-#
-# --------------------------------------------------------------------------------------
-# Gather comments
-#
-
-    st.session_state.TA[st.session_state.dim] = st.text_area(
-        "ASSESSOR Comments",
-        value=st.session_state.TA[st.session_state.dim],            # <- prepopulate with previous value
-        height=None,
-        max_chars=1000,
-        key=f"TA_{st.session_state.dim}",                           # <- use a simple, unique key
-        width="stretch",
-        disabled=not (mode == "ASSESSOR")
-    )
+    # Comments section - only show ASSESSOR comments for non-independent reviews
+    if not is_independent_review:
+        st.session_state.TA[st.session_state.dim] = st.text_area(
+            "ASSESSOR Comments",
+            value=st.session_state.TA[st.session_state.dim],
+            height=None,
+            max_chars=1000,
+            key=f"TA_{st.session_state.dim}",
+            width="stretch",
+            disabled=not (mode == "ASSESSOR")
+        )
 
     if mode != "ASSESSOR":
         st.session_state.TR[st.session_state.dim] = st.text_area(
             "REVIEWER Comments",
-            value=st.session_state.TR[st.session_state.dim],            # <- prepopulate with previous value
+            value=st.session_state.TR[st.session_state.dim],
             height=None,
             max_chars=1000,
-            key=f"TR_{st.session_state.dim}",                           # <- use a simple, unique key
+            key=f"TR_{st.session_state.dim}",
             width="stretch",
             disabled=not (mode == "REVIEWER")
         )

@@ -1,4 +1,5 @@
 from shared import *
+from pyairtable import Api
 
 # This page saves the assessment to the airtable database
 responses = {}
@@ -45,7 +46,7 @@ if isinstance(assessor_id, (list, tuple)):
 responses["Venture"] = [venture_id]  # Wrap in list for Airtable linked record
 responses["Project"] = [project_id]  # Wrap in list for Airtable linked record  
 responses["Support Organization"] = [support_id]  # Wrap in list for Airtable linked record
-responses["ASSESSOR"] = [assessor_id]  # Wrap in list for Airtable linked record
+responses["ASSESSOR"] = [assessor_id] if assessor_id else []  # Handle empty assessor for independent reviews
 
 today = datetime.now().date()
 airtable_date = today.isoformat()
@@ -66,8 +67,10 @@ api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
 table_name = st.secrets["general"]["airtable_table_data"]
 
-table = Table(api_key, base_id, table_name)
-
+# Use modern pyairtable API
+api = Api(api_key)
+base = api.base(base_id)
+table = base.table(table_name)
 
 # Convert numpy types to native Python types before sending to Airtable
 cleaned_responses = {}
