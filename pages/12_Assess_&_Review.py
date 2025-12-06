@@ -404,8 +404,7 @@ with col3:
                 
                 # Call submit_record directly (it has its own debug and confirmation)
                 submit_record()
-                st.session_state.submitted = True
-                st.rerun()  # Rerun to update UI
+                # Note: submit_record() will set st.session_state.submitted = True when confirmed
         else:
             st.success("✓ Successfully submitted!")
 with col4:
