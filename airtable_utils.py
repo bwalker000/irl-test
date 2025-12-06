@@ -296,18 +296,31 @@ def submit_record():
         field_name = f"TR_{dim:02d}"
         responses[field_name] = value
 
-    # Convert IDs to lists if they aren't already
-    responses["Venture"] = ([st.session_state.venture_id] if isinstance(st.session_state.venture_id, str) 
-                          else list(st.session_state.venture_id) if isinstance(st.session_state.venture_id, (list, tuple)) 
-                          else [])
-    
-    responses["Project"] = ([st.session_state.project_id] if isinstance(st.session_state.project_id, str)
-                          else list(st.session_state.project_id) if isinstance(st.session_state.project_id, (list, tuple))
-                          else [])
-    
-    responses["Support Organization"] = ([st.session_state.support_id[0]] if isinstance(st.session_state.support_id, (list, tuple)) and st.session_state.support_id
-                                       else [st.session_state.support_id] if st.session_state.support_id
-                                       else [])
+    # Helper function to extract ID from various data types
+    def extract_id(value):
+        if isinstance(value, pd.Series):
+            # If it's a Series, get the first (and likely only) value
+            return value.iloc[0] if len(value) > 0 else None
+        elif isinstance(value, (list, tuple)):
+            # If it's a list or tuple, get the first element
+            return value[0] if len(value) > 0 else None
+        elif isinstance(value, str):
+            # If it's already a string, return as-is
+            return value
+        else:
+            # For other types, convert to string or return None
+            return str(value) if value is not None else None
+
+    # Extract IDs using the helper function
+    venture_id = extract_id(st.session_state.venture_id)
+    project_id = extract_id(st.session_state.project_id)
+    support_id = extract_id(st.session_state.support_id)
+    assessor_id = extract_id(st.session_state.assessor_id)
+
+    # Convert IDs to lists for Airtable linked records
+    responses["Venture"] = [venture_id] if venture_id else []
+    responses["Project"] = [project_id] if project_id else []
+    responses["Support Organization"] = [support_id] if support_id else []
     
     # For independent reviews, assessor_id might be empty
     if st.session_state.mode == "REVIEWER" and (
@@ -316,9 +329,7 @@ def submit_record():
     ):
         responses["ASSESSOR"] = []  # Independent review, no assessor
     else:
-        responses["ASSESSOR"] = ([st.session_state.assessor_id[0]] if isinstance(st.session_state.assessor_id, (list, tuple)) and st.session_state.assessor_id
-                               else [st.session_state.assessor_id] if st.session_state.assessor_id
-                               else [])
+        responses["ASSESSOR"] = [assessor_id] if assessor_id else []
 
     # DEBUG: Show what was assigned to responses
     st.write("### DEBUG - Linked Record Fields After Processing")
