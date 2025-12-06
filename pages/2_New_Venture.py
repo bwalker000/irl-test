@@ -248,14 +248,27 @@ with col3:
             if assessor_choice == "Reviewer-only venture (no assessor)":
                 st.info("ℹ️ This venture is set up for independent reviews only (no assessor assigned).")
             
-            # Add a button to return to reviewer home
-            if st.button("Return to Reviewer Home"):
-                reset_session_timer()
-                st.switch_page("pages/2_Reviewer_Home.py")
+            # Set a flag to indicate successful creation
+            st.session_state.venture_created = True
+            st.rerun()  # Rerun to show the success state
             
         except Exception as e:
             st.error(f"Failed to create venture: {str(e)}")
             st.error("Please try again or contact support if the problem persists.")
+
+# Show success message and return button if venture was created
+if st.session_state.get('venture_created', False):
+    st.success("🎉 **Venture created successfully!**")
+    st.info("Your new venture and project are now ready for assessments and reviews.")
+    
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        if st.button("Return to Reviewer Home", type="primary"):
+            # Clear the creation flag
+            if 'venture_created' in st.session_state:
+                del st.session_state.venture_created
+            reset_session_timer()
+            st.switch_page("pages/2_Reviewer_Home.py")
 
 # Add help text at bottom
 st.divider()
