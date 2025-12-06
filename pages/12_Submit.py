@@ -25,10 +25,27 @@ for dim, value in enumerate(st.session_state.TR):
     field_name = f"TR_{dim:02d}"
     responses[field_name] = value
 
-responses["Venture"] = st.session_state.venture_id
-responses["Project"] = st.session_state.project_id
-responses["Support Organization"] = st.session_state.support_id
-responses["ASSESSOR"] = st.session_state.assessor_id
+# Extract single IDs from lists if needed (matching Support Organization pattern)
+venture_id = st.session_state.venture_id
+if isinstance(venture_id, (list, tuple)):
+    venture_id = venture_id[0]
+
+project_id = st.session_state.project_id
+if isinstance(project_id, (list, tuple)):
+    project_id = project_id[0]
+
+support_id = st.session_state.support_id
+if isinstance(support_id, (list, tuple)):
+    support_id = support_id[0]
+
+assessor_id = st.session_state.assessor_id
+if isinstance(assessor_id, (list, tuple)):
+    assessor_id = assessor_id[0]
+
+responses["Venture"] = [venture_id]  # Wrap in list for Airtable linked record
+responses["Project"] = [project_id]  # Wrap in list for Airtable linked record  
+responses["Support Organization"] = [support_id]  # Wrap in list for Airtable linked record
+responses["ASSESSOR"] = [assessor_id]  # Wrap in list for Airtable linked record
 
 today = datetime.now().date()
 airtable_date = today.isoformat()
