@@ -8,6 +8,12 @@ display_logo()
 # Check for session timeout at page entry
 check_session_timeout()
 
+st.title("Assessment & Review")
+
+# Initialize session state for submission tracking if not already set
+if 'submitted' not in st.session_state:
+    st.session_state.submitted = False
+
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
