@@ -377,44 +377,77 @@ if selected_page is not None and selected_page != st.session_state.dim:
     st.query_params["_reload"] = str(time.time())
     st.rerun()
 
-# Submit button (only on last page)
+# Navigation buttons - 4 buttons before submission, 3 after
+st.write("")  # Add some spacing
+
+if not st.session_state.submitted:
+    # Before submission: 4 buttons
+    nav_bottom_cols = st.columns([1, 1, 1, 1])
+    
+    with nav_bottom_cols[0]:
+        if st.session_state.dim > 0:
+            if st.button("← Prev", key="prev_button"):
+                reset_session_timer()
+                auto_save_progress()
+                st.session_state.dim -= 1
+                st.query_params["_reload"] = str(time.time())
+                st.rerun()
+    
+    with nav_bottom_cols[1]:
+        if st.button("Discard & Exit", key="discard_button"):
+            reset_session_timer()  # User is active
+            # Do not auto-save - discard changes
+            st.switch_page("streamlit_app.py")
+    
+    with nav_bottom_cols[2]:
+        if st.button("Save & Exit", key="save_exit_button"):
+            reset_session_timer()  # User is active
+            auto_save_progress()  # Save before leaving
+            st.switch_page("streamlit_app.py")
+    
+    with nav_bottom_cols[3]:
+        if st.session_state.dim < num_dims - 1:
+            if st.button("Next →", key="next_button"):
+                reset_session_timer()
+                auto_save_progress()
+                st.session_state.dim += 1
+                st.query_params["_reload"] = str(time.time())
+                st.rerun()
+else:
+    # After submission: 3 buttons
+    nav_bottom_cols = st.columns([1, 1, 1])
+    
+    with nav_bottom_cols[0]:
+        if st.session_state.dim > 0:
+            if st.button("← Prev", key="prev_button"):
+                reset_session_timer()
+                st.session_state.dim -= 1
+                st.query_params["_reload"] = str(time.time())
+                st.rerun()
+    
+    with nav_bottom_cols[1]:
+        if st.button("Return Home", key="return_home_button"):
+            reset_session_timer()  # User is active
+            st.switch_page("streamlit_app.py")
+    
+    with nav_bottom_cols[2]:
+        if st.session_state.dim < num_dims - 1:
+            if st.button("Next →", key="next_button"):
+                reset_session_timer()
+                st.session_state.dim += 1
+                st.query_params["_reload"] = str(time.time())
+                st.rerun()
+
+# Submit button (only on last page, below navigation)
 if st.session_state.dim == num_dims - 1:
     st.write("")  # Add some spacing
     submit_cols = st.columns([2, 1, 2])
     with submit_cols[1]:
-        if not st.session_state.submitted:  # Only show submit button if not submitted
+        if not st.session_state.submitted:  # Only show active submit button if not submitted
             if st.button("Submit", key="submit_button"):
                 reset_session_timer()  # User is active
                 submit_record()
         else:
             st.button("Submit", key="submit_button_disabled", disabled=True)
             st.success("✓ Successfully submitted!")
-
-# Navigation buttons and Home button on same row
-st.write("")  # Add some spacing
-nav_bottom_cols = st.columns([1, 1, 1])
-
-with nav_bottom_cols[0]:
-    if st.session_state.dim > 0:
-        if st.button("← Prev", key="prev_button"):
-            reset_session_timer()
-            auto_save_progress()
-            st.session_state.dim -= 1
-            st.query_params["_reload"] = str(time.time())
-            st.rerun()
-
-with nav_bottom_cols[1]:
-    if st.button("Home", key="home_button"):
-        reset_session_timer()  # User is active
-        auto_save_progress()  # Auto-save before leaving
-        st.switch_page("streamlit_app.py")
-
-with nav_bottom_cols[2]:
-    if st.session_state.dim < num_dims - 1:
-        if st.button("Next →", key="next_button"):
-            reset_session_timer()
-            auto_save_progress()
-            st.session_state.dim += 1
-            st.query_params["_reload"] = str(time.time())
-            st.rerun()
 
