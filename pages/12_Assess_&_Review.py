@@ -357,25 +357,49 @@ with st.container(border=True):
 st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
 st.write("\n")
 
-col1, col2, col3, col4 = st.columns(4)
-with col1:
+# Navigation with Previous, individual page buttons, and Next
+col_prev, col_pages, col_next = st.columns([1, 6, 1])
+
+# Previous button (left side)
+with col_prev:
     if st.session_state.dim > 0:
-        if st.button("Previous"):
+        if st.button("← Previous", key="prev_button"):
             reset_session_timer()
             auto_save_progress()
             st.session_state.dim -= 1
-            # Force fresh page load by updating query params
             st.query_params["_reload"] = str(time.time())
             st.rerun()
-with col2:
+    else:
+        # Empty space when on first page
+        st.write("")
+
+# Individual page buttons (center)
+with col_pages:
+    # Create buttons for each dimension page
+    page_cols = st.columns(num_dims)
+    for i in range(num_dims):
+        with page_cols[i]:
+            button_label = str(i + 1)
+            button_type = "primary" if i == st.session_state.dim else "secondary"
+            if st.button(button_label, key=f"page_button_{i}", type=button_type):
+                reset_session_timer()
+                auto_save_progress()
+                st.session_state.dim = i
+                st.query_params["_reload"] = str(time.time())
+                st.rerun()
+
+# Next button (right side)  
+with col_next:
     if st.session_state.dim < num_dims - 1:
-        if st.button("Next", key="next_button"):
+        if st.button("Next →", key="next_button"):
             reset_session_timer()
             auto_save_progress()
             st.session_state.dim += 1
-            # Force fresh page load by updating query params
             st.query_params["_reload"] = str(time.time())
             st.rerun()
+    else:
+        # Empty space when on last page
+        st.write("")
 with col3:
     if st.session_state.dim == num_dims - 1:
         if not st.session_state.submitted:  # Only show submit button if not submitted
@@ -383,8 +407,12 @@ with col3:
                 reset_session_timer()  # User is active
                 submit_record()
         else:
+            st.button("Submit", key="submit_button_disabled", disabled=True)
             st.success("✓ Successfully submitted!")
-with col4:
+# Home button in separate row
+st.write("\\n")  # Add some spacing
+col_home = st.columns([1, 1, 1])
+with col_home[1]:  # Center the Home button
     if st.button("Home", key="home_button"):
         reset_session_timer()  # User is active
         auto_save_progress()  # Auto-save before leaving
