@@ -15,6 +15,28 @@ st.title("Assessment & Review")
 if 'submitted' not in st.session_state:
     st.session_state.submitted = False
 
+# Submit function - defined early so it can be called later
+def handle_submit():
+    """Handle submission and show success"""
+    try:
+        result_message = airtable_utils.submit_record()
+        if "successfully" in result_message.lower():
+            st.session_state.submitted = True
+            st.session_state.submission_message = result_message
+            # Clear the draft record ID since we've now submitted
+            if 'draft_record_id' in st.session_state:
+                del st.session_state['draft_record_id']
+            # Set success page info
+            if st.session_state.mode == "ASSESSOR":
+                st.session_state.submission_type = "Assessment"
+            else:
+                st.session_state.submission_type = "Review"
+            st.rerun()
+        else:
+            st.error(result_message)
+    except Exception as e:
+        st.error(f"Submission failed: {str(e)}")
+
 # Load secrets
 api_key = st.secrets["general"]["airtable_api_key"]
 base_id = st.secrets["general"]["airtable_base_id"]
@@ -417,28 +439,7 @@ if not st.session_state.submitted:
                 reset_session_timer()  # User is active
                 handle_submit()
 
-# Submit function that redirects to success page
-def handle_submit():
-    """Handle submission and redirect to success page"""
-    try:
-        result_message = airtable_utils.submit_record()
-        if "successfully" in result_message.lower():
-            st.session_state.submitted = True
-            st.session_state.submission_message = result_message
-            # Clear the draft record ID since we've now submitted
-            if 'draft_record_id' in st.session_state:
-                del st.session_state['draft_record_id']
-            # Set success page info
-            if st.session_state.mode == "ASSESSOR":
-                st.session_state.submission_type = "Assessment"
-            else:
-                st.session_state.submission_type = "Review"
-            # Redirect to success page - but we'll create a simple success display instead
-            st.rerun()
-        else:
-            st.error(result_message)
-    except Exception as e:
-        st.error(f"Submission failed: {str(e)}")
+
 
 # Show success message if submitted
 if st.session_state.submitted:
