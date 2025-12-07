@@ -20,6 +20,13 @@ def handle_submit():
     """Handle submission and show success"""
     try:
         result_message = airtable_utils.submit_record()
+        # Handle case where submit_record returns None or empty string
+        if result_message is None:
+            result_message = "Record submitted successfully!"
+        elif not result_message:
+            result_message = "Record submitted successfully!"
+        
+        # Check for success (case insensitive)
         if "successfully" in result_message.lower():
             st.session_state.submitted = True
             st.session_state.submission_message = result_message
@@ -434,10 +441,11 @@ if not st.session_state.submitted:
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
         else:
-            # On last page, show submit button instead of Next
-            if st.button("Submit", key="submit_button", type="primary"):
-                reset_session_timer()  # User is active
-                handle_submit()
+            # On last page, show submit button instead of Next (only if not submitted)
+            if not st.session_state.submitted:
+                if st.button("Submit", key="submit_button", type="primary"):
+                    reset_session_timer()  # User is active
+                    handle_submit()
 
 
 
