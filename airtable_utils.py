@@ -407,8 +407,13 @@ def submit_record():
     st.write(f"**Assessment Name:** {st.session_state.get('assessment_name', 'None (Independent Review)')}")
 
     # Add confirmation button before actually submitting
-    if st.button("⚠️ CONFIRM SUBMIT (Debug Mode)", type="primary"):
+    st.write("### 🎯 READY TO SUBMIT - Click the button below to confirm")
+    
+    if st.button("⚠️ CONFIRM SUBMIT (Debug Mode)", type="primary", key="confirm_submit_final"):
+        print("🔥 TERMINAL: CONFIRM BUTTON CLICKED - Starting submission process...")
         st.write("### 🔥 CONFIRM BUTTON CLICKED - Starting submission process...")
+        print("📝 TERMINAL: About to call Airtable API...")
+        st.write("### 📝 About to call Airtable API...")
         try:
             # Determine which record to update
             record_id_to_update = None
@@ -424,18 +429,36 @@ def submit_record():
             else:
                 st.write("**DEBUG:** Creating new record")
             
+            print("🚀 TERMINAL: ATTEMPTING AIRTABLE OPERATION...")
             st.write("### 🚀 ATTEMPTING AIRTABLE OPERATION...")
             
             if record_id_to_update:
+                print(f"📞 TERMINAL: Calling table.update() with record_id: {record_id_to_update}")
+                print(f"📞 TERMINAL: Data being sent: Name={cleaned_responses.get('Name')}, Review_date={cleaned_responses.get('Review_date')}")
                 st.write(f"**Calling table.update() with record_id: {record_id_to_update}**")
                 result = table.update(record_id_to_update, cleaned_responses)
+                print(f"✅ TERMINAL: UPDATE SUCCESS - Result: {result}")
             else:
+                print("📞 TERMINAL: Calling table.create() for new record")
                 st.write("**Calling table.create() for new record**")
                 result = table.create(cleaned_responses)
+                print(f"✅ TERMINAL: CREATE SUCCESS - Result: {result}")
 
+            print("🎉 TERMINAL: Record submitted successfully!")
             st.success("🎉 Record submitted successfully!")
             
             # DEBUG: Show what was actually submitted AFTER successful submission
+            print("### 🎯 TERMINAL: FINAL DEBUG - What Was Actually Submitted to Airtable")
+            print(f"TERMINAL: Operation: {'UPDATE' if record_id_to_update else 'CREATE'}")
+            if record_id_to_update:
+                print(f"TERMINAL: Record ID Updated: {record_id_to_update}")
+            print(f"TERMINAL: Name sent: {cleaned_responses.get('Name', 'NOT SENT')}")
+            print(f"TERMINAL: Review_date sent: {cleaned_responses.get('Review_date', 'NOT SENT')}")
+            print(f"TERMINAL: Assess_date sent: {cleaned_responses.get('Assess_date', 'NOT SENT')}")
+            print(f"TERMINAL: REVIEWER sent: {cleaned_responses.get('REVIEWER', 'NOT SENT')}")
+            print(f"TERMINAL: Venture sent: {cleaned_responses.get('Venture', 'NOT SENT')}")
+            print(f"TERMINAL: Project sent: {cleaned_responses.get('Project', 'NOT SENT')}")
+            
             st.write("### 🎯 FINAL DEBUG - What Was Actually Submitted to Airtable")
             st.write(f"**Operation:** {'UPDATE' if record_id_to_update else 'CREATE'}")
             if record_id_to_update:
@@ -457,6 +480,7 @@ def submit_record():
             # Mark as submitted to prevent resubmission
             st.session_state.submitted = True
             
+            print("✅ TERMINAL: SUBMISSION COMPLETE - Session state updated")
             st.write("### ✅ SUBMISSION COMPLETE - Session state updated")
 
             if st.session_state.mode == "ASSESSOR":
@@ -465,6 +489,10 @@ def submit_record():
                 st.success("Review submitted successfully!")
                 
         except Exception as e:
+            print(f"💥 TERMINAL: SUBMISSION FAILED - Exception occurred: {str(e)}")
+            print(f"TERMINAL: Record ID to update: {locals().get('record_id_to_update', 'NOT SET')}")
+            print(f"TERMINAL: Cleaned responses keys: {list(cleaned_responses.keys()) if 'cleaned_responses' in locals() else 'NOT AVAILABLE'}")
+            
             st.error("### 💥 SUBMISSION FAILED - Exception occurred!")
             st.error(f"**Error message:** {str(e)}")
             st.write("**Full error details:**")
