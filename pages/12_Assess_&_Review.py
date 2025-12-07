@@ -440,15 +440,6 @@ def handle_submit():
     except Exception as e:
         st.error(f"Submission failed: {str(e)}")
 
-# Submit button (only on last page, below navigation)
-if st.session_state.dim == num_dims - 1 and not st.session_state.submitted:
-    st.write("")  # Add some spacing
-    submit_cols = st.columns([2, 1, 2])
-    with submit_cols[1]:
-        if st.button("Submit", key="submit_button"):
-            reset_session_timer()  # User is active
-            handle_submit()
-
 # Show success message if submitted
 if st.session_state.submitted:
     st.success(f"✓ {st.session_state.get('submission_type', 'Assessment')} successfully submitted!")
