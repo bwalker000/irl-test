@@ -192,11 +192,7 @@ elif mode == "REVIEWER":
 
 st.write("\n\n")
 
-# Add page indicator at top (above assessment table)
-# Create a unique container to force re-render from top
-page_anchor = st.empty()
-with page_anchor.container():
-    st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
+# Page info is shown via the page selector above
 
 # Show draft indicator if this is a draft (no submission date)
 if st.session_state.get('draft_record_id'):
@@ -353,35 +349,34 @@ with st.container(border=True):
 # Navigate
 # 
 
-# Add page indicator at bottom
-st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
-st.write("\n")
+# Page info is shown via the page selector below
 
-# Page selector using full width for segmented control
-# Create page options (1, 2, 3, ... num_dims) - dynamically determined from Airtable structure
-page_options = list(range(num_dims))
-
-selected_page = st.segmented_control(
-    "Go to page:",
-    options=page_options,
-    format_func=lambda x: str(x + 1),  # Display as 1, 2, 3... instead of 0, 1, 2...
-    default=st.session_state.dim,
-    key="page_selector"
-)
-
-# Handle page selection change
-if selected_page is not None and selected_page != st.session_state.dim:
-    reset_session_timer()
-    auto_save_progress()
-    st.session_state.dim = selected_page
-    st.query_params["_reload"] = str(time.time())
-    st.rerun()
-
-# Navigation buttons - 4 buttons before submission, 3 after
-st.write("")  # Add some spacing
-
+# Show page selector only if not submitted
 if not st.session_state.submitted:
-    # Before submission: 4 buttons
+    # Page selector using full width for segmented control
+    # Create page options (1, 2, 3, ... num_dims) - dynamically determined from Airtable structure
+    page_options = list(range(num_dims))
+
+    selected_page = st.segmented_control(
+        "Go to page:",
+        options=page_options,
+        format_func=lambda x: str(x + 1),  # Display as 1, 2, 3... instead of 0, 1, 2...
+        default=st.session_state.dim,
+        key="page_selector"
+    )
+
+    # Handle page selection change
+    if selected_page is not None and selected_page != st.session_state.dim:
+        reset_session_timer()
+        auto_save_progress()
+        st.session_state.dim = selected_page
+        st.query_params["_reload"] = str(time.time())
+        st.rerun()
+
+# Show navigation only if not submitted
+if not st.session_state.submitted:
+    # Navigation buttons - 4 buttons before submission
+    st.write("")  # Add some spacing
     nav_bottom_cols = st.columns([1, 1, 1, 1])
     
     with nav_bottom_cols[0]:
@@ -400,10 +395,12 @@ if not st.session_state.submitted:
             st.switch_page("streamlit_app.py")
     
     with nav_bottom_cols[2]:
-        if st.button("Save & Exit", key="save_exit_button"):
-            reset_session_timer()  # User is active
-            auto_save_progress()  # Save before leaving
-            st.switch_page("streamlit_app.py")
+        # Hide Save & Exit on last page - user must either submit or discard
+        if st.session_state.dim < num_dims - 1:
+            if st.button("Save & Exit", key="save_exit_button"):
+                reset_session_timer()  # User is active
+                auto_save_progress()  # Save before leaving
+                st.switch_page("streamlit_app.py")
     
     with nav_bottom_cols[3]:
         if st.session_state.dim < num_dims - 1:
@@ -413,41 +410,47 @@ if not st.session_state.submitted:
                 st.session_state.dim += 1
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
-else:
-    # After submission: 3 buttons
-    nav_bottom_cols = st.columns([1, 1, 1])
-    
-    with nav_bottom_cols[0]:
-        if st.session_state.dim > 0:
-            if st.button("← Prev", key="prev_button"):
-                reset_session_timer()
-                st.session_state.dim -= 1
-                st.query_params["_reload"] = str(time.time())
-                st.rerun()
-    
-    with nav_bottom_cols[1]:
-        if st.button("Return Home", key="return_home_button"):
-            reset_session_timer()  # User is active
-            st.switch_page("streamlit_app.py")
-    
-    with nav_bottom_cols[2]:
-        if st.session_state.dim < num_dims - 1:
-            if st.button("Next →", key="next_button"):
-                reset_session_timer()
-                st.session_state.dim += 1
-                st.query_params["_reload"] = str(time.time())
-                st.rerun()
+
+# Submit function that redirects to success page
+def handle_submit():
+    """Handle submission and redirect to success page"""
+    try:
+        result_message = airtable_utils.submit_record()
+        if "successfully" in result_message.lower():
+            st.session_state.submitted = True
+            st.session_state.submission_message = result_message
+            # Clear the draft record ID since we've now submitted
+            if 'draft_record_id' in st.session_state:
+                del st.session_state['draft_record_id']
+            # Set success page info
+            if st.session_state.mode == "ASSESSOR":
+                st.session_state.submission_type = "Assessment"
+            else:
+                st.session_state.submission_type = "Review"
+            # Redirect to success page - but we'll create a simple success display instead
+            st.rerun()
+        else:
+            st.error(result_message)
+    except Exception as e:
+        st.error(f"Submission failed: {str(e)}")
 
 # Submit button (only on last page, below navigation)
-if st.session_state.dim == num_dims - 1:
+if st.session_state.dim == num_dims - 1 and not st.session_state.submitted:
     st.write("")  # Add some spacing
     submit_cols = st.columns([2, 1, 2])
     with submit_cols[1]:
-        if not st.session_state.submitted:  # Only show active submit button if not submitted
-            if st.button("Submit", key="submit_button"):
-                reset_session_timer()  # User is active
-                submit_record()
-        else:
-            st.button("Submit", key="submit_button_disabled", disabled=True)
-            st.success("✓ Successfully submitted!")
+        if st.button("Submit", key="submit_button"):
+            reset_session_timer()  # User is active
+            handle_submit()
+
+# Show success message if submitted
+if st.session_state.submitted:
+    st.success(f"✓ {st.session_state.get('submission_type', 'Assessment')} successfully submitted!")
+    st.write("")
+    # Show only Return Home button
+    return_cols = st.columns([2, 1, 2])
+    with return_cols[1]:
+        if st.button("Return Home", key="final_return_home"):
+            reset_session_timer()
+            st.switch_page("streamlit_app.py")
 
