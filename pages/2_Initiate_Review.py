@@ -162,7 +162,7 @@ elif st.session_state.review_mode == 0:
                 if field_name in air_data_record.columns and pd.notna(air_data_record.iloc[0][field_name]):
                     st.session_state.TR[dim] = air_data_record.iloc[0][field_name]
             
-            st.info("✅ **Review initialized with assessment data.** You can now modify the responses as needed during your review.")
+            st.info("✅ **Review initialized with assessment data.** You should modify responses to reflect your professional review.")
         
         # Check for previous reviews (for reference, not for copying)
         completed_reviews = air_data[

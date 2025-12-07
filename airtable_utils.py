@@ -392,8 +392,19 @@ def submit_record():
 
         st.success("Record submitted successfully!")
             
-        # Clean up draft reference
-        if 'draft_record_id' in st.session_state:
+        # Clean up draft record from Airtable if it exists
+        if 'draft_record_id' in st.session_state and st.session_state.draft_record_id:
+            try:
+                # Only delete the draft if we updated a different record (i.e., reviewing existing assessment)
+                if (st.session_state.mode == "REVIEWER" and 
+                    st.session_state.get('assessment_record_id') and 
+                    st.session_state.draft_record_id != st.session_state.assessment_record_id):
+                    table.delete(st.session_state.draft_record_id)
+            except Exception as e:
+                # Draft deletion failure shouldn't prevent success - just log it
+                st.warning(f"Note: Draft cleanup failed, but submission was successful: {str(e)}")
+            
+            # Clean up draft reference from session state
             del st.session_state.draft_record_id
 
         # Mark as submitted to prevent resubmission

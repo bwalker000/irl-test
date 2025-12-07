@@ -151,6 +151,23 @@ if ('dim' not in st.session_state):
                     st.session_state.TA[dim] = air_data_record.iloc[0][field_name]
                 else:
                     st.session_state.TA[dim] = ""
+            
+            # Initialize reviewer responses with assessment data as starting point
+            for dim in range(num_dims):
+                for i in range(numQ):
+                    field_name = f"QA_{dim:02d}_{i}"
+                    if field_name in air_data_record.columns:
+                        st.session_state.QR[dim, i] = bool(air_data_record.iloc[0][field_name])
+                    else:
+                        st.session_state.QR[dim, i] = False
+            
+            # Initialize reviewer text responses with assessment text as starting point
+            for dim in range(num_dims):
+                field_name = f"TA_{dim:02d}"
+                if field_name in air_data_record.columns:
+                    st.session_state.TR[dim] = air_data_record.iloc[0][field_name] if pd.notna(air_data_record.iloc[0][field_name]) else ""
+                else:
+                    st.session_state.TR[dim] = ""
         # else: for independent reviews, QA and TA remain as initialized (all zeros/empty strings)
 
 #
