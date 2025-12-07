@@ -271,13 +271,6 @@ def submit_record():
     # This code saves the assessment to the airtable database
     responses = {}
 
-    # DEBUG: Show session state values before processing
-    st.write("### DEBUG - Session State Values Before Processing")
-    st.write(f"**venture_id:** {st.session_state.venture_id} (type: {type(st.session_state.venture_id)})")
-    st.write(f"**project_id:** {st.session_state.project_id} (type: {type(st.session_state.project_id)})")
-    st.write(f"**support_id:** {st.session_state.support_id} (type: {type(st.session_state.support_id)})")
-    st.write(f"**assessor_id:** {st.session_state.assessor_id} (type: {type(st.session_state.assessor_id)})")
-
     for dim in range(st.session_state.QA.shape[0]):
         for i, value in enumerate(st.session_state.QA[dim]):
             field_name = f"QA_{dim:02d}_{i}"
@@ -331,12 +324,7 @@ def submit_record():
     else:
         responses["ASSESSOR"] = [assessor_id] if assessor_id else []
 
-    # DEBUG: Show what was assigned to responses
-    st.write("### DEBUG - Linked Record Fields After Processing")
-    st.write(f"**Venture:** {responses['Venture']} (type: {type(responses['Venture'])})")
-    st.write(f"**Project:** {responses['Project']} (type: {type(responses['Project'])})")  
-    st.write(f"**Support Organization:** {responses['Support Organization']} (type: {type(responses['Support Organization'])})")
-    st.write(f"**ASSESSOR:** {responses['ASSESSOR']} (type: {type(responses['ASSESSOR'])})")
+
 
     today = datetime.now().date()
     airtable_date = today.isoformat()
@@ -351,12 +339,6 @@ def submit_record():
         responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date
         responses["Review_date"] = airtable_date
         
-        # DEBUG: Show what we just set for reviewer mode
-        st.write("### DEBUG - REVIEWER Mode Field Assignment")
-        st.write(f"**Setting Name:** {responses['Name']}")
-        st.write(f"**Setting Review_date:** {responses['Review_date']}")
-        st.write(f"**Assessment Name in session:** {st.session_state.get('assessment_name', 'None')}")
-        
         # Add reviewer ID to the record
         responses["REVIEWER"] = ([st.session_state.reviewer_id[0]] if isinstance(st.session_state.reviewer_id, (list, tuple))
                                else [st.session_state.reviewer_id] if st.session_state.reviewer_id
@@ -365,12 +347,10 @@ def submit_record():
         # Preserve the original assessment date if reviewing an existing assessment
         if st.session_state.get('assessment_name'):
             responses["Assess_date"] = st.session_state.get('assess_date')
-            st.write(f"**Preserving Assess_date:** {responses['Assess_date']} (existing assessment review)")
         # For independent reviews, ensure we don't preserve any assessment date
         elif not st.session_state.get('assessment_name'):
             # This is an independent review - make sure no Assess_date is set
             responses.pop("Assess_date", None)
-            st.write("**Independent review detected - removed any Assess_date**")
 
     api_key = st.secrets["general"]["airtable_api_key"]
     base_id = st.secrets["general"]["airtable_base_id"]
@@ -392,114 +372,36 @@ def submit_record():
             v = v.to_dict(orient="records")
         cleaned_responses[k] = v
 
-    # DEBUG: Show final cleaned responses for linked records
-    st.write("### DEBUG - Final Cleaned Responses for Linked Records")
-    for key in ['Venture', 'Project', 'Support Organization', 'ASSESSOR', 'REVIEWER']:
-        if key in cleaned_responses:
-            st.write(f"**{key}:** {cleaned_responses[key]} (type: {type(cleaned_responses[key])})")
-    
-    # DEBUG: Show Name and Review_date specifically for independent reviews
-    st.write("### DEBUG - Name and Date Fields")
-    st.write(f"**Name:** {cleaned_responses.get('Name', 'NOT SET')} (type: {type(cleaned_responses.get('Name', 'NOT SET'))})")
-    st.write(f"**Review_date:** {cleaned_responses.get('Review_date', 'NOT SET')} (type: {type(cleaned_responses.get('Review_date', 'NOT SET'))})")
-    st.write(f"**Assess_date:** {cleaned_responses.get('Assess_date', 'NOT SET')} (type: {type(cleaned_responses.get('Assess_date', 'NOT SET'))})")
-    st.write(f"**Mode:** {st.session_state.mode}")
-    st.write(f"**Assessment Name:** {st.session_state.get('assessment_name', 'None (Independent Review)')}")
 
-    # TEMPORARILY BYPASS CONFIRMATION - AUTO SUBMIT FOR DEBUGGING
-    st.write("### 🚀 AUTO-SUBMITTING FOR DEBUG (No confirmation needed)")
-    print("🔥 TERMINAL: AUTO-SUBMITTING - Starting submission process...")
-    st.write("### 🔥 AUTO-SUBMITTING - Starting submission process...")
-    print("📝 TERMINAL: About to call Airtable API...")
-    st.write("### 📝 About to call Airtable API...")
-    
+
     try:
-            # Determine which record to update
-            record_id_to_update = None
+        # Determine which record to update
+        record_id_to_update = None
+        
+        # Priority 1: If reviewing an existing assessment, update that record
+        if st.session_state.mode == "REVIEWER" and st.session_state.get('assessment_record_id'):
+            record_id_to_update = st.session_state.assessment_record_id
+        # Priority 2: If there's a draft, overwrite it
+        elif st.session_state.get('draft_record_id'):
+            record_id_to_update = st.session_state.draft_record_id
             
-            # Priority 1: If reviewing an existing assessment, update that record
-            if st.session_state.mode == "REVIEWER" and st.session_state.get('assessment_record_id'):
-                record_id_to_update = st.session_state.assessment_record_id
-                st.write(f"**DEBUG:** Updating existing assessment record: {record_id_to_update}")
-            # Priority 2: If there's a draft, overwrite it
-            elif st.session_state.get('draft_record_id'):
-                record_id_to_update = st.session_state.draft_record_id
-                st.write(f"**DEBUG:** Updating draft record: {record_id_to_update}")
-            else:
-                st.write("**DEBUG:** Creating new record")
-            
-            print("🚀 TERMINAL: ATTEMPTING AIRTABLE OPERATION...")
-            st.write("### 🚀 ATTEMPTING AIRTABLE OPERATION...")
-            
-            if record_id_to_update:
-                print(f"📞 TERMINAL: Calling table.update() with record_id: {record_id_to_update}")
-                print(f"📞 TERMINAL: Data being sent: Name={cleaned_responses.get('Name')}, Review_date={cleaned_responses.get('Review_date')}")
-                st.write(f"**Calling table.update() with record_id: {record_id_to_update}**")
-                result = table.update(record_id_to_update, cleaned_responses)
-                print(f"✅ TERMINAL: UPDATE SUCCESS - Result: {result}")
-            else:
-                print("📞 TERMINAL: Calling table.create() for new record")
-                st.write("**Calling table.create() for new record**")
-                result = table.create(cleaned_responses)
-                print(f"✅ TERMINAL: CREATE SUCCESS - Result: {result}")
+        if record_id_to_update:
+            result = table.update(record_id_to_update, cleaned_responses)
+        else:
+            result = table.create(cleaned_responses)
 
-            print("🎉 TERMINAL: Record submitted successfully!")
-            st.success("🎉 Record submitted successfully!")
+        st.success("Record submitted successfully!")
             
-            # DEBUG: Show what was actually submitted AFTER successful submission
-            print("### 🎯 TERMINAL: FINAL DEBUG - What Was Actually Submitted to Airtable")
-            print(f"TERMINAL: Operation: {'UPDATE' if record_id_to_update else 'CREATE'}")
-            if record_id_to_update:
-                print(f"TERMINAL: Record ID Updated: {record_id_to_update}")
-            print(f"TERMINAL: Name sent: {cleaned_responses.get('Name', 'NOT SENT')}")
-            print(f"TERMINAL: Review_date sent: {cleaned_responses.get('Review_date', 'NOT SENT')}")
-            print(f"TERMINAL: Assess_date sent: {cleaned_responses.get('Assess_date', 'NOT SENT')}")
-            print(f"TERMINAL: REVIEWER sent: {cleaned_responses.get('REVIEWER', 'NOT SENT')}")
-            print(f"TERMINAL: Venture sent: {cleaned_responses.get('Venture', 'NOT SENT')}")
-            print(f"TERMINAL: Project sent: {cleaned_responses.get('Project', 'NOT SENT')}")
-            
-            st.write("### 🎯 FINAL DEBUG - What Was Actually Submitted to Airtable")
-            st.write(f"**Operation:** {'UPDATE' if record_id_to_update else 'CREATE'}")
-            if record_id_to_update:
-                st.write(f"**Record ID Updated:** {record_id_to_update}")
-            st.write(f"**Name sent:** {cleaned_responses.get('Name', 'NOT SENT')}")
-            st.write(f"**Review_date sent:** {cleaned_responses.get('Review_date', 'NOT SENT')}")
-            st.write(f"**Assess_date sent:** {cleaned_responses.get('Assess_date', 'NOT SENT')}")
-            st.write(f"**REVIEWER sent:** {cleaned_responses.get('REVIEWER', 'NOT SENT')}")
-            st.write(f"**Venture sent:** {cleaned_responses.get('Venture', 'NOT SENT')}")
-            st.write(f"**Project sent:** {cleaned_responses.get('Project', 'NOT SENT')}")
-            
-            st.write("### 📋 AIRTABLE API RESPONSE:")
-            st.json(result)
-            
-            # Clean up draft reference
-            if 'draft_record_id' in st.session_state:
-                del st.session_state.draft_record_id
+        # Clean up draft reference
+        if 'draft_record_id' in st.session_state:
+            del st.session_state.draft_record_id
 
-            # Mark as submitted to prevent resubmission
-            st.session_state.submitted = True
-            
-            print("✅ TERMINAL: SUBMISSION COMPLETE - Session state updated")
-            st.write("### ✅ SUBMISSION COMPLETE - Session state updated")
-
-            if st.session_state.mode == "ASSESSOR":
-                st.success("Assessment submitted successfully!")
-            elif st.session_state.mode == "REVIEWER":
-                st.success("Review submitted successfully!")
+        # Mark as submitted to prevent resubmission
+        st.session_state.submitted = True
                 
     except Exception as e:
-        print(f"💥 TERMINAL: SUBMISSION FAILED - Exception occurred: {str(e)}")
-        print(f"TERMINAL: Record ID to update: {locals().get('record_id_to_update', 'NOT SET')}")
-        print(f"TERMINAL: Cleaned responses keys: {list(cleaned_responses.keys()) if 'cleaned_responses' in locals() else 'NOT AVAILABLE'}")
-        
-        st.error("### 💥 SUBMISSION FAILED - Exception occurred!")
-        st.error(f"**Error message:** {str(e)}")
-        st.write("**Full error details:**")
+        st.error(f"Submission failed: {str(e)}")
         st.exception(e)
-        st.write("### 📋 DEBUG INFO AT TIME OF ERROR:")
-        st.write(f"**Record ID to update:** {locals().get('record_id_to_update', 'NOT SET')}")
-        st.write(f"**Cleaned responses keys:** {list(cleaned_responses.keys()) if 'cleaned_responses' in locals() else 'NOT AVAILABLE'}")
-        st.write(f"**Table object:** {table if 'table' in locals() else 'NOT AVAILABLE'}")
 
     # Show home button
     if st.button("Return to Home"):

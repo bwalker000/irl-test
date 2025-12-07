@@ -381,30 +381,7 @@ with col3:
         if not st.session_state.submitted:  # Only show submit button if not submitted
             if st.button("Submit", key="submit_button"):
                 reset_session_timer()  # User is active
-                
-                # DEBUG: Show what we're trying to submit before calling submit_record()
-                st.write("### DEBUG - Pre-Submit Analysis")
-                st.write(f"**Mode:** {st.session_state.mode}")
-                st.write(f"**Assessment Name:** {st.session_state.get('assessment_name', 'None (Independent Review)')}")
-                st.write(f"**Venture ID:** {st.session_state.venture_id} (type: {type(st.session_state.venture_id)})")
-                st.write(f"**Project ID:** {st.session_state.project_id} (type: {type(st.session_state.project_id)})")
-                st.write(f"**Support ID:** {st.session_state.support_id} (type: {type(st.session_state.support_id)})")
-                st.write(f"**Assessor ID:** {st.session_state.assessor_id} (type: {type(st.session_state.assessor_id)})")
-                st.write(f"**Reviewer ID:** {st.session_state.get('reviewer_id', 'None')} (type: {type(st.session_state.get('reviewer_id', 'None'))})")
-                
-                # Show which submit path will be taken
-                if st.session_state.mode == "REVIEWER" and st.session_state.get('assessment_record_id'):
-                    st.write("**Submit Path:** Will update existing assessment record")
-                    st.write(f"**Assessment Record ID:** {st.session_state.assessment_record_id}")
-                elif st.session_state.get('draft_record_id'):
-                    st.write("**Submit Path:** Will update draft record")
-                    st.write(f"**Draft Record ID:** {st.session_state.draft_record_id}")
-                else:
-                    st.write("**Submit Path:** Will create new record")
-                
-                # Call submit_record directly (it has its own debug and confirmation)
                 submit_record()
-                # Note: submit_record() will set st.session_state.submitted = True when confirmed
         else:
             st.success("✓ Successfully submitted!")
 with col4:
