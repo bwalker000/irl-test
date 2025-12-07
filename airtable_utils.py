@@ -487,12 +487,12 @@ def submit_record():
             elif st.session_state.mode == "REVIEWER":
                 st.success("Review submitted successfully!")
                 
-        except Exception as e:
-            print(f"💥 TERMINAL: SUBMISSION FAILED - Exception occurred: {str(e)}")
-            print(f"TERMINAL: Record ID to update: {locals().get('record_id_to_update', 'NOT SET')}")
-            print(f"TERMINAL: Cleaned responses keys: {list(cleaned_responses.keys()) if 'cleaned_responses' in locals() else 'NOT AVAILABLE'}")
-            
-            st.error("### 💥 SUBMISSION FAILED - Exception occurred!")
+    except Exception as e:
+        print(f"💥 TERMINAL: SUBMISSION FAILED - Exception occurred: {str(e)}")
+        print(f"TERMINAL: Record ID to update: {locals().get('record_id_to_update', 'NOT SET')}")
+        print(f"TERMINAL: Cleaned responses keys: {list(cleaned_responses.keys()) if 'cleaned_responses' in locals() else 'NOT AVAILABLE'}")
+        
+        st.error("### 💥 SUBMISSION FAILED - Exception occurred!")
             st.error(f"**Error message:** {str(e)}")
             st.write("**Full error details:**")
             st.exception(e)
