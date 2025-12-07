@@ -406,15 +406,14 @@ def submit_record():
     st.write(f"**Mode:** {st.session_state.mode}")
     st.write(f"**Assessment Name:** {st.session_state.get('assessment_name', 'None (Independent Review)')}")
 
-    # Add confirmation button before actually submitting
-    st.write("### 🎯 READY TO SUBMIT - Click the button below to confirm")
+    # TEMPORARILY BYPASS CONFIRMATION - AUTO SUBMIT FOR DEBUGGING
+    st.write("### 🚀 AUTO-SUBMITTING FOR DEBUG (No confirmation needed)")
+    print("🔥 TERMINAL: AUTO-SUBMITTING - Starting submission process...")
+    st.write("### 🔥 AUTO-SUBMITTING - Starting submission process...")
+    print("📝 TERMINAL: About to call Airtable API...")
+    st.write("### 📝 About to call Airtable API...")
     
-    if st.button("⚠️ CONFIRM SUBMIT (Debug Mode)", type="primary", key="confirm_submit_final"):
-        print("🔥 TERMINAL: CONFIRM BUTTON CLICKED - Starting submission process...")
-        st.write("### 🔥 CONFIRM BUTTON CLICKED - Starting submission process...")
-        print("📝 TERMINAL: About to call Airtable API...")
-        st.write("### 📝 About to call Airtable API...")
-        try:
+    try:
             # Determine which record to update
             record_id_to_update = None
             
