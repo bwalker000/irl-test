@@ -423,16 +423,19 @@ def submit_record():
             else:
                 st.write("**DEBUG:** Creating new record")
             
+            st.write("### 🚀 ATTEMPTING AIRTABLE OPERATION...")
+            
             if record_id_to_update:
+                st.write(f"**Calling table.update() with record_id: {record_id_to_update}**")
                 result = table.update(record_id_to_update, cleaned_responses)
             else:
-                # Create new record
+                st.write("**Calling table.create() for new record**")
                 result = table.create(cleaned_responses)
 
-            st.success("Record submitted successfully!")
+            st.success("🎉 Record submitted successfully!")
             
             # DEBUG: Show what was actually submitted AFTER successful submission
-            st.write("### 🎯 DEBUG - What Was Actually Submitted to Airtable")
+            st.write("### 🎯 FINAL DEBUG - What Was Actually Submitted to Airtable")
             st.write(f"**Operation:** {'UPDATE' if record_id_to_update else 'CREATE'}")
             if record_id_to_update:
                 st.write(f"**Record ID Updated:** {record_id_to_update}")
@@ -443,7 +446,8 @@ def submit_record():
             st.write(f"**Venture sent:** {cleaned_responses.get('Venture', 'NOT SENT')}")
             st.write(f"**Project sent:** {cleaned_responses.get('Project', 'NOT SENT')}")
             
-            st.write(f"**Airtable Result:** {result}")
+            st.write("### 📋 AIRTABLE API RESPONSE:")
+            st.json(result)
             
             # Clean up draft reference
             if 'draft_record_id' in st.session_state:
@@ -451,6 +455,8 @@ def submit_record():
 
             # Mark as submitted to prevent resubmission
             st.session_state.submitted = True
+            
+            st.write("### ✅ SUBMISSION COMPLETE - Session state updated")
 
             if st.session_state.mode == "ASSESSOR":
                 st.success("Assessment submitted successfully!")
