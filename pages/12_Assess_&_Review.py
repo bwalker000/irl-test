@@ -357,49 +357,25 @@ with st.container(border=True):
 st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
 st.write("\n")
 
-# Navigation with Previous/Next and segmented control for pages
-nav_col1, nav_col2, nav_col3 = st.columns([1, 3, 1])
+# Page selector using full width for segmented control
+# Create page options (1, 2, 3, ... num_dims) - dynamically determined from Airtable structure
+page_options = list(range(num_dims))
 
-# Previous button (left side)
-with nav_col1:
-    if st.session_state.dim > 0:
-        if st.button("← Prev", key="prev_button"):
-            reset_session_timer()
-            auto_save_progress()
-            st.session_state.dim -= 1
-            st.query_params["_reload"] = str(time.time())
-            st.rerun()
+selected_page = st.segmented_control(
+    "Go to page:",
+    options=page_options,
+    format_func=lambda x: str(x + 1),  # Display as 1, 2, 3... instead of 0, 1, 2...
+    default=st.session_state.dim,
+    key="page_selector"
+)
 
-# Page selector using segmented control (center)
-with nav_col2:
-    # Create page options (1, 2, 3, ... num_dims)
-    page_options = list(range(num_dims))
-    
-    selected_page = st.segmented_control(
-        "Go to page:",
-        options=page_options,
-        format_func=lambda x: str(x + 1),  # Display as 1, 2, 3... instead of 0, 1, 2...
-        default=st.session_state.dim,
-        key="page_selector"
-    )
-    
-    # Handle page selection change
-    if selected_page is not None and selected_page != st.session_state.dim:
-        reset_session_timer()
-        auto_save_progress()
-        st.session_state.dim = selected_page
-        st.query_params["_reload"] = str(time.time())
-        st.rerun()
-
-# Next button (right side)  
-with nav_col3:
-    if st.session_state.dim < num_dims - 1:
-        if st.button("Next →", key="next_button"):
-            reset_session_timer()
-            auto_save_progress()
-            st.session_state.dim += 1
-            st.query_params["_reload"] = str(time.time())
-            st.rerun()
+# Handle page selection change
+if selected_page is not None and selected_page != st.session_state.dim:
+    reset_session_timer()
+    auto_save_progress()
+    st.session_state.dim = selected_page
+    st.query_params["_reload"] = str(time.time())
+    st.rerun()
 
 # Submit button (only on last page)
 if st.session_state.dim == num_dims - 1:
@@ -414,12 +390,31 @@ if st.session_state.dim == num_dims - 1:
             st.button("Submit", key="submit_button_disabled", disabled=True)
             st.success("✓ Successfully submitted!")
 
-# Home button centered on its own row
+# Navigation buttons and Home button on same row
 st.write("")  # Add some spacing
-home_cols = st.columns([2, 1, 2])
-with home_cols[1]:
+nav_bottom_cols = st.columns([1, 1, 1])
+
+with nav_bottom_cols[0]:
+    if st.session_state.dim > 0:
+        if st.button("← Prev", key="prev_button"):
+            reset_session_timer()
+            auto_save_progress()
+            st.session_state.dim -= 1
+            st.query_params["_reload"] = str(time.time())
+            st.rerun()
+
+with nav_bottom_cols[1]:
     if st.button("Home", key="home_button"):
         reset_session_timer()  # User is active
         auto_save_progress()  # Auto-save before leaving
         st.switch_page("streamlit_app.py")
+
+with nav_bottom_cols[2]:
+    if st.session_state.dim < num_dims - 1:
+        if st.button("Next →", key="next_button"):
+            reset_session_timer()
+            auto_save_progress()
+            st.session_state.dim += 1
+            st.query_params["_reload"] = str(time.time())
+            st.rerun()
 
