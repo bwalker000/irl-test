@@ -2,6 +2,7 @@ from shared import *
 # Explicitly import shared configuration
 from shared import num_dims, numQ, check_session_timeout, reset_session_timer
 from airtable_utils import auto_save_progress
+import airtable_utils
 
 display_logo()
 
@@ -410,6 +411,11 @@ if not st.session_state.submitted:
                 st.session_state.dim += 1
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
+        else:
+            # On last page, show submit button instead of Next
+            if st.button("Submit", key="submit_button", type="primary"):
+                reset_session_timer()  # User is active
+                handle_submit()
 
 # Submit function that redirects to success page
 def handle_submit():
