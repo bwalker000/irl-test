@@ -357,39 +357,42 @@ with st.container(border=True):
 st.markdown(f"**Page {st.session_state.dim + 1} of {num_dims}**")
 st.write("\n")
 
-# Navigation with Previous, individual page buttons, and Next
-col_prev, col_pages, col_next = st.columns([1, 6, 1])
+# Navigation with Previous/Next and segmented control for pages
+nav_col1, nav_col2, nav_col3 = st.columns([1, 3, 1])
 
 # Previous button (left side)
-with col_prev:
+with nav_col1:
     if st.session_state.dim > 0:
-        if st.button("← Previous", key="prev_button"):
+        if st.button("← Prev", key="prev_button"):
             reset_session_timer()
             auto_save_progress()
             st.session_state.dim -= 1
             st.query_params["_reload"] = str(time.time())
             st.rerun()
-    else:
-        # Empty space when on first page
-        st.write("")
 
-# Individual page buttons (center)
-with col_pages:
-    # Create buttons for each dimension page
-    page_cols = st.columns(num_dims)
-    for i in range(num_dims):
-        with page_cols[i]:
-            button_label = str(i + 1)
-            button_type = "primary" if i == st.session_state.dim else "secondary"
-            if st.button(button_label, key=f"page_button_{i}", type=button_type):
-                reset_session_timer()
-                auto_save_progress()
-                st.session_state.dim = i
-                st.query_params["_reload"] = str(time.time())
-                st.rerun()
+# Page selector using segmented control (center)
+with nav_col2:
+    # Create page options (1, 2, 3, ... num_dims)
+    page_options = list(range(num_dims))
+    
+    selected_page = st.segmented_control(
+        "Go to page:",
+        options=page_options,
+        format_func=lambda x: str(x + 1),  # Display as 1, 2, 3... instead of 0, 1, 2...
+        default=st.session_state.dim,
+        key="page_selector"
+    )
+    
+    # Handle page selection change
+    if selected_page is not None and selected_page != st.session_state.dim:
+        reset_session_timer()
+        auto_save_progress()
+        st.session_state.dim = selected_page
+        st.query_params["_reload"] = str(time.time())
+        st.rerun()
 
 # Next button (right side)  
-with col_next:
+with nav_col3:
     if st.session_state.dim < num_dims - 1:
         if st.button("Next →", key="next_button"):
             reset_session_timer()
@@ -397,11 +400,12 @@ with col_next:
             st.session_state.dim += 1
             st.query_params["_reload"] = str(time.time())
             st.rerun()
-    else:
-        # Empty space when on last page
-        st.write("")
-with col3:
-    if st.session_state.dim == num_dims - 1:
+
+# Submit button (only on last page)
+if st.session_state.dim == num_dims - 1:
+    st.write("")  # Add some spacing
+    submit_cols = st.columns([2, 1, 2])
+    with submit_cols[1]:
         if not st.session_state.submitted:  # Only show submit button if not submitted
             if st.button("Submit", key="submit_button"):
                 reset_session_timer()  # User is active
@@ -409,10 +413,11 @@ with col3:
         else:
             st.button("Submit", key="submit_button_disabled", disabled=True)
             st.success("✓ Successfully submitted!")
-# Home button in separate row
-st.write("\\n")  # Add some spacing
-col_home = st.columns([1, 1, 1])
-with col_home[1]:  # Center the Home button
+
+# Home button centered on its own row
+st.write("")  # Add some spacing
+home_cols = st.columns([2, 1, 2])
+with home_cols[1]:
     if st.button("Home", key="home_button"):
         reset_session_timer()  # User is active
         auto_save_progress()  # Auto-save before leaving
