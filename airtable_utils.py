@@ -408,6 +408,7 @@ def submit_record():
 
     # Add confirmation button before actually submitting
     if st.button("⚠️ CONFIRM SUBMIT (Debug Mode)", type="primary"):
+        st.write("### 🔥 CONFIRM BUTTON CLICKED - Starting submission process...")
         try:
             # Determine which record to update
             record_id_to_update = None
@@ -464,9 +465,14 @@ def submit_record():
                 st.success("Review submitted successfully!")
                 
         except Exception as e:
-            st.error(f"**Submission failed:** {str(e)}")
+            st.error("### 💥 SUBMISSION FAILED - Exception occurred!")
+            st.error(f"**Error message:** {str(e)}")
             st.write("**Full error details:**")
             st.exception(e)
+            st.write("### 📋 DEBUG INFO AT TIME OF ERROR:")
+            st.write(f"**Record ID to update:** {locals().get('record_id_to_update', 'NOT SET')}")
+            st.write(f"**Cleaned responses keys:** {list(cleaned_responses.keys()) if 'cleaned_responses' in locals() else 'NOT AVAILABLE'}")
+            st.write(f"**Table object:** {table if 'table' in locals() else 'NOT AVAILABLE'}")
 
     # Show home button
     if st.button("Return to Home"):
