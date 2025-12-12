@@ -122,7 +122,7 @@ table_name = st.secrets["general"]["airtable_table_data"]
 air_data_drafts, _ = load_airtable(table_name, base_id, api_key, False)
 
 # Look for drafts by this assessor for this venture/project
-draft_name_pattern = f"DRAFT - {st.session_state.venture_name}"
+draft_name_pattern = f"A-DRAFT - {st.session_state.venture_name}"
 existing_drafts = air_data_drafts[
     (air_data_drafts['Name'].str.startswith(draft_name_pattern, na=False)) &
     (air_data_drafts['Assess_date'].isnull() | (air_data_drafts['Assess_date'] == ""))

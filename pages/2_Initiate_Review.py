@@ -131,7 +131,7 @@ elif st.session_state.review_mode == 0:
         st.session_state.project_name = airtable_value_from_id(air_projects, st.session_state.project_id, "Name")
 
         # Check for existing review draft for this assessment
-        draft_name = f"DRAFT - {st.session_state.venture_name} - {st.session_state.project_name}"
+        draft_name = f"AR-DRAFT - {st.session_state.venture_name} - {st.session_state.project_name}"
         existing_draft = air_data[
             (air_data['Name'] == draft_name) &
             (air_data['Review_date'].isnull() | (air_data['Review_date'] == ""))
@@ -284,7 +284,7 @@ elif st.session_state.review_mode == 1:
     # After project selection, check for drafts and previous reviews
     if 'project_name' in st.session_state:
         # Check for existing independent review draft
-        draft_name = f"DRAFT - {st.session_state.venture_name} - {st.session_state.project_name}"
+        draft_name = f"R-DRAFT - {st.session_state.venture_name} - {st.session_state.project_name}"
         
         table_name = st.secrets["general"]["airtable_table_data"]
         air_data_check, _ = load_airtable(table_name, base_id, api_key, False)
@@ -312,7 +312,7 @@ elif st.session_state.review_mode == 1:
             (air_data_check['Review_date'] != pd.NaT) &
             (air_data_check['Name'].notna()) &  # Must have a valid name
             (air_data_check['Name'] != "") &    # Name cannot be empty
-            (~air_data_check['Name'].str.startswith('DRAFT', na=False)) &  # Exclude DRAFT records
+            (~air_data_check['Name'].str.contains('DRAFT', na=False)) &  # Exclude all DRAFT records (A-DRAFT, AR-DRAFT, R-DRAFT)
             (
                 (air_data_check['Assess_date'].isna()) |  # No assessment date (independent)
                 (air_data_check['Assess_date'] == "") |   # Or empty assessment date

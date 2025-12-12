@@ -220,8 +220,15 @@ def auto_save_progress():
     venture_name = st.session_state.venture_name
     project_name = st.session_state.project_name
     
-    # Create DRAFT name
-    draft_name = f"DRAFT - {venture_name} - {project_name}"
+    # Create DRAFT name with appropriate prefix
+    if st.session_state.mode == "ASSESSOR":
+        draft_name = f"A-DRAFT - {venture_name} - {project_name}"
+    elif st.session_state.mode == "REVIEWER":
+        # Check if this is a review of existing assessment or independent review
+        if st.session_state.get('assessment_name') and st.session_state.get('assessment_record_id'):
+            draft_name = f"AR-DRAFT - {venture_name} - {project_name}"
+        else:
+            draft_name = f"R-DRAFT - {venture_name} - {project_name}"
     
     if st.session_state.mode == "REVIEWER":
         # Add reviewer ID

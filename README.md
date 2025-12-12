@@ -4,4 +4,10 @@
    1 - page is accessible to ASSESSORs
    2 - page is accessible to REVIEWERs
 
+# Draft naming convention
+- Draft records in Airtable use specific prefixes to indicate the type of work in progress:
+   A-DRAFT - Assessment in progress (assessor creating new assessment)
+   AR-DRAFT - Assessment Review in progress (reviewer reviewing existing assessment)
+   R-DRAFT - Independent Review in progress (reviewer doing standalone review)
+
    
