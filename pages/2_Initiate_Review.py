@@ -165,9 +165,13 @@ elif st.session_state.review_mode == 0:
             st.info("✅ **Review initialized with assessment data.** You should modify responses to reflect your professional review.")
         
         # Check for previous reviews (for reference, not for copying)
+        # Extract the actual IDs for comparison (they might be stored as lists)
+        venture_id_for_comparison = st.session_state.venture_id[0] if isinstance(st.session_state.venture_id, (list, tuple)) else st.session_state.venture_id
+        project_id_for_comparison = st.session_state.project_id[0] if isinstance(st.session_state.project_id, (list, tuple)) else st.session_state.project_id
+        
         completed_reviews = air_data[
-            (air_data['Venture'] == st.session_state.venture_id) &
-            (air_data['Project'] == st.session_state.project_id) &
+            (air_data['Venture'].apply(lambda x: venture_id_for_comparison in x if isinstance(x, (list, tuple)) else x == venture_id_for_comparison)) &
+            (air_data['Project'].apply(lambda x: project_id_for_comparison in x if isinstance(x, (list, tuple)) else x == project_id_for_comparison)) &
             (air_data['Review_date'].notna()) &
             (air_data['Review_date'] != "")
         ]

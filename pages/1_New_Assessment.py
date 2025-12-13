@@ -155,9 +155,13 @@ if not existing_drafts.empty:
     st.stop()
 
 # Check for completed assessments for this venture/project
+# Extract the actual IDs for comparison (they might be stored as lists)
+venture_id_for_comparison = st.session_state.venture_id[0] if isinstance(st.session_state.venture_id, (list, tuple)) else st.session_state.venture_id
+project_id_for_comparison = st.session_state.project_id[0] if isinstance(st.session_state.project_id, (list, tuple)) else st.session_state.project_id
+
 completed_assessments = air_data_drafts[
-    (air_data_drafts['Venture'] == st.session_state.venture_id) &
-    (air_data_drafts['Project'] == st.session_state.project_id) &
+    (air_data_drafts['Venture'].apply(lambda x: venture_id_for_comparison in x if isinstance(x, (list, tuple)) else x == venture_id_for_comparison)) &
+    (air_data_drafts['Project'].apply(lambda x: project_id_for_comparison in x if isinstance(x, (list, tuple)) else x == project_id_for_comparison)) &
     (air_data_drafts['Assess_date'].notna()) &
     (air_data_drafts['Assess_date'] != "")
 ]
