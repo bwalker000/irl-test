@@ -140,13 +140,14 @@ if not existing_drafts.empty:
             st.session_state.draft_record_id = draft_record['id']
             st.switch_page("pages/12_Assess_&_Review.py")
     with col2:
-        if st.button("Start Fresh"):
+        if st.button("Start Fresh - Delete Draft"):
             # Delete old draft
             try:
                 table = Table(api_key, base_id, st.secrets["general"]["airtable_table_data"])
                 table.delete(existing_drafts.iloc[0]['id'])
-            except:
-                pass
+                st.success("Draft deleted successfully!")
+            except Exception as e:
+                st.error(f"Failed to delete draft: {str(e)}")
             st.rerun()
     with col3:
         if st.button("Cancel"):
