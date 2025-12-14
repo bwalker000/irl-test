@@ -253,9 +253,8 @@ if st.session_state.get('draft_record_id'):
 #
 # Display and collect the questions and answers
 #
-# Initialize scroll functionality
-if "scroll_flag" not in st.session_state:
-    st.session_state.scroll_flag = False
+# Initialize scroll functionality - reset on each page load
+st.session_state.setdefault('scroll_flag', False)
 
 # Note: Scroll functionality is handled by scroll_flag system below
 
@@ -394,7 +393,9 @@ with st.container(border=True):
         )
 
 # Execute scroll if flag is set (but not if we just submitted)
-if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
+scroll_should_execute = st.session_state.scroll_flag and not st.session_state.get('just_submitted', False)
+
+if scroll_should_execute:
     # Use both methods to ensure scrolling works (this was working before)
     try:
         from streamlit_scroll_to_top import scroll_to_top
@@ -413,10 +414,12 @@ if st.session_state.scroll_flag and not st.session_state.get('just_submitted', F
     }, 200);
     </script>
     """, unsafe_allow_html=True)
+    
+    # Reset scroll flag after execution
     st.session_state.scroll_flag = False
 
-# Clear the just_submitted flag after handling scroll
-if st.session_state.get('just_submitted', False):
+# Clear the just_submitted flag after handling scroll (but only if we actually scrolled)
+if st.session_state.get('just_submitted', False) and not st.session_state.scroll_flag:
     st.session_state.just_submitted = False
 
 #
