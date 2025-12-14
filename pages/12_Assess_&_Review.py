@@ -246,13 +246,16 @@ st.write("\n\n")
 
 # Initialize scroll functionality and place scroll target here
 # Only scroll if we just navigated to this page, not on form interactions
-if st.session_state.get('scroll_flag', False) and not st.session_state.get('just_submitted', False):
+# Check for navigation-specific scroll trigger
+if st.session_state.get('navigate_scroll', False) and not st.session_state.get('just_submitted', False):
     try:
         from streamlit_scroll_to_top import scroll_to_here
         scroll_to_here(0, key="table-top")
-        st.session_state.scroll_flag = False
+        # Immediately clear the flag to prevent repeated scrolling
+        st.session_state.navigate_scroll = False
     except:
-        pass
+        # Clear flag even if scroll fails
+        st.session_state.navigate_scroll = False
 
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
@@ -496,7 +499,7 @@ if not st.session_state.submitted:
         st.session_state.dim = selected_page
         st.query_params["_reload"] = str(time.time())
         # Set scroll flag for navigation
-        st.session_state.scroll_flag = True
+        st.session_state.navigate_scroll = True
         st.rerun()
 
 # Show navigation only if not submitted
@@ -513,7 +516,7 @@ if not st.session_state.submitted:
                 st.session_state.dim -= 1
                 st.query_params["_reload"] = str(time.time())
                 # Set scroll flag for navigation
-                st.session_state.scroll_flag = True
+                st.session_state.navigate_scroll = True
                 st.rerun()
     
     with nav_bottom_cols[1]:
@@ -538,7 +541,7 @@ if not st.session_state.submitted:
                 st.session_state.dim += 1
                 st.query_params["_reload"] = str(time.time())
                 # Set scroll flag for navigation
-                st.session_state.scroll_flag = True
+                st.session_state.navigate_scroll = True
                 st.rerun()
         else:
             # On last page, show submit button instead of Next (only if not submitted)
