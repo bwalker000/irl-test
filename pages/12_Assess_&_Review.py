@@ -31,7 +31,6 @@ def handle_submit():
             st.session_state.submitted = True
             st.session_state.submission_message = result_message
             st.session_state.just_submitted = True  # Prevent scrolling on submit
-            st.session_state.just_submitted = True  # Prevent scrolling on submit
             # Clear the draft record ID since we've now submitted
             if 'draft_record_id' in st.session_state:
                 del st.session_state['draft_record_id']
@@ -245,19 +244,10 @@ st.write("\n\n")
 
 # Show draft indicator if this is a draft (no submission date)
 
-
-if st.session_state.get('draft_record_id'):
-    st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
-
-#
-# Display and collect the questions and answers
-#
-
-
-# Initialize scroll functionality
+# Initialize scroll functionality and place scroll target here
 st.session_state.setdefault('scroll_flag', False)
 
-# Place scroll target at the exact location we want to see when scrolling
+# Place scroll target above autosaving message
 if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
     try:
         from streamlit_scroll_to_top import scroll_to_here
@@ -265,6 +255,13 @@ if st.session_state.scroll_flag and not st.session_state.get('just_submitted', F
         st.session_state.scroll_flag = False
     except:
         pass
+
+if st.session_state.get('draft_record_id'):
+    st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
+
+#
+# Display and collect the questions and answers
+#
 
 with st.container(border=True):
 
