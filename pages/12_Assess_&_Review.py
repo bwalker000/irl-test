@@ -245,10 +245,8 @@ st.write("\n\n")
 # Show draft indicator if this is a draft (no submission date)
 
 # Initialize scroll functionality and place scroll target here
-st.session_state.setdefault('scroll_flag', False)
-
-# Place scroll target above autosaving message
-if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
+# Only scroll if we just navigated to this page, not on form interactions
+if st.session_state.get('scroll_flag', False) and not st.session_state.get('just_submitted', False):
     try:
         from streamlit_scroll_to_top import scroll_to_here
         scroll_to_here(0, key="table-top")
