@@ -260,6 +260,9 @@ except ImportError:
     # Fallback if package not installed
     pass
 
+# Add scroll anchor before questions table to show dimension name
+st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
+
 with st.container(border=True):
 
     # Determine if this is an independent review (no assessor)
@@ -288,8 +291,6 @@ with st.container(border=True):
                 if mode != "ASSESSOR":
                     st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
             with col4:
-                # Add scroll anchor right before dimension name display
-                st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
                 st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
         st.markdown("<hr style='margin: 2px 0; border: 0.5px solid #e0e0e0;'>", unsafe_allow_html=True)
 
