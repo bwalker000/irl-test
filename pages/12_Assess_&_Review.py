@@ -244,7 +244,7 @@ st.write("\n\n")
 # Page info is shown via the page selector above
 
 # Show draft indicator if this is a draft (no submission date)
-st.write("DEBUG - Scroll target should be placed above")
+
 
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
@@ -252,16 +252,17 @@ if st.session_state.get('draft_record_id'):
 #
 # Display and collect the questions and answers
 #
-# Initialize scroll functionality - reset on each page load
-st.session_state.setdefault('scroll_flag', False)
+# Place scroll target at very start of page for immediate availability
+if st.session_state.get('scroll_flag', False):
+    try:
+        from streamlit_scroll_to_top import scroll_to_here
+        scroll_to_here(0, key="questions-scroll")
+        st.session_state.scroll_flag = False
+    except:
+        pass
 
-# Place scroll target early in render cycle to avoid timing issues
-try:
-    from streamlit_scroll_to_top import scroll_to_here
-    scroll_to_here(key="questions-scroll")
-    st.write("DEBUG - Scroll target 'questions-scroll' placed early in render")
-except Exception as e:
-    st.write(f"DEBUG - Failed to place scroll target: {e}")
+# Initialize scroll functionality
+st.session_state.setdefault('scroll_flag', False)
 
 # Note: Scroll functionality is handled by scroll_flag system below
 
@@ -399,20 +400,10 @@ with st.container(border=True):
             disabled=not (mode == "REVIEWER")
         )
 
-# Execute scroll if flag is set (but not if we just submitted)
-if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
-    try:
-        from streamlit_scroll_to_top import scroll_to_here
-        # Try scrolling to position 0 (top of the scroll target area)
-        scroll_to_here(0, key="questions-scroll")
-        st.write("DEBUG - Scrolled using scroll_to_here(0) to scroll target")
-    except Exception as e:
-        st.write(f"DEBUG - Scroll failed: {e}")
-    
-    st.session_state.scroll_flag = False
+# Scroll execution moved to top of page for immediate response
 
-# Clear the just_submitted flag after handling scroll (but only if we actually scrolled)
-if st.session_state.get('just_submitted', False) and not st.session_state.scroll_flag:
+# Clear the just_submitted flag after page load
+if st.session_state.get('just_submitted', False):
     st.session_state.just_submitted = False
 
 #
