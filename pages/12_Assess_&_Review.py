@@ -248,6 +248,23 @@ if st.session_state.get('draft_record_id'):
 #
 # Display and collect the questions and answers
 #
+# Auto-scroll to questions section when page changes
+if 'last_dim' not in st.session_state:
+    st.session_state.last_dim = st.session_state.dim
+elif st.session_state.last_dim != st.session_state.dim:
+    # Page changed, trigger scroll
+    st.session_state.last_dim = st.session_state.dim
+    st.markdown("""
+    <script>
+    setTimeout(function() {
+        const element = document.querySelector('[data-testid="stContainer"]');
+        if (element) {
+            element.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+    }, 100);
+    </script>
+    """, unsafe_allow_html=True)
+
 with st.container(border=True):
 
     # Determine if this is an independent review (no assessor)
@@ -417,29 +434,19 @@ def page_has_content(dim):
 # Show page selector only if not submitted
 if not st.session_state.submitted:
     # Page selector using full width for segmented control
-    # Create page options (1, 2, 3, ... num_dims) - dynamically determined from Airtable structure
+    # Create page options with indicators for content
     page_options = list(range(num_dims))
     
-    # Create custom styling for pages with content
-    page_styles = []
-    for i in range(num_dims):
-        if page_has_content(i):
-            page_styles.append(f"""
-            div[data-testid="stSegmentedControl"] button:nth-child({i+2})[aria-pressed="false"] {{
-                background-color: #e8f4fd !important;
-                border-color: #1f77b4 !important;
-                color: #1f77b4 !important;
-            }}
-            """)
-    
-    # Apply custom styling if any pages have content
-    if page_styles:
-        st.markdown(f"<style>{''.join(page_styles)}</style>", unsafe_allow_html=True)
+    def format_page_label(x):
+        page_num = x + 1
+        if page_has_content(x):
+            return f"{page_num} ●"  # Add dot indicator for pages with content
+        return str(page_num)
 
     selected_page = st.segmented_control(
         "Go to page:",
         options=page_options,
-        format_func=lambda x: str(x + 1),  # Display as 1, 2, 3... instead of 0, 1, 2...
+        format_func=format_page_label,
         default=st.session_state.dim,
         key="page_selector"
     )
@@ -450,12 +457,6 @@ if not st.session_state.submitted:
         auto_save_progress()
         st.session_state.dim = selected_page
         st.query_params["_reload"] = str(time.time())
-        # Add scroll to top functionality
-        st.markdown("""
-        <script>
-        window.scrollTo({top: 0, behavior: 'smooth'});
-        </script>
-        """, unsafe_allow_html=True)
         st.rerun()
 
 # Show navigation only if not submitted
@@ -471,12 +472,6 @@ if not st.session_state.submitted:
                 auto_save_progress()
                 st.session_state.dim -= 1
                 st.query_params["_reload"] = str(time.time())
-                # Scroll to top when changing pages
-                st.markdown("""
-                <script>
-                window.scrollTo({top: 0, behavior: 'smooth'});
-                </script>
-                """, unsafe_allow_html=True)
                 st.rerun()
     
     with nav_bottom_cols[1]:
@@ -500,12 +495,6 @@ if not st.session_state.submitted:
                 auto_save_progress()
                 st.session_state.dim += 1
                 st.query_params["_reload"] = str(time.time())
-                # Scroll to top when changing pages
-                st.markdown("""
-                <script>
-                window.scrollTo({top: 0, behavior: 'smooth'});
-                </script>
-                """, unsafe_allow_html=True)
                 st.rerun()
         else:
             # On last page, show submit button instead of Next (only if not submitted)
