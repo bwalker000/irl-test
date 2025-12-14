@@ -246,15 +246,18 @@ elif mode == "REVIEWER":
 
 # Show draft indicator if this is a draft (no submission date)
 
-
-# Scroll anchor - always present to mark the target location
-from streamlit_scroll_to_top import scroll_to_here
-scroll_to_here(0, key='questions-anchor')
-
-# Immediately trigger scroll if flag is set
-if st.session_state.get('scroll_to_questions', False):
-    if not st.session_state.get('just_submitted', False):
+# Only place scroll anchor if NOT just submitted
+# This prevents unwanted scrolling after submission
+if not st.session_state.get('just_submitted', False):
+    from streamlit_scroll_to_top import scroll_to_here
+    scroll_to_here(0, key='questions-anchor')
+    
+    # Immediately trigger scroll if flag is set
+    if st.session_state.get('scroll_to_questions', False):
         scroll_to_here(0, key='questions-anchor')
+    
+# Always clear the scroll flag
+if st.session_state.get('scroll_to_questions', False):
     st.session_state.scroll_to_questions = False
 
 st.write("\n\n")
