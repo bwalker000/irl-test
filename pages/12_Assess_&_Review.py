@@ -257,12 +257,14 @@ if st.session_state.get('draft_record_id'):
 # Initialize scroll functionality
 st.session_state.setdefault('scroll_flag', False)
 
-# Place scroll target higher to capture container header
-try:
-    from streamlit_scroll_to_top import scroll_to_here
-    scroll_to_here(key="questions-scroll")
-except:
-    pass
+# Place scroll target higher to capture container header - only if scroll is needed
+if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
+    try:
+        from streamlit_scroll_to_top import scroll_to_here
+        scroll_to_here(0, key="questions-scroll")
+        st.session_state.scroll_flag = False
+    except:
+        pass
 
 # Note: Scroll functionality is handled by scroll_flag system below
 
@@ -400,15 +402,7 @@ with st.container(border=True):
             disabled=not (mode == "REVIEWER")
         )
 
-# Execute scroll immediately if flag is set (but not if we just submitted)
-if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
-    try:
-        from streamlit_scroll_to_top import scroll_to_here
-        # Execute scroll to the placed target
-        scroll_to_here(0, key="questions-scroll")
-    except:
-        pass
-    st.session_state.scroll_flag = False
+# Scroll execution now handled at target location above
 
 # Clear the just_submitted flag after page load
 if st.session_state.get('just_submitted', False):
