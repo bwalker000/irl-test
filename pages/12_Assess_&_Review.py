@@ -15,10 +15,6 @@ st.title("Assessment & Review")
 if 'submitted' not in st.session_state:
     st.session_state.submitted = False
 
-# Initialize scroll state for navigation
-if 'scroll_to_questions' not in st.session_state:
-    st.session_state.scroll_to_questions = False
-
 # Submit function - defined early so it can be called later
 def handle_submit():
     """Handle submission and show success"""
@@ -245,18 +241,6 @@ elif mode == "REVIEWER":
 # Page info is shown via the page selector above
 
 # Show draft indicator if this is a draft (no submission date)
-
-# Handle scroll to questions area when navigating between pages
-# Only scroll if explicitly requested AND not during form interactions
-if (st.session_state.get('scroll_to_questions', False) and 
-    not st.session_state.get('just_submitted', False)):
-    try:
-        from streamlit_scroll_to_top import scroll_to_here
-        scroll_to_here(0, key='questions-area')  # 0 means instant scroll
-    except Exception:
-        pass  # Fail silently if scroll doesn't work
-    # Always clear the flag after attempting scroll
-    st.session_state.scroll_to_questions = False
 
 st.write("\n\n")
 
@@ -500,8 +484,6 @@ if not st.session_state.submitted:
         reset_session_timer()
         auto_save_progress()
         st.session_state.dim = selected_page
-        # Clear any existing scroll flags first, then set new one
-        st.session_state.scroll_to_questions = True  # Trigger scroll on navigation
         st.query_params["_reload"] = str(time.time())
         st.rerun()
 
@@ -517,8 +499,6 @@ if not st.session_state.submitted:
                 reset_session_timer()
                 auto_save_progress()
                 st.session_state.dim -= 1
-                # Clear any existing scroll flags first, then set new one
-                st.session_state.scroll_to_questions = True  # Trigger scroll on navigation
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
     
@@ -542,8 +522,6 @@ if not st.session_state.submitted:
                 reset_session_timer()
                 auto_save_progress()
                 st.session_state.dim += 1
-                # Clear any existing scroll flags first, then set new one
-                st.session_state.scroll_to_questions = True  # Trigger scroll on navigation
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
         else:
