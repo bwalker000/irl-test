@@ -248,10 +248,14 @@ elif mode == "REVIEWER":
 
 st.write("\n\n")
 
-# Handle scroll to questions area - must happen before the scroll target
-if st.session_state.scroll_to_questions and not st.session_state.get('just_submitted', False):
+# Place scroll target here - only active when navigating between pages
+# Double-check: only scroll if flag is True AND we're not in submit mode
+if (st.session_state.get('scroll_to_questions', False) and 
+    not st.session_state.get('just_submitted', False)):
     from streamlit_scroll_to_top import scroll_to_here
     scroll_to_here(0, key='questions-target')
+# Always clear the flag after checking, regardless of whether we scrolled
+if 'scroll_to_questions' in st.session_state:
     st.session_state.scroll_to_questions = False
 
 if st.session_state.get('draft_record_id'):
