@@ -396,28 +396,37 @@ with st.container(border=True):
 
 # Execute scroll if flag is set
 if st.session_state.scroll_flag:
+    # Use both methods to ensure scrolling works
     try:
-        from streamlit_scroll_to_top import scroll_to_here
-        scroll_to_here(0, key="questions-start-anchor")
-        st.session_state.scroll_flag = False
+        from streamlit_scroll_to_top import scroll_to_top
+        scroll_to_top()
     except ImportError:
-        # Fallback scroll method
-        st.markdown("""
-        <script>
-        setTimeout(function() {
-            const anchor = document.getElementById('questions-anchor');
-            if (anchor) {
-                anchor.scrollIntoView({behavior: 'smooth'});
-            }
-        }, 100);
-        </script>
-        """, unsafe_allow_html=True)
-        st.session_state.scroll_flag = False
+        pass
+    
+    # Also use JavaScript fallback
+    st.markdown("""
+    <script>
+    setTimeout(function() {
+        // Try multiple scroll methods
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        
+        // Also try to scroll to anchor
+        const anchor = document.getElementById('questions-anchor');
+        if (anchor) {
+            anchor.scrollIntoView({behavior: 'smooth'});
+        }
+    }, 200);
+    </script>
+    """, unsafe_allow_html=True)
+    st.session_state.scroll_flag = False
 
 #
 # --------------------------------------------------------------------------------------
 # Present specific instructions
 #
+
+# Add scroll anchor
+st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
 with st.container(border=True):
     st.write("__Detailed Instructions:__")
     instructions = df.loc[df["Dimension"] == dim, "Instructions"].iloc[0]
@@ -448,31 +457,61 @@ def page_has_content(dim):
 
 # Show page selector only if not submitted
 if not st.session_state.submitted:
-    # Create CSS for pages with content
+    # Check which pages have content and create visual indicators
     pages_with_content = [i for i in range(num_dims) if page_has_content(i)]
     
+    # More aggressive CSS targeting for segmented control buttons
     if pages_with_content:
-        # Build CSS to highlight pages with content
-        css_rules = []
-        for page_idx in pages_with_content:
-            # Target the button for this specific page (1-indexed in UI)
-            css_rules.append(f"""
-            div[data-testid="stSegmentedControl"] button[data-value="{page_idx}"] {{
-                background-color: #e1f5fe !important;
-                border-color: #0277bd !important;
-                font-weight: bold !important;
-            }}
-            """)
+        # Try multiple approaches since Streamlit's CSS can be tricky
+        st.markdown(f"""
+        <style>
+        /* Multiple selectors to ensure we catch the buttons */
+        div[data-testid="stSegmentedControl"] button[data-baseweb="button"] {{
+            transition: all 0.3s ease !important;
+        }}
         
-        st.markdown(f"<style>{''.join(css_rules)}</style>", unsafe_allow_html=True)
+        /* Try targeting by content */
+        div[data-testid="stSegmentedControl"] button:has-text("✓") {{
+            background-color: #e8f5e8 !important;
+            border: 2px solid #4caf50 !important;
+            color: #2e7d2e !important;
+            font-weight: bold !important;
+        }}
+        
+        /* Fallback - highlight all buttons temporarily for testing */
+        .stSegmentedControl > div > button {{
+            border: 1px solid red !important;
+        }}
+        
+        /* Another approach - use data attributes */
+        [data-testid="stSegmentedControl"] [role="radiogroup"] button {{
+            position: relative;
+        }}
+        </style>
+        """, unsafe_allow_html=True)
     
     # Page selector using full width for segmented control
     page_options = list(range(num_dims))
+    
+    # Add visual indicators and debug info
+    def format_page_with_status(x):
+        base_text = str(x + 1)
+        if page_has_content(x):
+            return f"✓ {base_text}"  # Checkmark for completed pages
+        return base_text
+    
+    # Debug info - show which pages have content
+    if pages_with_content:
+        st.info(f"Pages with content: {[p+1 for p in pages_with_content]}")
+    
+    # Show progress bar as alternative visual indicator
+    progress_percentage = len(pages_with_content) / num_dims if num_dims > 0 else 0
+    st.progress(progress_percentage, text=f"Progress: {len(pages_with_content)}/{num_dims} pages completed")
 
     selected_page = st.segmented_control(
         "Go to page:",
         options=page_options,
-        format_func=lambda x: str(x + 1),  # Clean numbering without dots
+        format_func=format_page_with_status,
         default=st.session_state.dim,
         key="page_selector"
     )
