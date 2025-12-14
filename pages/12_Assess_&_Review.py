@@ -15,6 +15,10 @@ st.title("Assessment & Review")
 if 'submitted' not in st.session_state:
     st.session_state.submitted = False
 
+# Initialize scroll state for navigation
+if 'scroll_to_questions' not in st.session_state:
+    st.session_state.scroll_to_questions = False
+
 # Submit function - defined early so it can be called later
 def handle_submit():
     """Handle submission and show success"""
@@ -243,6 +247,12 @@ elif mode == "REVIEWER":
 # Show draft indicator if this is a draft (no submission date)
 
 st.write("\n\n")
+
+# Handle scroll to questions area - must happen before the scroll target
+if st.session_state.scroll_to_questions and not st.session_state.get('just_submitted', False):
+    from streamlit_scroll_to_top import scroll_to_here
+    scroll_to_here(0, key='questions-target')
+    st.session_state.scroll_to_questions = False
 
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
@@ -484,6 +494,7 @@ if not st.session_state.submitted:
         reset_session_timer()
         auto_save_progress()
         st.session_state.dim = selected_page
+        st.session_state.scroll_to_questions = True
         st.query_params["_reload"] = str(time.time())
         st.rerun()
 
@@ -499,6 +510,7 @@ if not st.session_state.submitted:
                 reset_session_timer()
                 auto_save_progress()
                 st.session_state.dim -= 1
+                st.session_state.scroll_to_questions = True
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
     
@@ -522,6 +534,7 @@ if not st.session_state.submitted:
                 reset_session_timer()
                 auto_save_progress()
                 st.session_state.dim += 1
+                st.session_state.scroll_to_questions = True
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
         else:
