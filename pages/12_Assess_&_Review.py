@@ -257,13 +257,7 @@ if st.session_state.get('draft_record_id'):
 if "scroll_flag" not in st.session_state:
     st.session_state.scroll_flag = False
 
-# Scroll anchor for questions section
-try:
-    from streamlit_scroll_to_top import scroll_to_here
-    scroll_to_here(0, key="questions-start-anchor")
-except ImportError:
-    # Fallback if package not installed
-    pass
+# Note: Scroll functionality is handled by scroll_flag system below
 
 with st.container(border=True):
 
@@ -401,28 +395,17 @@ with st.container(border=True):
 
 # Execute scroll if flag is set (but not if we just submitted)
 if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
-    # Use both methods to ensure scrolling works
+    # Use Streamlit scroll method
     try:
-        from streamlit_scroll_to_top import scroll_to_top
-        scroll_to_top()
+        from streamlit_scroll_to_top import scroll_to_here
+        scroll_to_here(0, key="questions-scroll")
     except ImportError:
-        pass
-    
-    # Also use JavaScript fallback
-    st.markdown("""
-    <script>
-    setTimeout(function() {
-        // Try multiple scroll methods
-        window.scrollTo({top: 0, behavior: 'smooth'});
-        
-        // Also try to scroll to anchor
-        const anchor = document.getElementById('questions-anchor');
-        if (anchor) {
-            anchor.scrollIntoView({behavior: 'smooth'});
-        }
-    }, 200);
-    </script>
-    """, unsafe_allow_html=True)
+        # Fallback to scroll_to_top if scroll_to_here not available
+        try:
+            from streamlit_scroll_to_top import scroll_to_top
+            scroll_to_top()
+        except ImportError:
+            pass
     st.session_state.scroll_flag = False
 
 # Clear the just_submitted flag after handling scroll
