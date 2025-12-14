@@ -256,8 +256,8 @@ if st.session_state.get('draft_record_id'):
 if st.session_state.get('scroll_flag', False):
     try:
         from streamlit_scroll_to_top import scroll_to_here
-        # Scroll higher to show table header, not just questions
-        scroll_to_here(-50, key="questions-scroll")
+        # Scroll higher to account for Streamlit header bar covering content
+        scroll_to_here(-120, key="questions-scroll")
         st.session_state.scroll_flag = False
     except:
         pass
