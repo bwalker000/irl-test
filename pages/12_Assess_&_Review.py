@@ -244,13 +244,7 @@ st.write("\n\n")
 # Page info is shown via the page selector above
 
 # Show draft indicator if this is a draft (no submission date)
-# Add scroll target here - this is where we want to scroll to
-try:
-    from streamlit_scroll_to_top import scroll_to_here
-    scroll_to_here(key="questions-scroll")
-    st.write("DEBUG - Scroll target 'questions-scroll' placed here (above table)")
-except Exception as e:
-    st.write(f"DEBUG - Failed to place scroll target: {e}")
+st.write("DEBUG - Scroll target should be placed above")
 
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
@@ -260,6 +254,14 @@ if st.session_state.get('draft_record_id'):
 #
 # Initialize scroll functionality - reset on each page load
 st.session_state.setdefault('scroll_flag', False)
+
+# Place scroll target early in render cycle to avoid timing issues
+try:
+    from streamlit_scroll_to_top import scroll_to_here
+    scroll_to_here(key="questions-scroll")
+    st.write("DEBUG - Scroll target 'questions-scroll' placed early in render")
+except Exception as e:
+    st.write(f"DEBUG - Failed to place scroll target: {e}")
 
 # Note: Scroll functionality is handled by scroll_flag system below
 
