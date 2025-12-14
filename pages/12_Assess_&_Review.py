@@ -244,19 +244,6 @@ st.write("\n\n")
 
 # Show draft indicator if this is a draft (no submission date)
 
-# Handle scroll logic - must be before form elements but after initialization
-# Only scroll on navigation, not on form interactions
-if (st.session_state.get('navigate_scroll', False) and 
-    not st.session_state.get('just_submitted', False) and
-    'navigate_scroll' in st.session_state):  # Extra check to ensure flag was explicitly set
-    try:
-        from streamlit_scroll_to_top import scroll_to_here
-        scroll_to_here(0, key="table-top")
-    except:
-        pass
-    # Clear the flag immediately after attempting scroll
-    st.session_state.navigate_scroll = False
-
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
 
@@ -498,8 +485,6 @@ if not st.session_state.submitted:
         auto_save_progress()
         st.session_state.dim = selected_page
         st.query_params["_reload"] = str(time.time())
-        # Set scroll flag for navigation
-        st.session_state.navigate_scroll = True
         st.rerun()
 
 # Show navigation only if not submitted
@@ -515,8 +500,6 @@ if not st.session_state.submitted:
                 auto_save_progress()
                 st.session_state.dim -= 1
                 st.query_params["_reload"] = str(time.time())
-                # Set scroll flag for navigation
-                st.session_state.navigate_scroll = True
                 st.rerun()
     
     with nav_bottom_cols[1]:
@@ -540,8 +523,6 @@ if not st.session_state.submitted:
                 auto_save_progress()
                 st.session_state.dim += 1
                 st.query_params["_reload"] = str(time.time())
-                # Set scroll flag for navigation
-                st.session_state.navigate_scroll = True
                 st.rerun()
         else:
             # On last page, show submit button instead of Next (only if not submitted)
