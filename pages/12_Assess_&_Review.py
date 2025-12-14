@@ -556,6 +556,14 @@ if not st.session_state.submitted:
 
 # Show success message if submitted
 if st.session_state.submitted:
+    # Place scroll anchor here for success message
+    from streamlit_scroll_to_top import scroll_to_here
+    scroll_to_here(0, key='success-message')
+    
+    # Trigger scroll to success message if just submitted
+    if st.session_state.get('just_submitted', False):
+        scroll_to_here(0, key='success-message')
+    
     st.success(f"✓ {st.session_state.get('submission_type', 'Assessment')} successfully submitted!")
     st.write("")
     # Show only Return Home button
