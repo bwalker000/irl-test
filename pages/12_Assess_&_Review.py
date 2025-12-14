@@ -257,14 +257,14 @@ if st.session_state.get('draft_record_id'):
 # Initialize scroll functionality
 st.session_state.setdefault('scroll_flag', False)
 
-# Execute scroll if needed - place target before table to show header
+# Place scroll target at the exact location we want to see when scrolling
 if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
     try:
         from streamlit_scroll_to_top import scroll_to_here
-        scroll_to_here(0, key="questions-scroll")
+        scroll_to_here(0, key="table-top")
+        st.session_state.scroll_flag = False
     except:
         pass
-    st.session_state.scroll_flag = False
 
 with st.container(border=True):
 
