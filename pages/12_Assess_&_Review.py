@@ -251,9 +251,15 @@ st.write("\n\n")
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
 
-# Place scroll anchor/target here - this is where we want to scroll TO
+# Scroll anchor - always present to mark the target location
 from streamlit_scroll_to_top import scroll_to_here
 scroll_to_here(0, key='questions-anchor')
+
+# Immediately trigger scroll if flag is set
+if st.session_state.get('scroll_to_questions', False):
+    if not st.session_state.get('just_submitted', False):
+        scroll_to_here(0, key='questions-anchor')
+    st.session_state.scroll_to_questions = False
 
 #
 # Display and collect the questions and answers
@@ -554,12 +560,4 @@ if st.session_state.submitted:
         if st.button("Return Home", key="final_return_home"):
             reset_session_timer()
             st.switch_page("streamlit_app.py")
-
-# Trigger scroll to anchor if navigation occurred
-# This must be at the END of the page, after all content is rendered
-if st.session_state.get('scroll_to_questions', False):
-    if not st.session_state.get('just_submitted', False):
-        from streamlit_scroll_to_top import scroll_to_here
-        scroll_to_here(0, key='questions-anchor')  # Same key as anchor above
-    st.session_state.scroll_to_questions = False
 
