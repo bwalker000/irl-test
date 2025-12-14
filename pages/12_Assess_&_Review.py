@@ -393,29 +393,12 @@ with st.container(border=True):
         )
 
 # Execute scroll if flag is set (but not if we just submitted)
-scroll_should_execute = st.session_state.scroll_flag and not st.session_state.get('just_submitted', False)
-
-if scroll_should_execute:
-    # Use both methods to ensure scrolling works (this was working before)
+if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
     try:
         from streamlit_scroll_to_top import scroll_to_top
         scroll_to_top()
     except ImportError:
         pass
-    
-    # Also use JavaScript fallback to scroll to anchor
-    st.markdown("""
-    <script>
-    setTimeout(function() {
-        const anchor = document.getElementById('questions-anchor');
-        if (anchor) {
-            anchor.scrollIntoView({behavior: 'smooth'});
-        }
-    }, 200);
-    </script>
-    """, unsafe_allow_html=True)
-    
-    # Reset scroll flag after execution
     st.session_state.scroll_flag = False
 
 # Clear the just_submitted flag after handling scroll (but only if we actually scrolled)
