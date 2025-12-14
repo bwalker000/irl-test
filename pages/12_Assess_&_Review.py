@@ -257,14 +257,14 @@ if st.session_state.get('draft_record_id'):
 # Initialize scroll functionality
 st.session_state.setdefault('scroll_flag', False)
 
-# Note: Scroll functionality is handled by scroll_flag system below
-
-# Place scroll target here - this is where we want to scroll to
+# Place scroll target higher to capture container header
 try:
     from streamlit_scroll_to_top import scroll_to_here
     scroll_to_here(key="questions-scroll")
 except:
     pass
+
+# Note: Scroll functionality is handled by scroll_flag system below
 
 with st.container(border=True):
 
@@ -400,11 +400,14 @@ with st.container(border=True):
             disabled=not (mode == "REVIEWER")
         )
 
-# Execute scroll if flag is set (but not if we just submitted)
+# Execute scroll immediately if flag is set (but not if we just submitted)
 if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
+    # Clear any caches that might interfere
+    st.cache_data.clear()
     try:
         from streamlit_scroll_to_top import scroll_to_here
-        scroll_to_here(0, key="questions-scroll")
+        # Immediate scroll execution
+        scroll_to_here(key="questions-scroll")
     except:
         pass
     st.session_state.scroll_flag = False
