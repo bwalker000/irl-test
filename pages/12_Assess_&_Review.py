@@ -17,9 +17,8 @@ if 'submitted' not in st.session_state:
 
 # Submit function - defined early so it can be called later
 def handle_submit():
-    """Handle submission and show success - don't scroll to maintain position"""
+    """Handle submission and show success"""
     try:
-        # Don't set scroll flag when submitting - stay at current position to show success message
         result_message = airtable_utils.submit_record()
         # Handle case where submit_record returns None or empty string
         if result_message is None:
@@ -31,6 +30,8 @@ def handle_submit():
         if "successfully" in result_message.lower():
             st.session_state.submitted = True
             st.session_state.submission_message = result_message
+            st.session_state.just_submitted = True  # Prevent scrolling on submit
+            st.session_state.just_submitted = True  # Prevent scrolling on submit
             # Clear the draft record ID since we've now submitted
             if 'draft_record_id' in st.session_state:
                 del st.session_state['draft_record_id']
@@ -398,8 +399,8 @@ with st.container(border=True):
             disabled=not (mode == "REVIEWER")
         )
 
-# Execute scroll if flag is set
-if st.session_state.scroll_flag:
+# Execute scroll if flag is set (but not if we just submitted)
+if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
     # Use both methods to ensure scrolling works
     try:
         from streamlit_scroll_to_top import scroll_to_top
@@ -423,6 +424,10 @@ if st.session_state.scroll_flag:
     </script>
     """, unsafe_allow_html=True)
     st.session_state.scroll_flag = False
+
+# Clear the just_submitted flag after handling scroll
+if st.session_state.get('just_submitted', False):
+    st.session_state.just_submitted = False
 
 #
 # --------------------------------------------------------------------------------------
