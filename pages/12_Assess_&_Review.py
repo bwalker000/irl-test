@@ -17,8 +17,9 @@ if 'submitted' not in st.session_state:
 
 # Submit function - defined early so it can be called later
 def handle_submit():
-    """Handle submission and show success"""
+    """Handle submission and show success - don't scroll to maintain position"""
     try:
+        # Don't set scroll flag when submitting - stay at current position to show success message
         result_message = airtable_utils.submit_record()
         # Handle case where submit_record returns None or empty string
         if result_message is None:
@@ -242,6 +243,9 @@ st.write("\n\n")
 # Page info is shown via the page selector above
 
 # Show draft indicator if this is a draft (no submission date)
+# Add scroll anchor higher to capture full table outline
+st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
+
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
 
@@ -259,9 +263,6 @@ try:
 except ImportError:
     # Fallback if package not installed
     pass
-
-# Add scroll anchor to capture table outline including border
-st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
 
 with st.container(border=True):
 
