@@ -200,6 +200,9 @@ elif mode == "REVIEWER":
 else:
     st.title("REPORT")
 
+# Add scroll anchor right after title to capture dimension name in table
+st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
+
 st.write("\n\n")
 
 #
@@ -244,9 +247,6 @@ st.write("\n\n")
 # Show draft indicator if this is a draft (no submission date)
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
-
-# Add scroll anchor to capture more context including instructions
-st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
 
 #
 # Display and collect the questions and answers
@@ -509,7 +509,7 @@ if not st.session_state.submitted:
     first_half = page_options[:mid_point]
     second_half = page_options[mid_point:]
     
-    # First row - left aligned
+    # First row - full width
     if first_half:
         first_range = f"1-{first_half[-1] + 1}" if first_half else ""
         selected_page_1 = st.segmented_control(
@@ -520,18 +520,16 @@ if not st.session_state.submitted:
             key="page_selector_1"
         )
     
-    # Second row - right aligned using columns for positioning
+    # Second row - full width
     if second_half:
-        col1, col2 = st.columns([0.5, 0.5])
-        with col2:
-            second_range = f"{second_half[0] + 1}-{second_half[-1] + 1}" if second_half else ""
-            selected_page_2 = st.segmented_control(
-                f"Page ({second_range})",
-                options=second_half,
-                format_func=format_page_with_status,
-                default=st.session_state.dim if st.session_state.dim in second_half else None,
-                key="page_selector_2"
-            )
+        second_range = f"{second_half[0] + 1}-{second_half[-1] + 1}" if second_half else ""
+        selected_page_2 = st.segmented_control(
+            f"Page ({second_range})",
+            options=second_half,
+            format_func=format_page_with_status,
+            default=st.session_state.dim if st.session_state.dim in second_half else None,
+            key="page_selector_2"
+        )
     
     # Determine which page was selected
     selected_page = None
