@@ -248,9 +248,9 @@ st.write("\n\n")
 try:
     from streamlit_scroll_to_top import scroll_to_here
     scroll_to_here(key="questions-scroll")
-except:
-    pass
-st.write("DEBUG - Scroll target placed here (above table)")
+    st.write("DEBUG - Scroll target 'questions-scroll' placed here (above table)")
+except Exception as e:
+    st.write(f"DEBUG - Failed to place scroll target: {e}")
 
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
@@ -401,9 +401,9 @@ with st.container(border=True):
 if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
     try:
         from streamlit_scroll_to_top import scroll_to_here
-        # Use scroll_to_here with proper positioning - scroll to anchor position
-        scroll_to_here(key="questions-scroll")
-        st.write("DEBUG - Scrolled using scroll_to_here() at anchor position")
+        # Try scrolling to position 0 (top of the scroll target area)
+        scroll_to_here(0, key="questions-scroll")
+        st.write("DEBUG - Scrolled using scroll_to_here(0) to scroll target")
     except Exception as e:
         st.write(f"DEBUG - Scroll failed: {e}")
     
