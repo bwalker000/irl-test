@@ -14,4 +14,4 @@
    source /Users/billwalker/irl-test/.venv/bin/activate
 
    # Run code from terminal:
-   python3 -m streamlit run streamlit_app.py 
+/Users/billwalker/irl-test/.venv/bin/python -m streamlit run streamlit_app.py

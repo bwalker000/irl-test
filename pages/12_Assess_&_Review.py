@@ -258,7 +258,10 @@ try:
     scroll_to_here(0, key="questions-start-anchor")
 except ImportError:
     # Fallback if package not installed
-    st.markdown("<div id='questions-anchor'></div>", unsafe_allow_html=True)
+    pass
+
+# Add scroll anchor before the questions table to show dimension name
+st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
 
 with st.container(border=True):
 
@@ -424,9 +427,6 @@ if st.session_state.scroll_flag:
 # --------------------------------------------------------------------------------------
 # Present specific instructions
 #
-
-# Add scroll anchor
-st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
 with st.container(border=True):
     st.write("__Detailed Instructions:__")
     instructions = df.loc[df["Dimension"] == dim, "Instructions"].iloc[0]
@@ -497,19 +497,15 @@ if not st.session_state.submitted:
     def format_page_with_status(x):
         base_text = str(x + 1)
         if page_has_content(x):
-            return f"✓ {base_text}"  # Checkmark for completed pages
+            return f"✓{base_text}"  # Smaller checkmark, no space
         return base_text
     
-    # Debug info - show which pages have content
-    if pages_with_content:
-        st.info(f"Pages with content: {[p+1 for p in pages_with_content]}")
-    
-    # Show progress bar as alternative visual indicator
+    # Show compact progress indicator
     progress_percentage = len(pages_with_content) / num_dims if num_dims > 0 else 0
-    st.progress(progress_percentage, text=f"Progress: {len(pages_with_content)}/{num_dims} pages completed")
+    st.progress(progress_percentage, text=f"Completed: {len(pages_with_content)}/{num_dims}")
 
     selected_page = st.segmented_control(
-        "Go to page:",
+        "Page",
         options=page_options,
         format_func=format_page_with_status,
         default=st.session_state.dim,
