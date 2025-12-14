@@ -242,8 +242,6 @@ elif mode == "REVIEWER":
     st.write("__General Instructions:__")
     st.write("You will constructively challenge the ASSESSOR on each level they indicate that they have achieved. You should ask for evidence of achievement. If there is no tangible record, then you must reject the ASSESSOR’s indication and will instead indicate a lower level of achievement. Do not skip levels.")
 
-st.write("\n")
-
 # Page info is shown via the page selector above
 
 # Show draft indicator if this is a draft (no submission date)
@@ -254,7 +252,7 @@ if st.session_state.scroll_to_questions:
     scroll_to_here(0, key='questions-area')  # 0 means instant scroll
     st.session_state.scroll_to_questions = False  # Reset after scrolling
 
-st.write("\n")
+st.write("\n\n")
 
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
