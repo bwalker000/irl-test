@@ -244,9 +244,13 @@ st.write("\n\n")
 # Page info is shown via the page selector above
 
 # Show draft indicator if this is a draft (no submission date)
-# Add scroll anchor higher to capture full table outline
-st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
-st.write("DEBUG - Scroll anchor 'questions-anchor' placed here")
+# Add scroll target here - this is where we want to scroll to
+try:
+    from streamlit_scroll_to_top import scroll_to_here
+    scroll_to_here(key="questions-scroll")
+except:
+    pass
+st.write("DEBUG - Scroll target placed here (above table)")
 
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
@@ -393,46 +397,17 @@ with st.container(border=True):
             disabled=not (mode == "REVIEWER")
         )
 
-# DEBUG: Check scroll conditions
-st.write(f"DEBUG - scroll_flag: {st.session_state.get('scroll_flag', 'Not set')}")
-st.write(f"DEBUG - just_submitted: {st.session_state.get('just_submitted', 'Not set')}")
-
 # Execute scroll if flag is set (but not if we just submitted)
 if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
-    st.write("DEBUG - Attempting to scroll...")
-    
-    # Check if streamlit-scroll-to-top is available
     try:
-        import streamlit_scroll_to_top
-        st.write("DEBUG - streamlit-scroll-to-top package loaded successfully")
-        
-        # Check what methods are available
-        available_methods = dir(streamlit_scroll_to_top)
-        st.write(f"DEBUG - Available methods: {[m for m in available_methods if not m.startswith('_')]}")
-        
-        # Try scroll_to_top
-        try:
-            from streamlit_scroll_to_top import scroll_to_top
-            scroll_to_top()
-            st.write("DEBUG - scroll_to_top() called successfully")
-        except Exception as e:
-            st.write(f"DEBUG - scroll_to_top() failed: {e}")
-            
-        # Try scroll_to_here if available
-        try:
-            from streamlit_scroll_to_top import scroll_to_here
-            scroll_to_here(0, key="debug-scroll")
-            st.write("DEBUG - scroll_to_here() called successfully")
-        except Exception as e:
-            st.write(f"DEBUG - scroll_to_here() failed: {e}")
-            
-    except ImportError as e:
-        st.write(f"DEBUG - streamlit-scroll-to-top not available: {e}")
+        from streamlit_scroll_to_top import scroll_to_here
+        # Use scroll_to_here with proper positioning - scroll to anchor position
+        scroll_to_here(key="questions-scroll")
+        st.write("DEBUG - Scrolled using scroll_to_here() at anchor position")
+    except Exception as e:
+        st.write(f"DEBUG - Scroll failed: {e}")
     
     st.session_state.scroll_flag = False
-    st.write("DEBUG - scroll_flag reset to False")
-else:
-    st.write("DEBUG - Scroll conditions not met, not attempting scroll")
 
 # Clear the just_submitted flag after handling scroll (but only if we actually scrolled)
 if st.session_state.get('just_submitted', False) and not st.session_state.scroll_flag:
