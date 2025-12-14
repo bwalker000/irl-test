@@ -260,7 +260,7 @@ except ImportError:
     # Fallback if package not installed
     pass
 
-# Add scroll anchor before questions table to show dimension name
+# Add scroll anchor to capture table outline including border
 st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
 
 with st.container(border=True):
