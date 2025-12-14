@@ -402,12 +402,10 @@ with st.container(border=True):
 
 # Execute scroll immediately if flag is set (but not if we just submitted)
 if st.session_state.scroll_flag and not st.session_state.get('just_submitted', False):
-    # Clear any caches that might interfere
-    st.cache_data.clear()
     try:
         from streamlit_scroll_to_top import scroll_to_here
-        # Immediate scroll execution
-        scroll_to_here(key="questions-scroll")
+        # Execute scroll to the placed target
+        scroll_to_here(0, key="questions-scroll")
     except:
         pass
     st.session_state.scroll_flag = False
