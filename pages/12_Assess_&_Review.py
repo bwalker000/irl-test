@@ -245,6 +245,9 @@ st.write("\n\n")
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
 
+# Add scroll anchor to capture more context including instructions
+st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
+
 #
 # Display and collect the questions and answers
 #
@@ -259,9 +262,6 @@ try:
 except ImportError:
     # Fallback if package not installed
     pass
-
-# Add scroll anchor before the questions table to show dimension name
-st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
 
 with st.container(border=True):
 
@@ -497,20 +497,48 @@ if not st.session_state.submitted:
     def format_page_with_status(x):
         base_text = str(x + 1)
         if page_has_content(x):
-            return f"✓{base_text}"  # Smaller checkmark, no space
+            return f"✓ {base_text}"  # Checkmark with space
         return base_text
     
-    # Show compact progress indicator
-    progress_percentage = len(pages_with_content) / num_dims if num_dims > 0 else 0
-    st.progress(progress_percentage, text=f"Completed: {len(pages_with_content)}/{num_dims}")
+    # Progress is shown via page navigation checkmarks
 
-    selected_page = st.segmented_control(
-        "Page",
-        options=page_options,
-        format_func=format_page_with_status,
-        default=st.session_state.dim,
-        key="page_selector"
-    )
+    # Split segmented control into two rows to prevent overflow
+    # Dynamic splitting based on actual number of dimensions
+    total_pages = len(page_options)
+    mid_point = total_pages // 2
+    first_half = page_options[:mid_point]
+    second_half = page_options[mid_point:]
+    
+    # First row - left aligned
+    if first_half:
+        first_range = f"1-{first_half[-1] + 1}" if first_half else ""
+        selected_page_1 = st.segmented_control(
+            f"Page ({first_range})",
+            options=first_half,
+            format_func=format_page_with_status,
+            default=st.session_state.dim if st.session_state.dim in first_half else None,
+            key="page_selector_1"
+        )
+    
+    # Second row - right aligned using columns for positioning
+    if second_half:
+        col1, col2 = st.columns([0.5, 0.5])
+        with col2:
+            second_range = f"{second_half[0] + 1}-{second_half[-1] + 1}" if second_half else ""
+            selected_page_2 = st.segmented_control(
+                f"Page ({second_range})",
+                options=second_half,
+                format_func=format_page_with_status,
+                default=st.session_state.dim if st.session_state.dim in second_half else None,
+                key="page_selector_2"
+            )
+    
+    # Determine which page was selected
+    selected_page = None
+    if 'selected_page_1' in locals() and selected_page_1 is not None:
+        selected_page = selected_page_1
+    elif 'selected_page_2' in locals() and selected_page_2 is not None:
+        selected_page = selected_page_2
 
     # Handle page selection change
     if selected_page is not None and selected_page != st.session_state.dim:
