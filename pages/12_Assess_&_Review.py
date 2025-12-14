@@ -260,6 +260,10 @@ if not st.session_state.get('just_submitted', False):
 if st.session_state.get('scroll_to_questions', False):
     st.session_state.scroll_to_questions = False
 
+# Clear the just_submitted flag after the scroll check
+if st.session_state.get('just_submitted', False):
+    st.session_state.just_submitted = False
+
 st.write("\n\n")
 
 if st.session_state.get('draft_record_id'):
@@ -404,10 +408,6 @@ with st.container(border=True):
         )
 
 # Scroll execution now handled at target location above
-
-# Clear the just_submitted flag after page load
-if st.session_state.get('just_submitted', False):
-    st.session_state.just_submitted = False
 
 #
 # --------------------------------------------------------------------------------------
