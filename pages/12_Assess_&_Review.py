@@ -248,14 +248,14 @@ st.write("\n\n")
 
 # Show draft indicator if this is a draft (no submission date)
 
-if st.session_state.get('draft_record_id'):
-    st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
-
 # Handle scroll to questions area when navigating between pages
 if st.session_state.scroll_to_questions:
     from streamlit_scroll_to_top import scroll_to_here
     scroll_to_here(0, key='questions-area')  # 0 means instant scroll
     st.session_state.scroll_to_questions = False  # Reset after scrolling
+
+if st.session_state.get('draft_record_id'):
+    st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
 
 #
 # Display and collect the questions and answers
