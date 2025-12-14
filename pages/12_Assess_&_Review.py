@@ -248,22 +248,17 @@ if st.session_state.get('draft_record_id'):
 #
 # Display and collect the questions and answers
 #
-# Auto-scroll to questions section when page changes
-if 'last_dim' not in st.session_state:
-    st.session_state.last_dim = st.session_state.dim
-elif st.session_state.last_dim != st.session_state.dim:
-    # Page changed, trigger scroll
-    st.session_state.last_dim = st.session_state.dim
-    st.markdown("""
-    <script>
-    setTimeout(function() {
-        const element = document.querySelector('[data-testid="stContainer"]');
-        if (element) {
-            element.scrollIntoView({behavior: 'smooth', block: 'start'});
-        }
-    }, 100);
-    </script>
-    """, unsafe_allow_html=True)
+# Initialize scroll functionality
+if "scroll_flag" not in st.session_state:
+    st.session_state.scroll_flag = False
+
+# Scroll anchor for questions section
+try:
+    from streamlit_scroll_to_top import scroll_to_here
+    scroll_to_here(0, key="questions-start-anchor")
+except ImportError:
+    # Fallback if package not installed
+    st.markdown("<div id='questions-anchor'></div>", unsafe_allow_html=True)
 
 with st.container(border=True):
 
@@ -399,6 +394,26 @@ with st.container(border=True):
             disabled=not (mode == "REVIEWER")
         )
 
+# Execute scroll if flag is set
+if st.session_state.scroll_flag:
+    try:
+        from streamlit_scroll_to_top import scroll_to_here
+        scroll_to_here(0, key="questions-start-anchor")
+        st.session_state.scroll_flag = False
+    except ImportError:
+        # Fallback scroll method
+        st.markdown("""
+        <script>
+        setTimeout(function() {
+            const anchor = document.getElementById('questions-anchor');
+            if (anchor) {
+                anchor.scrollIntoView({behavior: 'smooth'});
+            }
+        }, 100);
+        </script>
+        """, unsafe_allow_html=True)
+        st.session_state.scroll_flag = False
+
 #
 # --------------------------------------------------------------------------------------
 # Present specific instructions
@@ -433,20 +448,31 @@ def page_has_content(dim):
 
 # Show page selector only if not submitted
 if not st.session_state.submitted:
-    # Page selector using full width for segmented control
-    # Create page options with indicators for content
-    page_options = list(range(num_dims))
+    # Create CSS for pages with content
+    pages_with_content = [i for i in range(num_dims) if page_has_content(i)]
     
-    def format_page_label(x):
-        page_num = x + 1
-        if page_has_content(x):
-            return f"{page_num} ●"  # Add dot indicator for pages with content
-        return str(page_num)
+    if pages_with_content:
+        # Build CSS to highlight pages with content
+        css_rules = []
+        for page_idx in pages_with_content:
+            # Target the button for this specific page (1-indexed in UI)
+            css_rules.append(f"""
+            div[data-testid="stSegmentedControl"] button[data-value="{page_idx}"] {{
+                background-color: #e1f5fe !important;
+                border-color: #0277bd !important;
+                font-weight: bold !important;
+            }}
+            """)
+        
+        st.markdown(f"<style>{''.join(css_rules)}</style>", unsafe_allow_html=True)
+    
+    # Page selector using full width for segmented control
+    page_options = list(range(num_dims))
 
     selected_page = st.segmented_control(
         "Go to page:",
         options=page_options,
-        format_func=format_page_label,
+        format_func=lambda x: str(x + 1),  # Clean numbering without dots
         default=st.session_state.dim,
         key="page_selector"
     )
@@ -457,6 +483,8 @@ if not st.session_state.submitted:
         auto_save_progress()
         st.session_state.dim = selected_page
         st.query_params["_reload"] = str(time.time())
+        # Set scroll flag for navigation
+        st.session_state.scroll_flag = True
         st.rerun()
 
 # Show navigation only if not submitted
@@ -472,6 +500,8 @@ if not st.session_state.submitted:
                 auto_save_progress()
                 st.session_state.dim -= 1
                 st.query_params["_reload"] = str(time.time())
+                # Set scroll flag for navigation
+                st.session_state.scroll_flag = True
                 st.rerun()
     
     with nav_bottom_cols[1]:
@@ -495,6 +525,8 @@ if not st.session_state.submitted:
                 auto_save_progress()
                 st.session_state.dim += 1
                 st.query_params["_reload"] = str(time.time())
+                # Set scroll flag for navigation
+                st.session_state.scroll_flag = True
                 st.rerun()
         else:
             # On last page, show submit button instead of Next (only if not submitted)

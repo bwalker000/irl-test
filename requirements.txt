@@ -6,3 +6,4 @@ pyairtable
 datetime
 Authlib
 streamlit-auth0
+streamlit-scroll-to-top
