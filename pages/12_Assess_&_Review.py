@@ -244,6 +244,19 @@ st.write("\n\n")
 
 # Show draft indicator if this is a draft (no submission date)
 
+# Handle scroll logic - must be before form elements but after initialization
+# Only scroll on navigation, not on form interactions
+if (st.session_state.get('navigate_scroll', False) and 
+    not st.session_state.get('just_submitted', False) and
+    'navigate_scroll' in st.session_state):  # Extra check to ensure flag was explicitly set
+    try:
+        from streamlit_scroll_to_top import scroll_to_here
+        scroll_to_here(0, key="table-top")
+    except:
+        pass
+    # Clear the flag immediately after attempting scroll
+    st.session_state.navigate_scroll = False
+
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
 
@@ -549,16 +562,4 @@ if st.session_state.submitted:
         if st.button("Return Home", key="final_return_home"):
             reset_session_timer()
             st.switch_page("streamlit_app.py")
-
-# Handle scroll after all other logic is complete
-# Only scroll if we just navigated to this page, not on form interactions
-if st.session_state.get('navigate_scroll', False) and not st.session_state.get('just_submitted', False):
-    try:
-        from streamlit_scroll_to_top import scroll_to_here
-        scroll_to_here(0, key="table-top")
-        # Immediately clear the flag to prevent repeated scrolling
-        st.session_state.navigate_scroll = False
-    except:
-        # Clear flag even if scroll fails
-        st.session_state.navigate_scroll = False
 
