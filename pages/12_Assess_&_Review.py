@@ -15,6 +15,10 @@ st.title("Assessment & Review")
 if 'submitted' not in st.session_state:
     st.session_state.submitted = False
 
+# Initialize scroll state for navigation
+if 'scroll_to_questions' not in st.session_state:
+    st.session_state.scroll_to_questions = False
+
 # Submit function - defined early so it can be called later
 def handle_submit():
     """Handle submission and show success"""
@@ -246,6 +250,12 @@ st.write("\n\n")
 
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
+
+# Handle scroll to questions area when navigating between pages
+if st.session_state.scroll_to_questions:
+    from streamlit_scroll_to_top import scroll_to_here
+    scroll_to_here(0, key='questions-area')  # 0 means instant scroll
+    st.session_state.scroll_to_questions = False  # Reset after scrolling
 
 #
 # Display and collect the questions and answers
@@ -484,6 +494,7 @@ if not st.session_state.submitted:
         reset_session_timer()
         auto_save_progress()
         st.session_state.dim = selected_page
+        st.session_state.scroll_to_questions = True  # Trigger scroll on navigation
         st.query_params["_reload"] = str(time.time())
         st.rerun()
 
@@ -499,6 +510,7 @@ if not st.session_state.submitted:
                 reset_session_timer()
                 auto_save_progress()
                 st.session_state.dim -= 1
+                st.session_state.scroll_to_questions = True  # Trigger scroll on navigation
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
     
@@ -522,6 +534,7 @@ if not st.session_state.submitted:
                 reset_session_timer()
                 auto_save_progress()
                 st.session_state.dim += 1
+                st.session_state.scroll_to_questions = True  # Trigger scroll on navigation
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
         else:
