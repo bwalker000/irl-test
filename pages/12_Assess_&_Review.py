@@ -398,11 +398,43 @@ with st.container(border=True):
 
 # Page info is shown via the page selector below
 
+# Function to check if a page has any content
+def page_has_content(dim):
+    """Check if a dimension has any answers or text"""
+    # Check question responses
+    if st.session_state.mode == "ASSESSOR":
+        if any(st.session_state.QA[dim]):
+            return True
+        if st.session_state.TA[dim].strip():
+            return True
+    elif st.session_state.mode == "REVIEWER":
+        if any(st.session_state.QR[dim]):
+            return True
+        if st.session_state.TR[dim].strip():
+            return True
+    return False
+
 # Show page selector only if not submitted
 if not st.session_state.submitted:
     # Page selector using full width for segmented control
     # Create page options (1, 2, 3, ... num_dims) - dynamically determined from Airtable structure
     page_options = list(range(num_dims))
+    
+    # Create custom styling for pages with content
+    page_styles = []
+    for i in range(num_dims):
+        if page_has_content(i):
+            page_styles.append(f"""
+            div[data-testid="stSegmentedControl"] button:nth-child({i+2})[aria-pressed="false"] {{
+                background-color: #e8f4fd !important;
+                border-color: #1f77b4 !important;
+                color: #1f77b4 !important;
+            }}
+            """)
+    
+    # Apply custom styling if any pages have content
+    if page_styles:
+        st.markdown(f"<style>{''.join(page_styles)}</style>", unsafe_allow_html=True)
 
     selected_page = st.segmented_control(
         "Go to page:",
@@ -418,6 +450,12 @@ if not st.session_state.submitted:
         auto_save_progress()
         st.session_state.dim = selected_page
         st.query_params["_reload"] = str(time.time())
+        # Add scroll to top functionality
+        st.markdown("""
+        <script>
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        </script>
+        """, unsafe_allow_html=True)
         st.rerun()
 
 # Show navigation only if not submitted
@@ -433,10 +471,16 @@ if not st.session_state.submitted:
                 auto_save_progress()
                 st.session_state.dim -= 1
                 st.query_params["_reload"] = str(time.time())
+                # Scroll to top when changing pages
+                st.markdown("""
+                <script>
+                window.scrollTo({top: 0, behavior: 'smooth'});
+                </script>
+                """, unsafe_allow_html=True)
                 st.rerun()
     
     with nav_bottom_cols[1]:
-        if st.button("Discard & Exit", key="discard_button"):
+        if st.button("Discard Draft & Exit", key="discard_button"):
             reset_session_timer()  # User is active
             # Do not auto-save - discard changes
             st.switch_page("streamlit_app.py")
@@ -444,7 +488,7 @@ if not st.session_state.submitted:
     with nav_bottom_cols[2]:
         # Hide Save & Exit on last page - user must either submit or discard
         if st.session_state.dim < num_dims - 1:
-            if st.button("Save & Exit", key="save_exit_button"):
+            if st.button("Save Draft & Exit", key="save_exit_button"):
                 reset_session_timer()  # User is active
                 auto_save_progress()  # Save before leaving
                 st.switch_page("streamlit_app.py")
@@ -456,6 +500,12 @@ if not st.session_state.submitted:
                 auto_save_progress()
                 st.session_state.dim += 1
                 st.query_params["_reload"] = str(time.time())
+                # Scroll to top when changing pages
+                st.markdown("""
+                <script>
+                window.scrollTo({top: 0, behavior: 'smooth'});
+                </script>
+                """, unsafe_allow_html=True)
                 st.rerun()
         else:
             # On last page, show submit button instead of Next (only if not submitted)
