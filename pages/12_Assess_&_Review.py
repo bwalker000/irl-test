@@ -248,14 +248,16 @@ elif mode == "REVIEWER":
 
 st.write("\n\n")
 
-# Place scroll target here - only active when navigating between pages
-# Use unique key based on current dimension to prevent iframe persistence
-if (st.session_state.get('scroll_to_questions', False) and 
-    not st.session_state.get('just_submitted', False)):
-    from streamlit_scroll_to_top import scroll_to_here
-    # Use dimension in key to ensure uniqueness per page
-    scroll_to_here(0, key=f'scroll-dim-{st.session_state.dim}')
-    st.session_state.scroll_to_questions = False  # Clear immediately after scroll
+# Handle scrolling on navigation - clear flag first to prevent re-triggering
+if st.session_state.get('scroll_to_questions', False):
+    # Clear the flag FIRST, before creating scroll target
+    should_scroll = True
+    st.session_state.scroll_to_questions = False
+    
+    # Now create the scroll target if appropriate
+    if should_scroll and not st.session_state.get('just_submitted', False):
+        from streamlit_scroll_to_top import scroll_to_here
+        scroll_to_here(0, key=f'scroll-dim-{st.session_state.dim}')
 
 if st.session_state.get('draft_record_id'):
     st.info("📝 **Auto-saving in progress...** Your work is being saved automatically every 5 minutes and when you navigate between pages.")
