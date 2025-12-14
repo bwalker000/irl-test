@@ -200,9 +200,6 @@ elif mode == "REVIEWER":
 else:
     st.title("REPORT")
 
-# Add scroll anchor right after title to capture dimension name in table
-st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
-
 st.write("\n\n")
 
 #
@@ -291,6 +288,8 @@ with st.container(border=True):
                 if mode != "ASSESSOR":
                     st.markdown("<div style='text-align: left'><b>REVIEW</b></div>", unsafe_allow_html=True)
             with col4:
+                # Add scroll anchor right before dimension name display
+                st.markdown('<div id="questions-anchor"></div>', unsafe_allow_html=True)
                 st.markdown(f"<div style='text-align: left; font-weight:bold;'>{dim}</div>", unsafe_allow_html=True)
         st.markdown("<hr style='margin: 2px 0; border: 0.5px solid #e0e0e0;'>", unsafe_allow_html=True)
 
@@ -502,41 +501,14 @@ if not st.session_state.submitted:
     
     # Progress is shown via page navigation checkmarks
 
-    # Split segmented control into two rows to prevent overflow
-    # Dynamic splitting based on actual number of dimensions
-    total_pages = len(page_options)
-    mid_point = total_pages // 2
-    first_half = page_options[:mid_point]
-    second_half = page_options[mid_point:]
-    
-    # First row - full width
-    if first_half:
-        first_range = f"1-{first_half[-1] + 1}" if first_half else ""
-        selected_page_1 = st.segmented_control(
-            f"Page ({first_range})",
-            options=first_half,
-            format_func=format_page_with_status,
-            default=st.session_state.dim if st.session_state.dim in first_half else None,
-            key="page_selector_1"
-        )
-    
-    # Second row - full width
-    if second_half:
-        second_range = f"{second_half[0] + 1}-{second_half[-1] + 1}" if second_half else ""
-        selected_page_2 = st.segmented_control(
-            f"Page ({second_range})",
-            options=second_half,
-            format_func=format_page_with_status,
-            default=st.session_state.dim if st.session_state.dim in second_half else None,
-            key="page_selector_2"
-        )
-    
-    # Determine which page was selected
-    selected_page = None
-    if 'selected_page_1' in locals() and selected_page_1 is not None:
-        selected_page = selected_page_1
-    elif 'selected_page_2' in locals() and selected_page_2 is not None:
-        selected_page = selected_page_2
+    # Single segmented control that can wrap naturally onto multiple lines
+    selected_page = st.segmented_control(
+        "Page",
+        options=page_options,
+        format_func=format_page_with_status,
+        default=st.session_state.dim,
+        key="page_selector"
+    )
 
     # Handle page selection change
     if selected_page is not None and selected_page != st.session_state.dim:
