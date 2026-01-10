@@ -835,7 +835,18 @@ st.components.v1.html(f"""
         window.parent.document.body.appendChild(tooltip);
         console.log('Tooltip element created and added to body');
 
-        const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
+        // Try multiple selectors to find the matplotlib figure image
+        let figures = window.parent.document.querySelectorAll('img[alt="User-uploaded image"]');
+        if (figures.length === 0) {{
+            figures = window.parent.document.querySelectorAll('img[src*="media"]');
+        }}
+        if (figures.length === 0) {{
+            figures = window.parent.document.querySelectorAll('[data-testid="stImage"] img');
+        }}
+        if (figures.length === 0) {{
+            figures = window.parent.document.querySelectorAll('img');
+        }}
+        
         console.log('Found', figures.length, 'figures');
         const matrixFigure = figures[figures.length - 1];
 
@@ -845,7 +856,8 @@ st.components.v1.html(f"""
             return;
         }}
 
-        console.log('Matrix figure found, attaching listeners');
+        console.log('Matrix figure found:', matrixFigure);
+        console.log('Matrix figure src:', matrixFigure.src);
         matrixFigure.addEventListener('mousemove', function(e) {{
             const rect = matrixFigure.getBoundingClientRect();
             const x = e.clientX - rect.left;
