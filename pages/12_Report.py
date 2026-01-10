@@ -805,6 +805,7 @@ question_json = json.dumps(question_lookup)
 st.components.v1.html(f"""
 <script>
 (function() {{
+    console.log('Tooltip script loaded');
     const questions = {question_json};
     const matrixConfig = {{
         startX: {matrix_start_x},
@@ -819,10 +820,12 @@ st.components.v1.html(f"""
     }};
 
     function initTooltip() {{
+        console.log('initTooltip called');
         // FORCE REMOVE any existing tooltip first
         let oldTooltip = window.parent.document.getElementById('floating-tooltip');
         if (oldTooltip) {{
             oldTooltip.remove();
+            console.log('Removed old tooltip');
         }}
         
         // Create fresh tooltip
@@ -830,15 +833,19 @@ st.components.v1.html(f"""
         tooltip.id = 'floating-tooltip';
         tooltip.style.cssText = 'position: fixed; display: none; background: rgba(255, 255, 255, 0.98); border: 2px solid #333; border-radius: 8px; padding: 12px; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10000; pointer-events: none; font-family: sans-serif; font-size: 14px;';
         window.parent.document.body.appendChild(tooltip);
+        console.log('Tooltip element created and added to body');
 
         const figures = window.parent.document.querySelectorAll('img[src*="streamlit"]');
+        console.log('Found', figures.length, 'figures');
         const matrixFigure = figures[figures.length - 1];
 
         if (!matrixFigure) {{
+            console.log('Matrix figure not found, retrying...');
             setTimeout(initTooltip, 100);
             return;
         }}
 
+        console.log('Matrix figure found, attaching listeners');
         matrixFigure.addEventListener('mousemove', function(e) {{
             const rect = matrixFigure.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -881,6 +888,8 @@ st.components.v1.html(f"""
         matrixFigure.addEventListener('mouseleave', function() {{
             tooltip.style.display = 'none';
         }});
+        
+        console.log('Event listeners attached successfully');
     }}
 
     setTimeout(initTooltip, 500);
