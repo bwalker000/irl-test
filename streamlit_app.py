@@ -3,7 +3,8 @@ from shared import *
 # Set page config for wide mode - must be first Streamlit command
 st.set_page_config(layout="wide")
 
-display_logo()
+# Temporarily disable logo to fix auth callback issue
+# display_logo()
 
 st.title("Impact Readiness Level")
 
