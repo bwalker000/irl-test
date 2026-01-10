@@ -31,12 +31,9 @@ IDLE_TIMEOUT = 1800  # 30 minutes in seconds
 def display_logo():
     """Display the Impact Readiness Level logo in the upper left corner"""
     try:
-        # Only display logo if not in auth callback flow
-        if 'auth_callback' not in st.query_params:
-            st.image("Logo.png", width=150)
-    except Exception as e:
-        # Silently fail if logo not found or can't be displayed
-        pass
+        st.image("Logo.png", width=150)
+    except:
+        pass  # Silently fail if logo not found
 
 def check_session_timeout():
     """Check if user has been idle too long and force logout"""
