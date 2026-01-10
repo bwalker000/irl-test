@@ -1,3 +1,8 @@
+import streamlit as st
+
+# Set page to centered layout (narrow display)
+st.set_page_config(layout="centered")
+
 from shared import *
 from shared import check_session_timeout, reset_session_timer
 import io
