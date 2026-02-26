@@ -392,7 +392,6 @@ with st.container(border=True):
             height=None,
             max_chars=1000,
             key=f"TA_{st.session_state.dim}",
-            width="stretch",
             disabled=not (mode == "ASSESSOR")
         )
 
@@ -403,7 +402,6 @@ with st.container(border=True):
             height=None,
             max_chars=1000,
             key=f"TR_{st.session_state.dim}",
-            width="stretch",
             disabled=not (mode == "REVIEWER")
         )
 
