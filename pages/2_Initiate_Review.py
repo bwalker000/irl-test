@@ -131,7 +131,7 @@ elif st.session_state.review_mode == 0:
         st.session_state.project_name = airtable_value_from_id(air_projects, st.session_state.project_id, "Name")
 
         # Check for existing review draft for this assessment
-        draft_name = f"AR-DRAFT - {st.session_state.venture_name} - {st.session_state.project_name}"
+        draft_name = f"AR-DRAFT - {st.session_state.assessment_name}"
         existing_draft = air_data[
             (air_data['Name'] == draft_name) &
             (air_data['Review_date'].isnull() | (air_data['Review_date'] == ""))

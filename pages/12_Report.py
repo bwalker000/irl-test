@@ -43,10 +43,40 @@ if air_data.empty:
 if st.session_state.mode == "REVIEWER":
     # Get reviewer ID (might be in a tuple)
     reviewer_id = st.session_state.reviewer_id[0] if isinstance(st.session_state.reviewer_id, (list, tuple)) else st.session_state.reviewer_id
-    # Filter records where reviewer is in the REVIEWER field
-    air_data = air_data[air_data["REVIEWER"].apply(
-        lambda x: reviewer_id in x if isinstance(x, (list, tuple)) else x == reviewer_id
-    )]
+
+    def has_linked_id(value, target_id):
+        if isinstance(value, (list, tuple)):
+            return target_id in value
+        return value == target_id
+
+    # Identify reviewer support organization so unreviewed, review-capable assessments can be reported
+    table_name = st.secrets["general"]["airtable_table_reviewers"]
+    air_reviewers, _ = load_airtable(table_name, base_id, api_key, False)
+    reviewer_row = air_reviewers[air_reviewers['id'] == reviewer_id]
+    reviewer_support_id = None
+    if not reviewer_row.empty:
+        reviewer_support = reviewer_row.iloc[0].get('Support Organization')
+        if isinstance(reviewer_support, (list, tuple)) and reviewer_support:
+            reviewer_support_id = reviewer_support[0]
+        else:
+            reviewer_support_id = reviewer_support
+
+    reviewed_by_me = air_data["REVIEWER"].apply(lambda x: has_linked_id(x, reviewer_id))
+    has_completed_assessment = (
+        air_data["Assess_date"].notna() &
+        (air_data["Assess_date"] != "") &
+        (air_data["Assess_date"] != pd.NaT)
+    )
+    is_not_draft = ~air_data["Name"].astype(str).str.contains("DRAFT", na=False)
+
+    if reviewer_support_id:
+        is_in_reviewer_support_org = air_data["Support Organization"].apply(
+            lambda x: has_linked_id(x, reviewer_support_id)
+        )
+        review_capable_assessments = is_in_reviewer_support_org & has_completed_assessment
+        air_data = air_data[(reviewed_by_me | review_capable_assessments) & is_not_draft]
+    else:
+        air_data = air_data[reviewed_by_me & is_not_draft]
 
 # if ASSESSOR, then only show assessments associated with the assessor
 if st.session_state.mode == "ASSESSOR":

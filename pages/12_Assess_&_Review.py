@@ -137,7 +137,10 @@ if ('dim' not in st.session_state):
             list_cols = air_data.select_dtypes(include=['object']).columns
             for col in list_cols:
                 air_data[col] = air_data[col].apply(lambda x: str(x) if isinstance(x, list) else x)
-            air_data_record = air_data.loc[air_data["Name"] == st.session_state.assessment_name]
+            if st.session_state.get("assessment_record_id"):
+                air_data_record = air_data.loc[air_data["id"] == st.session_state.assessment_record_id]
+            else:
+                air_data_record = air_data.loc[air_data["Name"] == st.session_state.assessment_name]
 
             # load the assessment question responses
             for dim in range(num_dims):

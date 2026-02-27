@@ -15,6 +15,13 @@ from datetime import datetime, date
 from fields import IRL_050_data_fields as expected_fields
 
 
+def _person_display_name(first_name, last_name, fallback="Unknown"):
+    first = str(first_name).strip() if first_name is not None else ""
+    last = str(last_name).strip() if last_name is not None else ""
+    full_name = f"{first} {last}".strip()
+    return full_name if full_name else fallback
+
+
 @st.cache_data(ttl=60)  # Cache for 60 seconds max
 def load_airtable(table_name, base_id, airtable_api_key, debug=True, view="Grid view"):
     """
@@ -222,11 +229,16 @@ def auto_save_progress():
     
     # Create DRAFT name with appropriate prefix
     if st.session_state.mode == "ASSESSOR":
-        draft_name = f"A-DRAFT - {venture_name} - {project_name}"
+        assessor_name = _person_display_name(
+            st.session_state.get('assessor_first_name'),
+            st.session_state.get('assessor_last_name'),
+            fallback="Assessor"
+        )
+        draft_name = f"A-DRAFT - {venture_name} - {project_name} - {assessor_name}"
     elif st.session_state.mode == "REVIEWER":
         # Check if this is a review of existing assessment or independent review
         if st.session_state.get('assessment_name') and st.session_state.get('assessment_record_id'):
-            draft_name = f"AR-DRAFT - {venture_name} - {project_name}"
+            draft_name = f"AR-DRAFT - {st.session_state.get('assessment_name')}"
         else:
             draft_name = f"R-DRAFT - {venture_name} - {project_name}"
     
@@ -340,10 +352,24 @@ def submit_record():
     project_name = st.session_state.project_name
 
     if st.session_state.mode == "ASSESSOR":
-        responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date
+        assessor_name = _person_display_name(
+            st.session_state.get('assessor_first_name'),
+            st.session_state.get('assessor_last_name'),
+            fallback="Assessor"
+        )
+        responses["Name"] = venture_name + " - " + project_name + " - " + assessor_name + " - " + airtable_date
         responses["Assess_date"] = airtable_date
     elif st.session_state.mode == "REVIEWER":
-        responses["Name"] = venture_name + " - " + project_name + " - " + airtable_date
+        # Preserve the original assessment name when reviewing an existing assessment
+        if st.session_state.get('assessment_name') and st.session_state.get('assessment_record_id'):
+            responses["Name"] = st.session_state.get('assessment_name')
+        else:
+            reviewer_name = _person_display_name(
+                st.session_state.get('reviewer_first_name'),
+                st.session_state.get('reviewer_last_name'),
+                fallback="Reviewer"
+            )
+            responses["Name"] = venture_name + " - " + project_name + " - " + reviewer_name + " - " + airtable_date
         responses["Review_date"] = airtable_date
         
         # Add reviewer ID to the record
