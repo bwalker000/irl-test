@@ -90,28 +90,63 @@ if st.session_state.mode == "ASSESSOR":
 #-----------------------------------------------------------------------------------------
 # Use a pulldown menu to select the assessment to be reported on
 
-# Role-specific assessment selection
+# Load assessors once to build unambiguous selection labels
+table_name = st.secrets["general"]["airtable_table_assessors"]
+air_assessors_for_labels, _ = load_airtable(table_name, base_id, api_key, False)
+
+def get_assessor_name_for_label(assessor_value):
+    assessor_id = assessor_value[0] if isinstance(assessor_value, (list, tuple)) and assessor_value else assessor_value
+    if not assessor_id:
+        return "N/A"
+    matches = air_assessors_for_labels[air_assessors_for_labels['id'] == assessor_id]
+    if matches.empty:
+        return "N/A"
+    first = str(matches.iloc[0].get('First Name', '')).strip()
+    last = str(matches.iloc[0].get('Last Name', '')).strip()
+    full_name = f"{first} {last}".strip()
+    return full_name if full_name else "N/A"
+
+# Role-specific assessment selection (by unique record ID to avoid duplicate-name collisions)
 if st.session_state.mode == "REVIEWER":
-    assessment_names = air_data['Name']
-    if assessment_names.empty:
+    if air_data.empty:
         st.warning("No available assessments to report for you as a REVIEWER.")
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             if st.button("Return to Home"):
                 st.switch_page("streamlit_app.py")
         st.stop()
-    selected_assessment = st.selectbox('Select an assessment for reporting:', options=assessment_names)
+
+    selection_data = air_data.copy()
+    selection_data["_assessor_label"] = selection_data["ASSESSOR"].apply(get_assessor_name_for_label)
+    selection_data["_option_label"] = selection_data.apply(
+        lambda row: f"{row['Name']} | Assessor: {row['_assessor_label']} | ID: {row['id'][-6:]}", axis=1
+    )
+    option_label_map = dict(zip(selection_data["id"], selection_data["_option_label"]))
+    selected_record_id = st.selectbox(
+        'Select an assessment for reporting:',
+        options=selection_data["id"].tolist(),
+        format_func=lambda record_id: option_label_map.get(record_id, record_id)
+    )
 
 elif st.session_state.mode == "ASSESSOR":
-    assessment_names = air_data['Name']
-    if assessment_names.empty:
+    if air_data.empty:
         st.warning("No available assessments to report for you as an ASSESSOR.")
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             if st.button("Return to Home"):
                 st.switch_page("streamlit_app.py")
         st.stop()
-    selected_assessment = st.selectbox('Select an assessment for reporting:', options=assessment_names)
+
+    selection_data = air_data.copy()
+    selection_data["_option_label"] = selection_data.apply(
+        lambda row: f"{row['Name']} | ID: {row['id'][-6:]}", axis=1
+    )
+    option_label_map = dict(zip(selection_data["id"], selection_data["_option_label"]))
+    selected_record_id = st.selectbox(
+        'Select an assessment for reporting:',
+        options=selection_data["id"].tolist(),
+        format_func=lambda record_id: option_label_map.get(record_id, record_id)
+    )
 
 else:
     st.warning("Unknown mode.")
@@ -124,14 +159,14 @@ else:
 # Don't run report immediately after selection!
 # Instead, wait for user to click a button
 
-if not selected_assessment:
+if not selected_record_id:
     st.info("Please select an assessment to enable report generation.")
 
 # Show all UI controls in one section
 col1, col2, col3 = st.columns([1, 1, 1])
 
 with col1:
-    generate_report = st.button("Generate Report", disabled=(not selected_assessment), type="secondary")
+    generate_report = st.button("Generate Report", disabled=(not selected_record_id), type="secondary")
     if generate_report:
         reset_session_timer()  # User is active
 
@@ -144,14 +179,18 @@ with col3:
         reset_session_timer()  # User is active
         st.switch_page("streamlit_app.py")
 
-if not selected_assessment or not generate_report:
+if not selected_record_id or not generate_report:
     st.stop()
 
 # Filter for chosen assessment
-filtered_data = air_data.loc[air_data["Name"] == selected_assessment]
+filtered_data = air_data.loc[air_data["id"] == selected_record_id]
 if filtered_data.empty:
     st.warning("No data found for the selected assessment.")
     st.stop()
+
+# Use only the selected record from this point onward
+air_data = filtered_data.reset_index(drop=True)
+selected_assessment = air_data.iloc[0]["Name"]
 
 with st.spinner("Generating your report, please wait..."):
     #-----------------------------------------------------------------------------------------
