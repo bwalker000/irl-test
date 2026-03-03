@@ -388,8 +388,8 @@ legend_row_height = 0.18
 for legend_col_idx in range(legend_cols):
     x0 = legend_col_idx * (legend_col_width + legend_col_gap)
     ax_header.text(x0, legend_y, "Symbol", fontsize=8.5, ha='left', va='top', fontweight='bold')
-    ax_header.text(x0 + 0.55, legend_y, "Role", fontsize=8.5, ha='left', va='top', fontweight='bold')
-    ax_header.text(x0 + 1.35, legend_y, "Name", fontsize=8.5, ha='left', va='top', fontweight='bold')
+    ax_header.text(x0 + 0.80, legend_y, "Role", fontsize=8.5, ha='left', va='top', fontweight='bold')
+    ax_header.text(x0 + 1.60, legend_y, "Name", fontsize=8.5, ha='left', va='top', fontweight='bold')
     ax_header.text(x0 + legend_col_width - 1.1, legend_y, "Date", fontsize=8.5, ha='left', va='top', fontweight='bold')
 
 legend_y -= 0.17
@@ -406,8 +406,8 @@ for idx, col in enumerate(comparison_columns):
 
     role_label = "Assessor" if col['role'] == "ASSESSOR" else "Reviewer"
     ax_header.text(x0, y0, f"{col['symbol']}{col['initials']}", fontsize=8.5, ha='left', va='top')
-    ax_header.text(x0 + 0.55, y0, role_label, fontsize=8.5, ha='left', va='top')
-    ax_header.text(x0 + 1.35, y0, col['person']['full'], fontsize=8.5, ha='left', va='top')
+    ax_header.text(x0 + 0.80, y0, role_label, fontsize=8.5, ha='left', va='top')
+    ax_header.text(x0 + 1.60, y0, col['person']['full'], fontsize=8.5, ha='left', va='top')
     ax_header.text(x0 + legend_col_width - 1.1, y0, format_date(col['date']), fontsize=8.5, ha='left', va='top')
 
 # If there are more entries than can fit in the cover legend, notify user
@@ -416,10 +416,6 @@ if len(comparison_columns) > max_legend_entries:
     ax_header.text(0, legend_y - (16 * legend_row_height) - 0.05,
                    f"+ {len(comparison_columns) - max_legend_entries} additional entries (see matrix column labels)",
                    fontsize=8, ha='left', va='top', color='#606060')
-
-# Milestone color legend on cover page (no progress calculation)
-legend_rows_used = min(len(comparison_columns), max_legend_entries)
-legend_bottom_y = legend_y - max(legend_rows_used - 1, 0) * legend_row_height
 
 milestones_sorted = air_milestones.copy()
 
@@ -467,44 +463,31 @@ if not milestones_sorted.empty:
     milestones_sorted["_sort_key"] = milestones_sorted.apply(milestone_sort_key, axis=1)
     milestones_sorted = milestones_sorted.sort_values(by=["_sort_key"])
 
-# Single-column layout
-milestone_row_h = 0.16
-milestone_rows = len(milestones_sorted)
+def draw_milestones_legend_bottom(ax, title_y=1.02, row_start_y=0.82, row_h=0.13):
+    ax.text(0, title_y, "Milestones", fontsize=9.0, ha='left', va='top', fontweight='bold')
 
-# Keep milestones near bottom, but leave a clear blank line above footer
-milestone_bottom_target = 0.50
-milestone_start_y_bottom_anchored = milestone_bottom_target + max(milestone_rows - 1, 0) * milestone_row_h
+    for idx, (_, ms_row) in enumerate(milestones_sorted.iterrows()):
+        x0 = 0
+        y0 = row_start_y - idx * row_h
+        if y0 < 0.36:
+            break
 
-# Ensure milestone block does not collide with comparison legend block above
-milestone_start_y_max = legend_bottom_y - 0.50
-milestone_start_y = min(milestone_start_y_bottom_anchored, milestone_start_y_max)
+        raw_color = ms_row.get("Color")
+        if pd.isna(raw_color) or not raw_color:
+            ms_color = "#FFFFFF"
+        else:
+            ms_color = raw_color if str(raw_color).startswith("#") else f"#{raw_color}"
 
-# Ensure first milestone title remains safely on-page
-milestone_start_y = min(milestone_start_y, page_height - 1.25)
+        swatch = patches.Rectangle((x0, y0 - 0.09), 0.10, 0.10, facecolor=ms_color, edgecolor='none', lw=0)
+        ax.add_patch(swatch)
 
-legend_title_y = milestone_start_y + 0.20
-ax_header.text(0, legend_title_y, "Milestones", fontsize=9.5, ha='left', va='top', fontweight='bold')
+        ms_name = str(ms_row.get("Name", "Milestone"))
+        ms_label = str(ms_row.get("Label", ""))
+        text_val = f"Milestone **{ms_name}**: {ms_label}" if ms_label else f"Milestone **{ms_name}**"
+        render_markdown_bold_text(ax, x0 + 0.15, y0 - 0.035, text_val, fontsize=7.8, ha='left', va='center')
 
-for idx, (_, ms_row) in enumerate(milestones_sorted.iterrows()):
-    x0 = 0
-    y0 = milestone_start_y - idx * milestone_row_h
-    if y0 < 0.36:
-        break
 
-    raw_color = ms_row.get("Color")
-    if pd.isna(raw_color) or not raw_color:
-        ms_color = "#FFFFFF"
-    else:
-        ms_color = raw_color if str(raw_color).startswith("#") else f"#{raw_color}"
-
-    # Square swatch, no border
-    swatch = patches.Rectangle((x0, y0 - 0.10), 0.11, 0.11, facecolor=ms_color, edgecolor='none', lw=0)
-    ax_header.add_patch(swatch)
-
-    ms_name = str(ms_row.get("Name", "Milestone"))
-    ms_label = str(ms_row.get("Label", ""))
-    text_val = f"Milestone **{ms_name}**: {ms_label}" if ms_label else f"Milestone **{ms_name}**"
-    render_markdown_bold_text(ax_header, x0 + 0.16, y0 - 0.04, text_val, fontsize=8, ha='left', va='center')
+draw_milestones_legend_bottom(ax_header)
 
 ax_header.text(0, 0.1, "DO NOT DUPLICATE - DO NOT DISTRIBUTE", fontsize=8, ha='left', va='bottom', color='#808080')
 ax_header.text(page_width / 2, 0.1, "v. 0.50", fontsize=8, ha='center', va='bottom', color='#808080')
@@ -581,6 +564,8 @@ for page_start_dim in range(0, num_dims, 2):
     if page_start_dim + 1 < num_dims:
         top_y = top_y - section_gap
         draw_dimension_section(ax, page_start_dim + 1, top_y, comparison_columns, tooltip_cells)
+
+    draw_milestones_legend_bottom(ax)
 
     ax.text(0, 0.1, "DO NOT DUPLICATE - DO NOT DISTRIBUTE", fontsize=8, ha='left', va='bottom', color='#808080')
     ax.text(page_width / 2, 0.1, "v. 0.50", fontsize=8, ha='center', va='bottom', color='#808080')
