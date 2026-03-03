@@ -424,29 +424,55 @@ legend_bottom_y = legend_y - max(legend_rows_used - 1, 0) * legend_row_height
 milestones_sorted = air_milestones.copy()
 
 def milestone_sort_key(row):
-    for field_name in ["Order", "Milestone", "Level", "Name"]:
+    """
+    Sort milestones by achievement progression encoded in Airtable structure.
+
+    Priority:
+    1) Explicit numeric order fields in milestone table (if present)
+    2) First appearance in assessment mapping (Q{i} Milestone across dimensions)
+    3) Stable name fallback
+    """
+    # 1) Explicit numeric order from milestone table if available
+    for field_name in ["Order", "Milestone", "Level"]:
         if field_name in row.index:
             raw_val = row.get(field_name)
             if pd.notna(raw_val):
                 match = re.search(r"\d+", str(raw_val))
                 if match:
-                    return int(match.group(0))
-    return 10_000
+                    return (0, int(match.group(0)), 0)
+
+    # 2) Infer progression from assessment structure by first occurrence position
+    milestone_id = row.get("id")
+    if milestone_id and not air_assessment.empty:
+        first_position = None
+        for dim_idx in range(len(air_assessment)):
+            for q_idx in range(numQ):
+                milestone_field = f"Q{q_idx} Milestone"
+                if milestone_field not in air_assessment.columns:
+                    continue
+                mapped_id = normalize_linked_id(air_assessment.iloc[dim_idx].get(milestone_field))
+                if mapped_id == milestone_id:
+                    position = q_idx  # progression is question level progression
+                    if first_position is None or position < first_position:
+                        first_position = position
+        if first_position is not None:
+            return (1, first_position, 0)
+
+    # 3) Stable fallback by name
+    name_val = str(row.get("Name", ""))
+    return (2, 10_000, name_val)
 
 if not milestones_sorted.empty:
     milestones_sorted = milestones_sorted.copy()
     milestones_sorted["_sort_key"] = milestones_sorted.apply(milestone_sort_key, axis=1)
-    sort_columns = ["_sort_key"]
-    if "Name" in milestones_sorted.columns:
-        sort_columns.append("Name")
-    milestones_sorted = milestones_sorted.sort_values(by=sort_columns)
+    milestones_sorted = milestones_sorted.sort_values(by=["_sort_key"])
 
 # Single-column layout
 milestone_row_h = 0.16
 milestone_rows = len(milestones_sorted)
 
-# Keep milestones near bottom, but always above footer (y > 0.22)
-milestone_bottom_target = 0.32
+# Keep milestones near bottom, but leave a clear blank line above footer
+milestone_bottom_target = 0.50
 milestone_start_y_bottom_anchored = milestone_bottom_target + max(milestone_rows - 1, 0) * milestone_row_h
 
 # Ensure milestone block does not collide with comparison legend block above
@@ -462,7 +488,7 @@ ax_header.text(0, legend_title_y, "Milestones", fontsize=9.5, ha='left', va='top
 for idx, (_, ms_row) in enumerate(milestones_sorted.iterrows()):
     x0 = 0
     y0 = milestone_start_y - idx * milestone_row_h
-    if y0 < 0.22:
+    if y0 < 0.36:
         break
 
     raw_color = ms_row.get("Color")
