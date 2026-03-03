@@ -13,9 +13,9 @@ st.title("Comparison Report")
 
 col_top1, col_top2 = st.columns([1, 1])
 with col_top1:
-    if st.button("Return to Standard Report"):
+    if st.button("Return to Report Selection"):
         reset_session_timer()
-        st.switch_page("pages/12_Report.py")
+        st.switch_page("pages/12_Select_Report.py")
 with col_top2:
     if st.button("Home"):
         reset_session_timer()
@@ -355,6 +355,15 @@ legend_col_gap = 0.3
 legend_col_width = (page_width - legend_col_gap) / legend_cols
 legend_row_height = 0.18
 
+for legend_col_idx in range(legend_cols):
+    x0 = legend_col_idx * (legend_col_width + legend_col_gap)
+    ax_header.text(x0, legend_y, "Symbol", fontsize=8.5, ha='left', va='top', fontweight='bold')
+    ax_header.text(x0 + 0.55, legend_y, "Role", fontsize=8.5, ha='left', va='top', fontweight='bold')
+    ax_header.text(x0 + 1.35, legend_y, "Name", fontsize=8.5, ha='left', va='top', fontweight='bold')
+    ax_header.text(x0 + legend_col_width - 1.1, legend_y, "Date", fontsize=8.5, ha='left', va='top', fontweight='bold')
+
+legend_y -= 0.17
+
 for idx, col in enumerate(comparison_columns):
     legend_col_idx = idx // 16  # soft cap of 16 rows in first column before using second
     legend_row_idx = idx % 16
@@ -366,8 +375,10 @@ for idx, col in enumerate(comparison_columns):
     y0 = legend_y - (legend_row_idx * legend_row_height)
 
     role_label = "Assessor" if col['role'] == "ASSESSOR" else "Reviewer"
-    line = f"{col['symbol']}{col['initials']}  {role_label}: {col['person']['full']}  |  Date: {format_date(col['date'])}"
-    ax_header.text(x0, y0, line, fontsize=8.5, ha='left', va='top')
+    ax_header.text(x0, y0, f"{col['symbol']}{col['initials']}", fontsize=8.5, ha='left', va='top')
+    ax_header.text(x0 + 0.55, y0, role_label, fontsize=8.5, ha='left', va='top')
+    ax_header.text(x0 + 1.35, y0, col['person']['full'], fontsize=8.5, ha='left', va='top')
+    ax_header.text(x0 + legend_col_width - 1.1, y0, format_date(col['date']), fontsize=8.5, ha='left', va='top')
 
 # If there are more entries than can fit in two columns, notify user on cover page
 max_legend_entries = legend_cols * 16
@@ -378,7 +389,7 @@ if len(comparison_columns) > max_legend_entries:
 
 ax_header.text(0, 0.1, "DO NOT DUPLICATE - DO NOT DISTRIBUTE", fontsize=8, ha='left', va='bottom', color='#808080')
 ax_header.text(page_width / 2, 0.1, "v. 0.50", fontsize=8, ha='center', va='bottom', color='#808080')
-ax_header.text(page_width, 0.1, "© Impact Readiness Ltd. 2024-5", fontsize=8, ha='right', va='bottom', color='#808080')
+ax_header.text(page_width, 0.1, "© Impact Readiness Ltd. 2024-6", fontsize=8, ha='right', va='bottom', color='#808080')
 
 figures.append(fig_header)
 tooltip_payloads.append(None)
@@ -386,13 +397,11 @@ tooltip_payloads.append(None)
 
 def draw_dimension_section(ax, dim, top_y, columns, tooltip_cells):
     section_title = air_assessment.iloc[dim].get("Dimension", f"Dimension {dim}")
-    abbrev = air_assessment.iloc[dim].get("Abbreviation", f"D{dim}")
-    ax.text(0, top_y, f"{abbrev}: {section_title}", fontsize=11, ha='left', va='top', fontweight='bold')
+    ax.text(0, top_y, f"{section_title}", fontsize=11, ha='left', va='top', fontweight='bold')
 
     matrix_top = top_y - section_header_gap
     matrix_bottom = matrix_top - (numQ * cell_dy)
-    total_matrix_width = question_col_width + (len(columns) * column_dx)
-    start_x = (page_width - total_matrix_width) / 2
+    start_x = 0.05
 
     for q in range(numQ):
         y0 = matrix_bottom + q * cell_dy
@@ -414,15 +423,8 @@ def draw_dimension_section(ax, dim, top_y, columns, tooltip_cells):
                 "y0": y0,
                 "x1": x0 + column_dx,
                 "y1": y0 + cell_dy,
-                "title": f"{abbrev} | Q{q}: {question_text_by_dim[dim][q]}"
+                "title": f"{section_title} | Q{q}: {question_text_by_dim[dim][q]}"
             })
-
-    label_y = matrix_bottom - 0.08
-    for col_idx, col in enumerate(columns):
-        x0 = start_x + question_col_width + col_idx * column_dx
-        cx = x0 + column_dx / 2
-        col_label = f"{col['symbol']}{col['initials']}\n{format_date(col['date'])}"
-        ax.text(cx, label_y, col_label, fontsize=column_label_fontsize, ha='center', va='top')
 
     return matrix_bottom - section_bottom_padding
 
@@ -455,7 +457,7 @@ for page_start_dim in range(0, num_dims, 2):
 
     ax.text(0, 0.1, "DO NOT DUPLICATE - DO NOT DISTRIBUTE", fontsize=8, ha='left', va='bottom', color='#808080')
     ax.text(page_width / 2, 0.1, "v. 0.50", fontsize=8, ha='center', va='bottom', color='#808080')
-    ax.text(page_width, 0.1, "© Impact Readiness Ltd. 2024-5", fontsize=8, ha='right', va='bottom', color='#808080')
+    ax.text(page_width, 0.1, "© Impact Readiness Ltd. 2024-6", fontsize=8, ha='right', va='bottom', color='#808080')
 
     figures.append(fig)
     tooltip_payloads.append(tooltip_cells)
@@ -467,34 +469,43 @@ with col_dl1:
 for idx, fig in enumerate(figures):
     st.pyplot(fig)
 
-    tooltip_cells = tooltip_payloads[idx]
-    if tooltip_cells:
-        tooltip_json = json.dumps(tooltip_cells)
-        st.components.v1.html(f"""
-        <script>
-        (function() {{
-            const cells = {tooltip_json};
-            const pageW = {page_width};
-            const pageH = {page_height};
+# Attach tooltip handlers once across all dimension pages so hover works for every dimension
+tooltip_pages = [cells for cells in tooltip_payloads if cells]
+if tooltip_pages:
+    tooltip_pages_json = json.dumps(tooltip_pages)
+    st.components.v1.html(f"""
+    <script>
+    (function() {{
+        const pages = {tooltip_pages_json};
+        const pageW = {page_width};
+        const pageH = {page_height};
 
-            function initTooltip() {{
-                let oldTooltip = window.parent.document.getElementById('floating-tooltip-comparison');
-                if (oldTooltip) oldTooltip.remove();
-
-                let tooltip = window.parent.document.createElement('div');
+        function initTooltipsAllPages() {{
+            let tooltip = window.parent.document.getElementById('floating-tooltip-comparison');
+            if (!tooltip) {{
+                tooltip = window.parent.document.createElement('div');
                 tooltip.id = 'floating-tooltip-comparison';
                 tooltip.style.cssText = 'position: fixed; display: none; background: rgba(255,255,255,0.98); border: 2px solid #333; border-radius: 8px; padding: 8px; max-width: 420px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 10000; pointer-events: none; font-family: sans-serif; font-size: 13px;';
                 window.parent.document.body.appendChild(tooltip);
+            }}
 
-                let figures = window.parent.document.querySelectorAll('img[alt="User-uploaded image"]');
-                if (figures.length === 0) figures = window.parent.document.querySelectorAll('[data-testid="stImage"] img');
-                if (figures.length === 0) figures = window.parent.document.querySelectorAll('img');
-                const img = figures[figures.length - 1];
-                if (!img) {{
-                    setTimeout(initTooltip, 120);
-                    return;
-                }}
+            let imgs = window.parent.document.querySelectorAll('img[alt="User-uploaded image"]');
+            if (imgs.length === 0) imgs = window.parent.document.querySelectorAll('[data-testid="stImage"] img');
+            if (imgs.length === 0) imgs = window.parent.document.querySelectorAll('img');
 
+            const needed = pages.length;
+            if (imgs.length < needed) {{
+                setTimeout(initTooltipsAllPages, 200);
+                return;
+            }}
+
+            const targetImgs = Array.from(imgs).slice(-needed);
+
+            targetImgs.forEach((img, idx) => {{
+                if (img.dataset.comparisonTooltipBound === '1') return;
+                img.dataset.comparisonTooltipBound = '1';
+
+                const cells = pages[idx] || [];
                 img.addEventListener('mousemove', function(e) {{
                     const rect = img.getBoundingClientRect();
                     const x = e.clientX - rect.left;
@@ -524,12 +535,13 @@ for idx, fig in enumerate(figures):
                 img.addEventListener('mouseleave', function() {{
                     tooltip.style.display = 'none';
                 }});
-            }}
+            }});
+        }}
 
-            setTimeout(initTooltip, 300);
-        }})();
-        </script>
-        """, height=0)
+        setTimeout(initTooltipsAllPages, 250);
+    }})();
+    </script>
+    """, height=0)
 
 pdf_buffer = io.BytesIO()
 with PdfPages(pdf_buffer) as pdf:

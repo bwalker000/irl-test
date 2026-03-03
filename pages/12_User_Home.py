@@ -63,12 +63,12 @@ if st.session_state.mode == "ASSESSOR":
     if st.button("Assess"):
         st.switch_page("pages/1_New_Assessment.py")
     if st.button("Report"):
-        st.switch_page("pages/12_Report.py")
+        st.switch_page("pages/12_Select_Report.py")
 if st.session_state.mode == "REVIEWER":
     if st.button("Review"):
         st.switch_page("pages/2_Initiate_Review.py")
     if st.button("Report"):
-        st.switch_page("pages/12_Report.py")
+        st.switch_page("pages/12_Select_Report.py")
 if st.button("Home"):
     st.switch_page("streamlit_app.py")
 if st.button("Log out"):

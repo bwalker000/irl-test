@@ -37,7 +37,7 @@ with col2:
 with col3:
     if st.button("Report"):
         reset_session_timer()
-        st.switch_page("pages/12_Report.py")
+        st.switch_page("pages/12_Select_Report.py")
 with col4:
     if st.button("Log out"):
         # Clear EULA acceptance and login attempt on logout

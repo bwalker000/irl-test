@@ -15,12 +15,6 @@ check_session_timeout()
 
 st.title("Create a Report")
 
-col_nav1, col_nav2 = st.columns([1, 1])
-with col_nav1:
-    if st.button("Comparison Report"):
-        reset_session_timer()
-        st.switch_page("pages/12_Comparison_Report.py")
-
 # Clear the cache when entering this page
 st.cache_data.clear()
 
@@ -836,8 +830,8 @@ ax.text(0, footnote_y, "DO NOT DUPLICATE - DO NOT DISTRIBUTE",
 ax.text(page_width/2, footnote_y, "v. 0.50", 
         fontsize=footnote_fontsize, ha='center', va='bottom', color=footnote_color)
 
-# Right: "© Impact Readiness Ltd. 2024-5"
-ax.text(page_width, footnote_y, "© Impact Readiness Ltd. 2024-5", 
+# Right: "© Impact Readiness Ltd. 2024-6"
+ax.text(page_width, footnote_y, "© Impact Readiness Ltd. 2024-6", 
         fontsize=footnote_fontsize, ha='right', va='bottom', color=footnote_color)
 
 #------------------------------------------------------------------------------------------
