@@ -379,10 +379,10 @@ legend_y = page_height - 1.5
 ax_header.text(0, legend_y, "Comparison Legend", fontsize=10, ha='left', va='top', fontweight='bold')
 legend_y -= 0.25
 
-# Two-column legend layout for readability with larger comparison sets (e.g., 16+ entries)
-legend_cols = 2
-legend_col_gap = 0.3
-legend_col_width = (page_width - legend_col_gap) / legend_cols
+# Single-column legend layout (up to ~16 entries expected)
+legend_cols = 1
+legend_col_gap = 0.0
+legend_col_width = page_width
 legend_row_height = 0.18
 
 for legend_col_idx in range(legend_cols):
@@ -395,7 +395,7 @@ for legend_col_idx in range(legend_cols):
 legend_y -= 0.17
 
 for idx, col in enumerate(comparison_columns):
-    legend_col_idx = idx // 16  # soft cap of 16 rows in first column before using second
+    legend_col_idx = idx // 16
     legend_row_idx = idx % 16
 
     if legend_col_idx >= legend_cols:
@@ -410,7 +410,7 @@ for idx, col in enumerate(comparison_columns):
     ax_header.text(x0 + 1.35, y0, col['person']['full'], fontsize=8.5, ha='left', va='top')
     ax_header.text(x0 + legend_col_width - 1.1, y0, format_date(col['date']), fontsize=8.5, ha='left', va='top')
 
-# If there are more entries than can fit in two columns, notify user on cover page
+# If there are more entries than can fit in the cover legend, notify user
 max_legend_entries = legend_cols * 16
 if len(comparison_columns) > max_legend_entries:
     ax_header.text(0, legend_y - (16 * legend_row_height) - 0.05,
@@ -418,16 +418,46 @@ if len(comparison_columns) > max_legend_entries:
                    fontsize=8, ha='left', va='top', color='#606060')
 
 # Milestone color legend on cover page (no progress calculation)
-legend_title_y = 0.95
-ax_header.text(0, legend_title_y, "Milestones", fontsize=9.5, ha='left', va='top', fontweight='bold')
+legend_rows_used = min(len(comparison_columns), max_legend_entries)
+legend_bottom_y = legend_y - max(legend_rows_used - 1, 0) * legend_row_height
 
 milestones_sorted = air_milestones.copy()
-if "Name" in milestones_sorted.columns:
-    milestones_sorted = milestones_sorted.sort_values(by="Name")
+
+def milestone_sort_key(row):
+    for field_name in ["Order", "Milestone", "Level", "Name"]:
+        if field_name in row.index:
+            raw_val = row.get(field_name)
+            if pd.notna(raw_val):
+                match = re.search(r"\d+", str(raw_val))
+                if match:
+                    return int(match.group(0))
+    return 10_000
+
+if not milestones_sorted.empty:
+    milestones_sorted = milestones_sorted.copy()
+    milestones_sorted["_sort_key"] = milestones_sorted.apply(milestone_sort_key, axis=1)
+    sort_columns = ["_sort_key"]
+    if "Name" in milestones_sorted.columns:
+        sort_columns.append("Name")
+    milestones_sorted = milestones_sorted.sort_values(by=sort_columns)
 
 # Single-column layout
 milestone_row_h = 0.16
-milestone_start_y = legend_title_y - 0.18
+milestone_rows = len(milestones_sorted)
+
+# Keep milestones near bottom, but always above footer (y > 0.22)
+milestone_bottom_target = 0.32
+milestone_start_y_bottom_anchored = milestone_bottom_target + max(milestone_rows - 1, 0) * milestone_row_h
+
+# Ensure milestone block does not collide with comparison legend block above
+milestone_start_y_max = legend_bottom_y - 0.50
+milestone_start_y = min(milestone_start_y_bottom_anchored, milestone_start_y_max)
+
+# Ensure first milestone title remains safely on-page
+milestone_start_y = min(milestone_start_y, page_height - 1.25)
+
+legend_title_y = milestone_start_y + 0.20
+ax_header.text(0, legend_title_y, "Milestones", fontsize=9.5, ha='left', va='top', fontweight='bold')
 
 for idx, (_, ms_row) in enumerate(milestones_sorted.iterrows()):
     x0 = 0
