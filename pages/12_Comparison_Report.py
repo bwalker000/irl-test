@@ -69,6 +69,16 @@ def format_date(date_str):
         return "[Pending]"
 
 
+def format_month_year(date_str):
+    try:
+        if pd.isna(date_str) or not date_str:
+            return "[Pending]"
+        date_obj = datetime.strptime(str(date_str), '%Y-%m-%d')
+        return date_obj.strftime('%b-%y')
+    except Exception:
+        return "[Pending]"
+
+
 def initials(first_name, last_name, fallback="NA"):
     first = str(first_name).strip() if first_name is not None else ""
     last = str(last_name).strip() if last_name is not None else ""
@@ -154,7 +164,8 @@ if air_data.empty:
 venture_map = {row["id"]: row.get("Name", row["id"]) for _, row in air_ventures.iterrows()}
 project_map = {row["id"]: row.get("Name", row["id"]) for _, row in air_projects.iterrows()}
 
-venture_ids = sorted([vid for vid in air_data["venture_id_norm"].dropna().unique().tolist()], key=lambda x: venture_map.get(x, str(x)))
+# Show all ventures/projects from database in dropdowns (not only those currently in filtered records)
+venture_ids = sorted([vid for vid in air_ventures["id"].dropna().unique().tolist()], key=lambda x: venture_map.get(x, str(x)))
 if not venture_ids:
     st.warning("No venture records available.")
     st.stop()
@@ -165,12 +176,19 @@ selected_venture_id = st.selectbox(
     format_func=lambda vid: venture_map.get(vid, vid)
 )
 
-venture_filtered = air_data[air_data["venture_id_norm"] == selected_venture_id]
-project_series = venture_filtered.get("project_id_norm")
-if project_series is None:
-    st.warning("No projects available for the selected company.")
-    st.stop()
-project_ids = sorted([pid for pid in project_series.dropna().unique().tolist()], key=lambda x: project_map.get(x, str(x)))
+venture_row = air_ventures[air_ventures["id"] == selected_venture_id]
+linked_projects = []
+if not venture_row.empty:
+    proj_val = venture_row.iloc[0].get("Projects")
+    if isinstance(proj_val, (list, tuple)):
+        linked_projects = [pid for pid in proj_val if pid in project_map]
+
+# Also include projects linked by Venture reference in Projects table
+projects_by_venture = air_projects[
+    air_projects["Venture"].apply(lambda x: has_linked_id(x, selected_venture_id))
+]["id"].dropna().tolist() if "Venture" in air_projects.columns else []
+
+project_ids = sorted(list(set(linked_projects + projects_by_venture)), key=lambda x: project_map.get(x, str(x)))
 
 if not project_ids:
     st.warning("No projects available for the selected company.")
@@ -182,7 +200,10 @@ selected_project_id = st.selectbox(
     format_func=lambda pid: project_map.get(pid, pid)
 )
 
-scope_records = venture_filtered[project_series == selected_project_id].copy()
+scope_records = air_data[
+    (air_data["venture_id_norm"] == selected_venture_id) &
+    (air_data["project_id_norm"] == selected_project_id)
+].copy()
 
 if scope_records.empty:
     st.warning("No records available for the selected company/project.")
@@ -196,12 +217,13 @@ scope_records["_display"] = scope_records.apply(
 record_options = scope_records["id"].tolist()
 record_label_map = dict(zip(scope_records["id"], scope_records["_display"]))
 
-selected_records = st.multiselect(
-    "Select assessments/reviews to include:",
-    options=record_options,
-    default=record_options,
-    format_func=lambda rid: record_label_map.get(rid, rid)
-)
+st.write("Select assessments/reviews to include:")
+selected_records = []
+for rid in record_options:
+    checkbox_key = f"comparison_record_{rid}"
+    checked = st.checkbox(record_label_map.get(rid, rid), value=True, key=checkbox_key)
+    if checked:
+        selected_records.append(rid)
 
 if not selected_records:
     st.info("Please select at least one record.")
@@ -308,7 +330,7 @@ column_dx = 0.9 * 7.15 / num_dims
 question_col_width = 0.3
 section_gap = 0.5
 section_header_gap = 0.2
-section_bottom_padding = 0.45
+section_bottom_padding = 0.62
 
 # Keep column width fixed (as in standard report), but dynamically size row height
 # so exactly two dimensions fit on each page without clipping.
@@ -387,6 +409,43 @@ if len(comparison_columns) > max_legend_entries:
                    f"+ {len(comparison_columns) - max_legend_entries} additional entries (see matrix column labels)",
                    fontsize=8, ha='left', va='top', color='#606060')
 
+# Milestone color legend on cover page (no progress calculation)
+legend_title_y = 0.95
+ax_header.text(0, legend_title_y, "Milestone Color Legend", fontsize=9.5, ha='left', va='top', fontweight='bold')
+
+milestones_sorted = air_milestones.copy()
+if "Name" in milestones_sorted.columns:
+    milestones_sorted = milestones_sorted.sort_values(by="Name")
+
+milestone_cols = 2
+milestone_col_gap = 0.4
+milestone_col_width = (page_width - milestone_col_gap) / milestone_cols
+milestone_row_h = 0.17
+milestone_start_y = legend_title_y - 0.18
+
+for idx, (_, ms_row) in enumerate(milestones_sorted.iterrows()):
+    col_idx = idx % milestone_cols
+    row_idx = idx // milestone_cols
+
+    x0 = col_idx * (milestone_col_width + milestone_col_gap)
+    y0 = milestone_start_y - row_idx * milestone_row_h
+    if y0 < 0.22:
+        break
+
+    raw_color = ms_row.get("Color")
+    if pd.isna(raw_color) or not raw_color:
+        ms_color = "#FFFFFF"
+    else:
+        ms_color = raw_color if str(raw_color).startswith("#") else f"#{raw_color}"
+
+    swatch = patches.Rectangle((x0, y0 - 0.09), 0.18, 0.11, facecolor=ms_color, edgecolor='black', lw=0.6)
+    ax_header.add_patch(swatch)
+
+    ms_name = str(ms_row.get("Name", "Milestone"))
+    ms_label = str(ms_row.get("Label", ""))
+    text_val = f"Milestone {ms_name}: {ms_label}" if ms_label else f"Milestone {ms_name}"
+    ax_header.text(x0 + 0.24, y0 - 0.03, text_val, fontsize=8, ha='left', va='center')
+
 ax_header.text(0, 0.1, "DO NOT DUPLICATE - DO NOT DISTRIBUTE", fontsize=8, ha='left', va='bottom', color='#808080')
 ax_header.text(page_width / 2, 0.1, "v. 0.50", fontsize=8, ha='center', va='bottom', color='#808080')
 ax_header.text(page_width, 0.1, "© Impact Readiness Ltd. 2024-6", fontsize=8, ha='right', va='bottom', color='#808080')
@@ -425,6 +484,14 @@ def draw_dimension_section(ax, dim, top_y, columns, tooltip_cells):
                 "y1": y0 + cell_dy,
                 "title": f"{section_title} | Q{q}: {question_text_by_dim[dim][q]}"
             })
+
+    # Add month-year at the bottom of each column (e.g., Mar-26)
+    label_y = matrix_bottom - 0.08
+    for col_idx, col in enumerate(columns):
+        x0 = start_x + question_col_width + col_idx * column_dx
+        cx = x0 + column_dx / 2
+        date_label = format_month_year(col['date'])
+        ax.text(cx, label_y, date_label, fontsize=column_label_fontsize, ha='center', va='top')
 
     return matrix_bottom - section_bottom_padding
 
