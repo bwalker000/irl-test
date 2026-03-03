@@ -3,6 +3,7 @@ from shared import *
 from shared import check_session_timeout, reset_session_timer
 from draw import draw_diamond
 import io
+import re
 from matplotlib.backends.backend_pdf import PdfPages
 
 st.set_page_config(layout="centered")
@@ -77,6 +78,13 @@ def format_month_year(date_str):
         return date_obj.strftime('%b-%y')
     except Exception:
         return "[Pending]"
+
+
+def render_markdown_bold_text(ax, x, y, text, fontsize=8, ha='left', va='center'):
+    """Render basic markdown bold (**text**) using matplotlib mathtext."""
+    safe_text = str(text).replace('$', '\\$')
+    safe_text = re.sub(r'\*\*(.*?)\*\*', r'$\\mathbf{\1}$', safe_text)
+    ax.text(x, y, safe_text, fontsize=fontsize, ha=ha, va=va)
 
 
 def initials(first_name, last_name, fallback="NA"):
@@ -368,7 +376,7 @@ ax_header.text(0, page_height - 0.9, f"Company (Venture): {venture_map.get(selec
 ax_header.text(0, page_height - 1.15, f"Project: {project_map.get(selected_project_id, selected_project_id)}", fontsize=10, ha='left', va='top')
 
 legend_y = page_height - 1.5
-ax_header.text(0, legend_y, "Comparison Legend (symbols and initials used in matrix):", fontsize=10, ha='left', va='top', fontweight='bold')
+ax_header.text(0, legend_y, "Comparison Legend", fontsize=10, ha='left', va='top', fontweight='bold')
 legend_y -= 0.25
 
 # Two-column legend layout for readability with larger comparison sets (e.g., 16+ entries)
@@ -411,24 +419,19 @@ if len(comparison_columns) > max_legend_entries:
 
 # Milestone color legend on cover page (no progress calculation)
 legend_title_y = 0.95
-ax_header.text(0, legend_title_y, "Milestone Color Legend", fontsize=9.5, ha='left', va='top', fontweight='bold')
+ax_header.text(0, legend_title_y, "Milestones", fontsize=9.5, ha='left', va='top', fontweight='bold')
 
 milestones_sorted = air_milestones.copy()
 if "Name" in milestones_sorted.columns:
     milestones_sorted = milestones_sorted.sort_values(by="Name")
 
-milestone_cols = 2
-milestone_col_gap = 0.4
-milestone_col_width = (page_width - milestone_col_gap) / milestone_cols
-milestone_row_h = 0.17
+# Single-column layout
+milestone_row_h = 0.16
 milestone_start_y = legend_title_y - 0.18
 
 for idx, (_, ms_row) in enumerate(milestones_sorted.iterrows()):
-    col_idx = idx % milestone_cols
-    row_idx = idx // milestone_cols
-
-    x0 = col_idx * (milestone_col_width + milestone_col_gap)
-    y0 = milestone_start_y - row_idx * milestone_row_h
+    x0 = 0
+    y0 = milestone_start_y - idx * milestone_row_h
     if y0 < 0.22:
         break
 
@@ -438,13 +441,14 @@ for idx, (_, ms_row) in enumerate(milestones_sorted.iterrows()):
     else:
         ms_color = raw_color if str(raw_color).startswith("#") else f"#{raw_color}"
 
-    swatch = patches.Rectangle((x0, y0 - 0.09), 0.18, 0.11, facecolor=ms_color, edgecolor='black', lw=0.6)
+    # Square swatch, no border
+    swatch = patches.Rectangle((x0, y0 - 0.10), 0.11, 0.11, facecolor=ms_color, edgecolor='none', lw=0)
     ax_header.add_patch(swatch)
 
     ms_name = str(ms_row.get("Name", "Milestone"))
     ms_label = str(ms_row.get("Label", ""))
-    text_val = f"Milestone {ms_name}: {ms_label}" if ms_label else f"Milestone {ms_name}"
-    ax_header.text(x0 + 0.24, y0 - 0.03, text_val, fontsize=8, ha='left', va='center')
+    text_val = f"Milestone **{ms_name}**: {ms_label}" if ms_label else f"Milestone **{ms_name}**"
+    render_markdown_bold_text(ax_header, x0 + 0.16, y0 - 0.04, text_val, fontsize=8, ha='left', va='center')
 
 ax_header.text(0, 0.1, "DO NOT DUPLICATE - DO NOT DISTRIBUTE", fontsize=8, ha='left', va='bottom', color='#808080')
 ax_header.text(page_width / 2, 0.1, "v. 0.50", fontsize=8, ha='center', va='bottom', color='#808080')
