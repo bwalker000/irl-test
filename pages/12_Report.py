@@ -15,6 +15,12 @@ check_session_timeout()
 
 st.title("Create a Report")
 
+col_nav1, col_nav2 = st.columns([1, 1])
+with col_nav1:
+    if st.button("Comparison Report"):
+        reset_session_timer()
+        st.switch_page("pages/12_Comparison_Report.py")
+
 # Clear the cache when entering this page
 st.cache_data.clear()
 
