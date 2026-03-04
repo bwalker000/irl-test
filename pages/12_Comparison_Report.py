@@ -343,7 +343,8 @@ section_bottom_padding = 0.62
 # Keep column width fixed (as in standard report), but dynamically size row height
 # so exactly two dimensions fit on each page without clipping.
 body_top_y = page_height - 1.2
-body_bottom_y = 0.35
+# Reserve bottom area for milestones legend on every page
+body_bottom_y = 1.35
 available_height = body_top_y - body_bottom_y
 section_height = (available_height - section_gap) / 2
 cell_dy = (section_height - section_header_gap - section_bottom_padding) / numQ
@@ -463,13 +464,13 @@ if not milestones_sorted.empty:
     milestones_sorted["_sort_key"] = milestones_sorted.apply(milestone_sort_key, axis=1)
     milestones_sorted = milestones_sorted.sort_values(by=["_sort_key"])
 
-def draw_milestones_legend_bottom(ax, title_y=1.02, row_start_y=0.82, row_h=0.13):
+def draw_milestones_legend_bottom(ax, title_y=1.12, row_start_y=0.92, row_h=0.14):
     ax.text(0, title_y, "Milestones", fontsize=9.0, ha='left', va='top', fontweight='bold')
 
     for idx, (_, ms_row) in enumerate(milestones_sorted.iterrows()):
         x0 = 0
         y0 = row_start_y - idx * row_h
-        if y0 < 0.36:
+        if y0 < 0.30:
             break
 
         raw_color = ms_row.get("Color")
