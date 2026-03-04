@@ -19,6 +19,51 @@ if 'submitted' not in st.session_state:
 if 'scroll_to_questions' not in st.session_state:
     st.session_state.scroll_to_questions = False
 
+if 'skip_level_error' not in st.session_state:
+    st.session_state.skip_level_error = ""
+
+
+def validate_no_skipped_levels(dim_index):
+    if st.session_state.mode == "ASSESSOR":
+        responses = [bool(v) for v in st.session_state.QA[dim_index]]
+    elif st.session_state.mode == "REVIEWER":
+        responses = [bool(v) for v in st.session_state.QR[dim_index]]
+    else:
+        return True, ""
+
+    if not any(responses):
+        message = (
+            "No level selected on this page. "
+            "At least level 0 (or higher) must be selected before proceeding."
+        )
+        return False, message
+
+    highest_selected = max(i for i, selected in enumerate(responses) if selected)
+    missing_before_highest = [i for i in range(highest_selected) if not responses[i]]
+
+    if missing_before_highest:
+        missing_text = ", ".join(str(i) for i in missing_before_highest)
+        message = (
+            f"Skipped levels detected on this page. "
+            f"Level {highest_selected} is selected, but level(s) {missing_text} are blank. "
+            "Please complete levels in order before proceeding."
+        )
+        return False, message
+
+    return True, ""
+
+
+if hasattr(st, "dialog"):
+    @st.dialog("Skipped levels detected")
+    def show_skipped_levels_dialog(message):
+        st.error(message)
+        st.info("You cannot move forward, submit, or save/exit until skipped levels are fixed.")
+        if st.button("Return and fix", key="skip_dialog_return"):
+            st.rerun()
+else:
+    def show_skipped_levels_dialog(message):
+        st.session_state.skip_level_error = message
+
 # Submit function - defined early so it can be called later
 def handle_submit():
     """Handle submission and show success"""
@@ -244,6 +289,9 @@ if mode == "ASSESSOR":
 elif mode == "REVIEWER":
     st.write("__General Instructions:__")
     st.write("You will constructively challenge the ASSESSOR on each level they indicate that they have achieved. You should ask for evidence of achievement. If there is no tangible record, then you must reject the ASSESSOR’s indication and will instead indicate a lower level of achievement. Do not skip levels.")
+
+if st.session_state.get('skip_level_error'):
+    st.warning(st.session_state.skip_level_error)
 
 # Page info is shown via the page selector above
 
@@ -500,12 +548,28 @@ if not st.session_state.submitted:
 
     # Handle page selection change
     if selected_page is not None and selected_page != st.session_state.dim:
-        reset_session_timer()
-        auto_save_progress()
-        st.session_state.dim = selected_page
-        st.session_state.scroll_to_questions = True
-        st.query_params["_reload"] = str(time.time())
-        st.rerun()
+        moving_forward = selected_page > st.session_state.dim
+        if moving_forward:
+            valid, message = validate_no_skipped_levels(st.session_state.dim)
+            if not valid:
+                st.session_state.skip_level_error = message
+                show_skipped_levels_dialog(message)
+            else:
+                st.session_state.skip_level_error = ""
+                reset_session_timer()
+                auto_save_progress()
+                st.session_state.dim = selected_page
+                st.session_state.scroll_to_questions = True
+                st.query_params["_reload"] = str(time.time())
+                st.rerun()
+        else:
+            st.session_state.skip_level_error = ""
+            reset_session_timer()
+            auto_save_progress()
+            st.session_state.dim = selected_page
+            st.session_state.scroll_to_questions = True
+            st.query_params["_reload"] = str(time.time())
+            st.rerun()
 
 # Show navigation only if not submitted
 if not st.session_state.submitted:
@@ -533,25 +597,43 @@ if not st.session_state.submitted:
         # Hide Save & Exit on last page - user must either submit or discard
         if st.session_state.dim < num_dims - 1:
             if st.button("Save Draft & Exit", key="save_exit_button"):
-                reset_session_timer()  # User is active
-                auto_save_progress()  # Save before leaving
-                st.switch_page("streamlit_app.py")
+                valid, message = validate_no_skipped_levels(st.session_state.dim)
+                if not valid:
+                    st.session_state.skip_level_error = message
+                    show_skipped_levels_dialog(message)
+                else:
+                    st.session_state.skip_level_error = ""
+                    reset_session_timer()  # User is active
+                    auto_save_progress()  # Save before leaving
+                    st.switch_page("streamlit_app.py")
     
     with nav_bottom_cols[3]:
         if st.session_state.dim < num_dims - 1:
             if st.button("Next →", key="next_button"):
-                reset_session_timer()
-                auto_save_progress()
-                st.session_state.dim += 1
-                st.session_state.scroll_to_questions = True
-                st.query_params["_reload"] = str(time.time())
-                st.rerun()
+                valid, message = validate_no_skipped_levels(st.session_state.dim)
+                if not valid:
+                    st.session_state.skip_level_error = message
+                    show_skipped_levels_dialog(message)
+                else:
+                    st.session_state.skip_level_error = ""
+                    reset_session_timer()
+                    auto_save_progress()
+                    st.session_state.dim += 1
+                    st.session_state.scroll_to_questions = True
+                    st.query_params["_reload"] = str(time.time())
+                    st.rerun()
         else:
             # On last page, show submit button instead of Next (only if not submitted)
             if not st.session_state.submitted:
                 if st.button("Submit", key="submit_button", type="primary"):
-                    reset_session_timer()  # User is active
-                    handle_submit()
+                    valid, message = validate_no_skipped_levels(st.session_state.dim)
+                    if not valid:
+                        st.session_state.skip_level_error = message
+                        show_skipped_levels_dialog(message)
+                    else:
+                        st.session_state.skip_level_error = ""
+                        reset_session_timer()  # User is active
+                        handle_submit()
 
 
 
