@@ -38,14 +38,17 @@ def validate_no_skipped_levels(dim_index):
         )
         return False, message
 
-    highest_selected = max(i for i, selected in enumerate(responses) if selected)
+    selected_levels = [i for i, selected in enumerate(responses) if selected]
+    highest_selected = max(selected_levels)
     missing_before_highest = [i for i in range(highest_selected) if not responses[i]]
 
     if missing_before_highest:
+        selected_text = ", ".join(str(i) for i in selected_levels)
         missing_text = ", ".join(str(i) for i in missing_before_highest)
         message = (
             f"Skipped levels detected on this page. "
-            f"Level {highest_selected} is selected, but level(s) {missing_text} are blank. "
+            f"Selected level(s): {selected_text}. "
+            f"Required lower level(s) {missing_text} are blank. "
             "Please complete levels in order before proceeding."
         )
         return False, message
@@ -63,6 +66,13 @@ if hasattr(st, "dialog"):
 else:
     def show_skipped_levels_dialog(message):
         st.session_state.skip_level_error = message
+
+
+def handle_skip_validation_block(message):
+    st.session_state.skip_level_error = message
+    if "page_selector" in st.session_state:
+        st.session_state.page_selector = st.session_state.dim
+    show_skipped_levels_dialog(message)
 
 # Submit function - defined early so it can be called later
 def handle_submit():
@@ -552,8 +562,7 @@ if not st.session_state.submitted:
         if moving_forward:
             valid, message = validate_no_skipped_levels(st.session_state.dim)
             if not valid:
-                st.session_state.skip_level_error = message
-                show_skipped_levels_dialog(message)
+                handle_skip_validation_block(message)
             else:
                 st.session_state.skip_level_error = ""
                 reset_session_timer()
@@ -599,8 +608,7 @@ if not st.session_state.submitted:
             if st.button("Save Draft & Exit", key="save_exit_button"):
                 valid, message = validate_no_skipped_levels(st.session_state.dim)
                 if not valid:
-                    st.session_state.skip_level_error = message
-                    show_skipped_levels_dialog(message)
+                    handle_skip_validation_block(message)
                 else:
                     st.session_state.skip_level_error = ""
                     reset_session_timer()  # User is active
@@ -612,8 +620,7 @@ if not st.session_state.submitted:
             if st.button("Next →", key="next_button"):
                 valid, message = validate_no_skipped_levels(st.session_state.dim)
                 if not valid:
-                    st.session_state.skip_level_error = message
-                    show_skipped_levels_dialog(message)
+                    handle_skip_validation_block(message)
                 else:
                     st.session_state.skip_level_error = ""
                     reset_session_timer()
@@ -628,8 +635,7 @@ if not st.session_state.submitted:
                 if st.button("Submit", key="submit_button", type="primary"):
                     valid, message = validate_no_skipped_levels(st.session_state.dim)
                     if not valid:
-                        st.session_state.skip_level_error = message
-                        show_skipped_levels_dialog(message)
+                        handle_skip_validation_block(message)
                     else:
                         st.session_state.skip_level_error = ""
                         reset_session_timer()  # User is active
