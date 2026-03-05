@@ -22,6 +22,15 @@ if 'scroll_to_questions' not in st.session_state:
 if 'skip_level_error' not in st.session_state:
     st.session_state.skip_level_error = ""
 
+if 'reset_page_selector_pending' not in st.session_state:
+    st.session_state.reset_page_selector_pending = False
+
+# Reset page selector key safely before widget instantiation (if requested by validation flow)
+if st.session_state.reset_page_selector_pending:
+    if 'page_selector' in st.session_state:
+        del st.session_state['page_selector']
+    st.session_state.reset_page_selector_pending = False
+
 
 def validate_no_skipped_levels(dim_index):
     if st.session_state.mode == "ASSESSOR":
@@ -70,8 +79,8 @@ else:
 
 def handle_skip_validation_block(message):
     st.session_state.skip_level_error = message
-    if "page_selector" in st.session_state:
-        st.session_state.page_selector = st.session_state.dim
+    # Defer page selector reset to next rerun, before widget is instantiated
+    st.session_state.reset_page_selector_pending = True
     show_skipped_levels_dialog(message)
 
 # Submit function - defined early so it can be called later
@@ -166,18 +175,31 @@ if ('dim' not in st.session_state):
         if not draft_record.empty:
             draft_record = draft_record.iloc[0]
             
-            # Load question responses
+            # Load ASSESSOR question responses
             for dim in range(num_dims):
                 for i in range(numQ):
                     field_name = f"QA_{dim:02d}_{i}"
                     if field_name in draft_record and pd.notna(draft_record[field_name]):
                         st.session_state.QA[dim, i] = bool(draft_record[field_name])
+
+            # Load REVIEWER question responses
+            for dim in range(num_dims):
+                for i in range(numQ):
+                    field_name = f"QR_{dim:02d}_{i}"
+                    if field_name in draft_record and pd.notna(draft_record[field_name]):
+                        st.session_state.QR[dim, i] = bool(draft_record[field_name])
             
-            # Load text responses
+            # Load ASSESSOR text responses
             for dim in range(num_dims):
                 field_name = f"TA_{dim:02d}"
                 if field_name in draft_record and pd.notna(draft_record[field_name]):
                     st.session_state.TA[dim] = draft_record[field_name]
+
+            # Load REVIEWER text responses
+            for dim in range(num_dims):
+                field_name = f"TR_{dim:02d}"
+                if field_name in draft_record and pd.notna(draft_record[field_name]):
+                    st.session_state.TR[dim] = draft_record[field_name]
     
     # if this is a reivew, then load the assessment data
     elif st.session_state.mode == "REVIEWER":

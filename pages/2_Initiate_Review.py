@@ -141,6 +141,8 @@ elif st.session_state.review_mode == 0:
             st.info("🔄 **Found an in-progress review for this assessment!**")
             if st.button("Resume Review Draft", type="primary"):
                 st.session_state.draft_record_id = existing_draft.iloc[0]['id']
+                reset_session_timer()
+                st.switch_page("pages/12_Assess_&_Review.py")
         
         # Automatically initialize review data with assessment data by default
         # This eliminates duplication - reviewer starts with assessor's responses
@@ -302,6 +304,8 @@ elif st.session_state.review_mode == 1:
             st.info("🔄 **Found an in-progress independent review!**")
             if st.button("Resume Independent Review Draft", type="primary"):
                 st.session_state.draft_record_id = existing_draft.iloc[0]['id']
+                reset_session_timer()
+                st.switch_page("pages/12_Assess_&_Review.py")
         
         # Check for previous independent reviews
         venture_id_to_check = st.session_state.venture_id[0] if isinstance(st.session_state.venture_id, (list, tuple)) else st.session_state.venture_id
