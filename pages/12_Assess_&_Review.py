@@ -22,8 +22,8 @@ if 'scroll_to_questions' not in st.session_state:
 if 'skip_level_error' not in st.session_state:
     st.session_state.skip_level_error = ""
 
-if 'reset_page_selector_pending' not in st.session_state:
-    st.session_state.reset_page_selector_pending = False
+if 'page_selector_version' not in st.session_state:
+    st.session_state.page_selector_version = 0
 
 if 'page_nav_event_id' not in st.session_state:
     st.session_state.page_nav_event_id = 0
@@ -34,11 +34,12 @@ if 'last_handled_page_nav_event_id' not in st.session_state:
 if 'page_nav_target' not in st.session_state:
     st.session_state.page_nav_target = None
 
-# Reset page selector key safely before widget instantiation (if requested by validation flow)
-if st.session_state.reset_page_selector_pending:
-    if 'page_selector' in st.session_state:
-        del st.session_state['page_selector']
-    st.session_state.reset_page_selector_pending = False
+
+def get_page_selector_key():
+    """Return the current versioned key for the page selector widget.
+    Incrementing page_selector_version forces a brand-new widget,
+    discarding any stale browser-side state from the old widget."""
+    return f"page_selector_{st.session_state.page_selector_version}"
 
 
 def validate_no_skipped_levels(dim_index):
@@ -88,14 +89,16 @@ else:
 
 def handle_skip_validation_block(message):
     st.session_state.skip_level_error = message
-    # Defer page selector reset to next rerun, before widget is instantiated
-    st.session_state.reset_page_selector_pending = True
+    # Increment version to force a brand-new widget on next rerun.
+    # The old browser-side state maps to the old key and is ignored.
+    st.session_state.page_selector_version += 1
     st.session_state.page_nav_target = None
     show_skipped_levels_dialog(message)
 
 
 def request_page_navigation():
-    st.session_state.page_nav_target = st.session_state.get("page_selector")
+    key = get_page_selector_key()
+    st.session_state.page_nav_target = st.session_state.get(key)
     st.session_state.page_nav_event_id += 1
 
 # Submit function - defined early so it can be called later
@@ -590,7 +593,7 @@ if not st.session_state.submitted:
         options=page_options,
         format_func=format_page_with_status,
         default=st.session_state.dim,
-        key="page_selector",
+        key=get_page_selector_key(),
         on_change=request_page_navigation
     )
 
