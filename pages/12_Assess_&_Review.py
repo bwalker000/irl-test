@@ -25,8 +25,14 @@ if 'skip_level_error' not in st.session_state:
 if 'reset_page_selector_pending' not in st.session_state:
     st.session_state.reset_page_selector_pending = False
 
-if 'page_nav_requested' not in st.session_state:
-    st.session_state.page_nav_requested = False
+if 'page_nav_event_id' not in st.session_state:
+    st.session_state.page_nav_event_id = 0
+
+if 'last_handled_page_nav_event_id' not in st.session_state:
+    st.session_state.last_handled_page_nav_event_id = 0
+
+if 'page_nav_target' not in st.session_state:
+    st.session_state.page_nav_target = None
 
 # Reset page selector key safely before widget instantiation (if requested by validation flow)
 if st.session_state.reset_page_selector_pending:
@@ -84,12 +90,13 @@ def handle_skip_validation_block(message):
     st.session_state.skip_level_error = message
     # Defer page selector reset to next rerun, before widget is instantiated
     st.session_state.reset_page_selector_pending = True
-    st.session_state.page_nav_requested = False
+    st.session_state.page_nav_target = None
     show_skipped_levels_dialog(message)
 
 
 def request_page_navigation():
-    st.session_state.page_nav_requested = True
+    st.session_state.page_nav_target = st.session_state.get("page_selector")
+    st.session_state.page_nav_event_id += 1
 
 # Submit function - defined early so it can be called later
 def handle_submit():
@@ -587,11 +594,13 @@ if not st.session_state.submitted:
         on_change=request_page_navigation
     )
 
-    # Handle page changes only when explicitly requested by page selector interaction
-    if st.session_state.page_nav_requested:
-        st.session_state.page_nav_requested = False
-        if selected_page is not None and selected_page != st.session_state.dim:
-            moving_forward = selected_page > st.session_state.dim
+    # Handle page changes only for new selector events (prevents stale auto-navigation)
+    if st.session_state.page_nav_event_id > st.session_state.last_handled_page_nav_event_id:
+        st.session_state.last_handled_page_nav_event_id = st.session_state.page_nav_event_id
+        target_page = st.session_state.page_nav_target
+
+        if target_page is not None and target_page != st.session_state.dim:
+            moving_forward = target_page > st.session_state.dim
             if moving_forward:
                 valid, message = validate_no_skipped_levels(st.session_state.dim)
                 if not valid:
@@ -600,7 +609,7 @@ if not st.session_state.submitted:
                     st.session_state.skip_level_error = ""
                     reset_session_timer()
                     auto_save_progress()
-                    st.session_state.dim = selected_page
+                    st.session_state.dim = target_page
                     st.session_state.scroll_to_questions = True
                     st.query_params["_reload"] = str(time.time())
                     st.rerun()
@@ -608,7 +617,7 @@ if not st.session_state.submitted:
                 st.session_state.skip_level_error = ""
                 reset_session_timer()
                 auto_save_progress()
-                st.session_state.dim = selected_page
+                st.session_state.dim = target_page
                 st.session_state.scroll_to_questions = True
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
