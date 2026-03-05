@@ -25,6 +25,9 @@ if 'skip_level_error' not in st.session_state:
 if 'reset_page_selector_pending' not in st.session_state:
     st.session_state.reset_page_selector_pending = False
 
+if 'last_page_selector_value' not in st.session_state:
+    st.session_state.last_page_selector_value = None
+
 # Reset page selector key safely before widget instantiation (if requested by validation flow)
 if st.session_state.reset_page_selector_pending:
     if 'page_selector' in st.session_state:
@@ -578,13 +581,29 @@ if not st.session_state.submitted:
         key="page_selector"
     )
 
+    # Initialize tracker after widget exists
+    if st.session_state.last_page_selector_value is None:
+        st.session_state.last_page_selector_value = selected_page
+
     # Handle page selection change
     if selected_page is not None and selected_page != st.session_state.dim:
-        moving_forward = selected_page > st.session_state.dim
-        if moving_forward:
-            valid, message = validate_no_skipped_levels(st.session_state.dim)
-            if not valid:
-                handle_skip_validation_block(message)
+        # Only act on fresh user interaction; ignore stale mismatches from prior blocked attempts
+        user_changed_selector = (selected_page != st.session_state.last_page_selector_value)
+
+        if user_changed_selector:
+            moving_forward = selected_page > st.session_state.dim
+            if moving_forward:
+                valid, message = validate_no_skipped_levels(st.session_state.dim)
+                if not valid:
+                    handle_skip_validation_block(message)
+                else:
+                    st.session_state.skip_level_error = ""
+                    reset_session_timer()
+                    auto_save_progress()
+                    st.session_state.dim = selected_page
+                    st.session_state.scroll_to_questions = True
+                    st.query_params["_reload"] = str(time.time())
+                    st.rerun()
             else:
                 st.session_state.skip_level_error = ""
                 reset_session_timer()
@@ -593,14 +612,9 @@ if not st.session_state.submitted:
                 st.session_state.scroll_to_questions = True
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
-        else:
-            st.session_state.skip_level_error = ""
-            reset_session_timer()
-            auto_save_progress()
-            st.session_state.dim = selected_page
-            st.session_state.scroll_to_questions = True
-            st.query_params["_reload"] = str(time.time())
-            st.rerun()
+
+    # Track current selector value for next-run interaction detection
+    st.session_state.last_page_selector_value = selected_page
 
 # Show navigation only if not submitted
 if not st.session_state.submitted:
