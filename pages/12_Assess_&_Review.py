@@ -25,15 +25,6 @@ if 'skip_level_error' not in st.session_state:
 if 'page_selector_version' not in st.session_state:
     st.session_state.page_selector_version = 0
 
-if 'page_nav_event_id' not in st.session_state:
-    st.session_state.page_nav_event_id = 0
-
-if 'last_handled_page_nav_event_id' not in st.session_state:
-    st.session_state.last_handled_page_nav_event_id = 0
-
-if 'page_nav_target' not in st.session_state:
-    st.session_state.page_nav_target = None
-
 
 def get_page_selector_key():
     """Return the current versioned key for the page selector widget.
@@ -89,17 +80,24 @@ else:
 
 def handle_skip_validation_block(message):
     st.session_state.skip_level_error = message
-    # Increment version to force a brand-new widget on next rerun.
+    # Increment version to force a brand-new page selector widget on next rerun.
     # The old browser-side state maps to the old key and is ignored.
     st.session_state.page_selector_version += 1
-    st.session_state.page_nav_target = None
     show_skipped_levels_dialog(message)
 
 
-def request_page_navigation():
-    key = get_page_selector_key()
-    st.session_state.page_nav_target = st.session_state.get(key)
-    st.session_state.page_nav_event_id += 1
+def sync_current_page_from_widgets():
+    """Re-read checkbox widget values into QA/QR arrays.
+    Ensures the arrays reflect the absolute latest browser state
+    before validation runs, guarding against any state buffering."""
+    dim = st.session_state.dim
+    for i in range(numQ):
+        qa_key = f"QA_{dim}_{i}"
+        qr_key = f"QR_{dim}_{i}"
+        if qa_key in st.session_state:
+            st.session_state.QA[dim, i] = bool(st.session_state[qa_key])
+        if qr_key in st.session_state:
+            st.session_state.QR[dim, i] = bool(st.session_state[qr_key])
 
 # Submit function - defined early so it can be called later
 def handle_submit():
@@ -587,43 +585,41 @@ if not st.session_state.submitted:
     
     # Progress is shown via page navigation checkmarks
 
-    # Single segmented control that can wrap naturally onto multiple lines
+    # Single segmented control that can wrap naturally onto multiple lines.
+    # No on_change callback — page changes are detected inline AFTER all
+    # checkboxes have rendered and synced their values to QA/QR arrays.
     selected_page = st.segmented_control(
         "Page",
         options=page_options,
         format_func=format_page_with_status,
         default=st.session_state.dim,
         key=get_page_selector_key(),
-        on_change=request_page_navigation
     )
 
-    # Handle page changes only for new selector events (prevents stale auto-navigation)
-    if st.session_state.page_nav_event_id > st.session_state.last_handled_page_nav_event_id:
-        st.session_state.last_handled_page_nav_event_id = st.session_state.page_nav_event_id
-        target_page = st.session_state.page_nav_target
-
-        if target_page is not None and target_page != st.session_state.dim:
-            moving_forward = target_page > st.session_state.dim
-            if moving_forward:
-                valid, message = validate_no_skipped_levels(st.session_state.dim)
-                if not valid:
-                    handle_skip_validation_block(message)
-                else:
-                    st.session_state.skip_level_error = ""
-                    reset_session_timer()
-                    auto_save_progress()
-                    st.session_state.dim = target_page
-                    st.session_state.scroll_to_questions = True
-                    st.query_params["_reload"] = str(time.time())
-                    st.rerun()
+    # Detect page change by comparing widget value to current dimension.
+    if selected_page is not None and selected_page != st.session_state.dim:
+        sync_current_page_from_widgets()
+        moving_forward = selected_page > st.session_state.dim
+        if moving_forward:
+            valid, message = validate_no_skipped_levels(st.session_state.dim)
+            if not valid:
+                handle_skip_validation_block(message)
             else:
                 st.session_state.skip_level_error = ""
                 reset_session_timer()
                 auto_save_progress()
-                st.session_state.dim = target_page
+                st.session_state.dim = selected_page
                 st.session_state.scroll_to_questions = True
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
+        else:
+            st.session_state.skip_level_error = ""
+            reset_session_timer()
+            auto_save_progress()
+            st.session_state.dim = selected_page
+            st.session_state.scroll_to_questions = True
+            st.query_params["_reload"] = str(time.time())
+            st.rerun()
 
 # Show navigation only if not submitted
 if not st.session_state.submitted:
@@ -651,6 +647,7 @@ if not st.session_state.submitted:
         # Hide Save & Exit on last page - user must either submit or discard
         if st.session_state.dim < num_dims - 1:
             if st.button("Save Draft & Exit", key="save_exit_button"):
+                sync_current_page_from_widgets()
                 valid, message = validate_no_skipped_levels(st.session_state.dim)
                 if not valid:
                     handle_skip_validation_block(message)
@@ -663,6 +660,7 @@ if not st.session_state.submitted:
     with nav_bottom_cols[3]:
         if st.session_state.dim < num_dims - 1:
             if st.button("Next →", key="next_button"):
+                sync_current_page_from_widgets()
                 valid, message = validate_no_skipped_levels(st.session_state.dim)
                 if not valid:
                     handle_skip_validation_block(message)
@@ -678,6 +676,7 @@ if not st.session_state.submitted:
             # On last page, show submit button instead of Next (only if not submitted)
             if not st.session_state.submitted:
                 if st.button("Submit", key="submit_button", type="primary"):
+                    sync_current_page_from_widgets()
                     valid, message = validate_no_skipped_levels(st.session_state.dim)
                     if not valid:
                         handle_skip_validation_block(message)
