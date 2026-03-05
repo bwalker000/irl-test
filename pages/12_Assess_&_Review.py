@@ -25,8 +25,8 @@ if 'skip_level_error' not in st.session_state:
 if 'reset_page_selector_pending' not in st.session_state:
     st.session_state.reset_page_selector_pending = False
 
-if 'last_page_selector_value' not in st.session_state:
-    st.session_state.last_page_selector_value = None
+if 'page_nav_requested' not in st.session_state:
+    st.session_state.page_nav_requested = False
 
 # Reset page selector key safely before widget instantiation (if requested by validation flow)
 if st.session_state.reset_page_selector_pending:
@@ -84,7 +84,12 @@ def handle_skip_validation_block(message):
     st.session_state.skip_level_error = message
     # Defer page selector reset to next rerun, before widget is instantiated
     st.session_state.reset_page_selector_pending = True
+    st.session_state.page_nav_requested = False
     show_skipped_levels_dialog(message)
+
+
+def request_page_navigation():
+    st.session_state.page_nav_requested = True
 
 # Submit function - defined early so it can be called later
 def handle_submit():
@@ -578,19 +583,14 @@ if not st.session_state.submitted:
         options=page_options,
         format_func=format_page_with_status,
         default=st.session_state.dim,
-        key="page_selector"
+        key="page_selector",
+        on_change=request_page_navigation
     )
 
-    # Initialize tracker after widget exists
-    if st.session_state.last_page_selector_value is None:
-        st.session_state.last_page_selector_value = selected_page
-
-    # Handle page selection change
-    if selected_page is not None and selected_page != st.session_state.dim:
-        # Only act on fresh user interaction; ignore stale mismatches from prior blocked attempts
-        user_changed_selector = (selected_page != st.session_state.last_page_selector_value)
-
-        if user_changed_selector:
+    # Handle page changes only when explicitly requested by page selector interaction
+    if st.session_state.page_nav_requested:
+        st.session_state.page_nav_requested = False
+        if selected_page is not None and selected_page != st.session_state.dim:
             moving_forward = selected_page > st.session_state.dim
             if moving_forward:
                 valid, message = validate_no_skipped_levels(st.session_state.dim)
@@ -612,9 +612,6 @@ if not st.session_state.submitted:
                 st.session_state.scroll_to_questions = True
                 st.query_params["_reload"] = str(time.time())
                 st.rerun()
-
-    # Track current selector value for next-run interaction detection
-    st.session_state.last_page_selector_value = selected_page
 
 # Show navigation only if not submitted
 if not st.session_state.submitted:
